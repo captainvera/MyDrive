@@ -32,16 +32,16 @@ class Link extends PlainFile {
 class App extends PlainFile {
 }
 
+relation DomainRootHasFileSystemApplication {
+  .pt.ist.fenixframework.DomainRoot playsRole root;
+  FileSystem playsRole filesystem;
+}
+
 relation FileSystemHasUsers {
   Filesystem playsRole filesystem;
   User playsRole user {
     multiplicity *;
   }
-}
-
-relation DomainRootHasFileSystemApplication {
-  .pt.ist.fenixframework.DomainRoot playsRole root;
-  FileSystem playsRole filesystem;
 }
 
 relation UserHasFiles {
