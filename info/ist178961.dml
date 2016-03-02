@@ -14,8 +14,9 @@ class User{
 class File{
 	Integer id;
 	String name;
-	String date;
+	DateTime date;
 	String permissions;
+	String path;
 }
 
 class Directory extends File{
