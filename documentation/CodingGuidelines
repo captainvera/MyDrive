@@ -1,0 +1,64 @@
+This file describes a series of rules that should be followed when programming
+in this project.
+
+Commentaries:
+
+  - Multiline comments à la JavaDoc
+
+  /**
+   * Insert comment here
+   * ...
+   * End comment here
+   */
+
+
+  - "Inline" commentaries:
+
+  var = someFunc(); // Stores in var something
+
+
+  This is ok, although, sometimes, this happens:
+
+
+  int veryLongVariableNameThatIsAssignedWithSomething = something;
+
+
+  - "Long lines" comments:
+
+  (incorrect)
+  int veryLongVariableNameThatIsAssignedWithSomething = something; // a not so long comment
+
+  (correct)
+  /** a not so long comment */
+  int veryLongVariableNameThatIsAssignedWithSomething = something;
+
+
+Don't forget to identify methods that are overriden by derived classes with the
+keyword: @Override; The compiler appreciates it and so do the people you're
+working with. There's nothing more annoying that searching through a bunch of
+super classes that you didn't implement to know where the method is actually
+defined.
+
+  (Example)
+  @Override
+  public void foo(){} // some overriden method
+
+
+Tabstop and shiftwidth of 2:
+
+(correct)
+public void main(String [] args){
+  if (true){
+    ;
+  } else {
+    ;
+  }
+  return; // Only two spaces in every indentation level
+}
+
+
+Do not write more than 80 columns per line.
+
+
+And please, do *not* leave commented code...
+
