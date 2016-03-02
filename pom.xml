@@ -22,7 +22,7 @@
         <role>Integrator</role>
       </roles>
       <properties>
-        <picUrl>https://fenix.tecnico.ulisboa.pt/user/photo/ist178839</picUrl> <!-- FIXME -->
+        <picUrl>https://fenix.tecnico.ulisboa.pt/user/photo/ist178470</picUrl> <!-- FIXME -->
       </properties>
     </developer>
     <developer>
@@ -86,7 +86,7 @@
       </properties>
     </developer>
 
-    <!-- TODO: Vincente e Lopes -->
+    <!-- TODO: Lopes -->
     <developer>
       <id>ist78839</id>
       <name>jorge-pessoa</name>
@@ -102,22 +102,7 @@
         <picUrl>https://fenix.tecnico.ulisboa.pt/user/photo/ist199999</picUrl> <!-- FIXME -->
       </properties>
     </developer>
-    <developer>
-      <id>ist78839</id>
-      <name>jorge-pessoa</name>
-      <email>ist78839@tecnico.ulisboa.pt</email>
-      <organization>es16 g21al</organization>
-      <roles>
-        <role>Architect</role>
-        <role>Developer</role>
-        <role>Tester</role>
-        <role>Integrator</role>
-      </roles>
-      <properties>
-        <picUrl>https://fenix.tecnico.ulisboa.pt/user/photo/ist199999</picUrl> <!-- FIXME -->
-      </properties>
-    </developer>
-    <!-- END TODO: Vincente e Lopes -->
+    <!-- END TODO: Lopes -->
 
   </developers>
 
