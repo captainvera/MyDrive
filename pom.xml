@@ -11,6 +11,21 @@
 
   <developers>
     <developer>
+      <id>ist178470</id>
+      <name>jcvicente</name>
+      <email>ist78470@tecnico.ulisboa.pt</email>
+      <organization>es16 g21al</organization>
+      <roles>
+        <role>Architect</role>
+        <role>Developer</role>
+        <role>Tester</role>
+        <role>Integrator</role>
+      </roles>
+      <properties>
+        <picUrl>https://fenix.tecnico.ulisboa.pt/user/photo/ist178839</picUrl> <!-- FIXME -->
+      </properties>
+    </developer>
+    <developer>
       <id>ist178839</id>
       <name>jorge-pessoa</name>
       <email>ist78839@tecnico.ulisboa.pt</email>
