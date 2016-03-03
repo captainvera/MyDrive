@@ -28,7 +28,9 @@ class File {
 }
 
 class Directory extends File;
-class PlainFile extends File;
+class PlainFile extends File {
+  String content;
+}
 
 class App extends PlainFile;
 class Link extends PlainFile;
@@ -37,7 +39,7 @@ class Link extends PlainFile;
  * Relation Specifications
  */
 relation DomainRootHasFileSystemManager {
-   .pt.ist.fenixframework.DomainRoot playsRole root { multiplicity 0..1; }
+  .pt.ist.fenixframework.DomainRoot playsRole root { multiplicity 0..1; }
   FileSystemManager playsRole fileSystemManager { multiplicity 0..1; }
 }
 
@@ -57,13 +59,13 @@ relation FileSystemContainsFiles {
 }
 
 relation FileSystemHasRootUser {
-   FileSystem playsRole;
-   User playsRole rootUser { multiplicity 1; }
+  FileSystem playsRole;
+  User playsRole rootUser { multiplicity 1; }
 }
 
 relation FileSystemHasRootDirectory {
-   FileSystem playsRole;
-   Directory playsRole rootDirectory { multiplicity 1; }
+  FileSystem playsRole;
+  Directory playsRole rootDirectory { multiplicity 1; }
 }
 
 relation UserHasHomeDirectory {
@@ -74,9 +76,4 @@ relation UserHasHomeDirectory {
 relation DirectoryContainsFiles {
   Directory playsRole directory { multiplicity 1; }
   File playsRole files { multiplicity *; }
-}
-
-relation DirectoryHasParent {
-  Directory playsRole childDirectory;
-  Directory playsRole parentDirectory { multiplicity 1; }
 }
