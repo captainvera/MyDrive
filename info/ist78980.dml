@@ -1,0 +1,81 @@
+package pt.tecnico.phonebook.domain;
+
+class FileSystemManager{};
+
+class FileSystem{};
+
+class User{
+  String username;
+  String password;
+
+}
+
+class File{
+  String name;
+  Integer fileID;
+  DateTime modified;
+  String filePath;
+  String permOwner;
+  String permOthers;
+}
+
+class Directory extends File{}
+
+class TextFile extends File{
+  String fileText;
+}
+
+class Link extends File{}
+
+class Application extends File{}
+
+relation DomainRootHasFileSystem {
+  .pt.ist.fenixframework.DomainRoot playsRole root {
+    multiplicity 0..1;
+  }
+  FileSystem playsRole fileSystem {
+    multiplicity 0..1;
+  }
+}
+
+relation FileSystemContainsFiles {
+  FileSystem playsRole fileSystem;
+  File playsRole file {
+    multiplicity *;
+  }
+}
+
+relation FileSystemContainsDirectory {
+  FileSystem playsRole fileSystem;
+  Directory playsRole directory {
+    multiplicity 1..*;
+  }
+}
+
+relation UserContainsLinker {
+  User playsRole user;
+  Linker playsRole home {
+    multiplicity 1..*;
+  }
+}
+
+relation FileSystemManagerContainsFileSystems {
+  FileSystemManager playsRole fileSystemManager;
+  FileSystem playsRole fileSystem {
+    multiplicity 1..*;
+  }
+}
+
+relation FileSystemManagerContainsUsers {
+  FileSystemManager playsRole fileSystemManager;
+  User playsRole user {
+    multiplicity 1..*;
+  }
+}
+
+relation DirectoryContainsFiles {
+  Directory playsRole directory;
+  File playsRole file {
+    multiplicity *;
+  }
+}
