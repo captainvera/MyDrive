@@ -1,3 +1,3 @@
-## Introdução
-A aplicação MYDRIVE permitirá manter e gerir um sistema de ficheiros transacional.
-O sistema permite a criação e manipulação de vários tipos de ficheiros: texto, aplicações e ligações. Os utilizadores da aplicação a desenvolver podem interagir uns com os outros através da alteração de ficheiros partilhados entre eles.
+##Introduction
+The application MYDRIVE will maintain and manage a transactional file system. The system allows the creation and manipulation of various types of files: text, applications and links.
+The users of the application can interact with each other through shared files.
