@@ -2,7 +2,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>pt.tecnico.myDrive</groupId>
+  <groupId>pt.tecnico.md</groupId>
   <artifactId>myDrive</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -86,11 +86,10 @@
       </properties>
     </developer>
 
-    <!-- TODO: Lopes -->
     <developer>
-      <id>ist78839</id>
-      <name>jorge-pessoa</name>
-      <email>ist78839@tecnico.ulisboa.pt</email>
+      <id>ist78910</id>
+      <name>pedroallenrevez</name>
+      <email>ist78910@tecnico.ulisboa.pt</email>
       <organization>es16 g21al</organization>
       <roles>
         <role>Architect</role>
@@ -99,10 +98,9 @@
         <role>Integrator</role>
       </roles>
       <properties>
-        <picUrl>https://fenix.tecnico.ulisboa.pt/user/photo/ist199999</picUrl> <!-- FIXME -->
+        <picUrl>https://fenix.tecnico.ulisboa.pt/user/photo/ist178910</picUrl> 
       </properties>
     </developer>
-    <!-- END TODO: Lopes -->
 
   </developers>
 

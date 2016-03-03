@@ -1,0 +1,96 @@
+package pt.tecnico.myDrive;
+
+class User{
+	String _username;
+	String _password;
+	String _name;
+	integer _umask;
+	String _homeDirectory;	
+}
+
+class FileSystem{
+
+}
+
+class FileSystemMngr{
+	
+}
+
+class DataBaseMngr{
+	
+} 
+
+class File{
+	String _name;
+	double _id;
+	String _owner;
+	integer _ownerUmask;
+	integer _userUmask;
+	DateTime _lastModified;
+}
+
+class PlainFile extends File{
+	String _content;
+}
+
+class Link extends PlainFile{
+}
+
+class Application extends PlainFile{
+
+}
+
+class Directory extends File{
+	String _name;
+}
+
+relation DomainRootHasFileSystem {
+    .pt.ist.fenixframework.DomainRoot playsRole root {multiplicity 0..1;}
+    FileSystem playsRole _fs {multiplicity 0..1;}
+}
+
+relation FileSystemContainsFile {
+    FileSystem playsRole _fs;
+    File playsRole _files {  multiplicity 1..*;}
+}
+
+relation UserHasHomeDirectory {
+    User playsRole _user;
+    Directory playsRole _home {multiplicity 1;};
+}
+
+relation FileSystemHasDbMngr{
+	FileSystem playsRole _fs {multiplicity 0..1;}
+	DataBaseMngr _dbManager {multiplicity 0..1;}
+}
+
+
+relation FileSystemManagerHasFileSystem{
+	FileSystemMngr playsRole _fsManager {multiplicity 0..1;}
+	FileSystem playsRole _fs {multiplicity 0..1;}
+}
+
+relation FileSystemHasSuperUser{
+	FileSystem playRole _fs;
+	User playsRole _user {multiplicity 1;}
+}
+
+relation FileSystemHasUsers {
+  FileSystem playsRole _fs { multiplicity 1; }
+  User playsRole user { multiplicity *; }
+}
+
+relation FileSystemHasDirectories{
+	FileSystem playsRole _fs {multiplicity 1;}
+	Directory playsRole _directories {multiplicity 1..*;}
+}
+
+relation DirectoryHasParent {
+  Directory playsRole _self;
+  Directory playsRole _parentDir { multiplicity 1; }
+}
+
+relation DirectoryHasFiles {
+    Directory playsRole _filesDirectory;
+    File playsRole _files {multiplicity *;}
+}
