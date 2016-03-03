@@ -1,0 +1,82 @@
+package pt.tecnico.myDrive;
+
+/**
+ * Class specifications
+ */
+class FileSystemManager;
+
+class FileSystem {
+  int id;
+}
+
+class User {
+  String username;
+  String name;
+  String password;
+  int umask;           /** User's file creating mask */
+  int id;              /** User's unique identifier number */
+}
+
+/** An abstract class */
+class File {
+  /** Exact point on the time-line when the file was last modified */
+  DateTime lastModification;
+  String name;
+  int id;               /** File's unique identifier number */
+  int owner;            /** File's owner user ID */
+  int permissions;
+}
+
+class Directory extends File;
+class PlainFile extends File;
+
+class App extends PlainFile;
+class Link extends PlainFile;
+
+/**
+ * Relation Specifications
+ */
+relation DomainRootHasFileSystemManager {
+   .pt.ist.fenixframework.DomainRoot playsRole root { multiplicity 0..1; }
+  FileSystemManager playsRole fileSystemManager { multiplicity 0..1; }
+}
+
+relation FileSystemManagerManagesFileSystems {
+  FileSystemManager playsRole fileSystemManager { multiplicity 1; }
+  FileSystem playsRole fileSystem { multiplicity *; }
+}
+
+relation FileSystemContainsUsers {
+  FileSystem playsRole fileSystem { multiplicity 1; }
+  User playsRole user { multiplicity *; }
+}
+
+relation FileSystemContainsFiles {
+  FileSystem playsRole fileSystem { multiplicity 1; }
+  File playsRole files { multiplicity *; }
+}
+
+relation FileSystemHasRootUser {
+   FileSystem playsRole;
+   User playsRole rootUser { multiplicity 1; }
+}
+
+relation FileSystemHasRootDirectory {
+   FileSystem playsRole;
+   Directory playsRole rootDirectory { multiplicity 1; }
+}
+
+relation UserHasHomeDirectory {
+  User playsRole user { multiplicity 1; }
+  Directory playsRole homeDirectory { multiplicity 1; }
+}
+
+relation DirectoryContainsFiles {
+  Directory playsRole directory { multiplicity 1; }
+  File playsRole files { multiplicity *; }
+}
+
+relation DirectoryHasParent {
+  Directory playsRole childDirectory;
+  Directory playsRole parentDirectory { multiplicity 1; }
+}
