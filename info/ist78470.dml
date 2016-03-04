@@ -1,7 +1,6 @@
 package pt.tecnico.myDrive;
 
-class FileSystem {
-}
+class FileSystem;
 
 class User {
   String username;
@@ -14,7 +13,7 @@ class File {
   int id;
   String name;
   DateTime last_mod;
-  String user;
+  String owner;
   String fmask;
   String path;
 }
@@ -33,12 +32,16 @@ class App extends PlainFile {
 }
 
 relation DomainRootHasFileSystemApplication {
-  .pt.ist.fenixframework.DomainRoot playsRole root;
-  FileSystem playsRole filesystem;
+  .pt.ist.fenixframework.DomainRoot playsRole root {
+    multiplicity 0..1;
+  }
+  FileSystem playsRole filesystem {
+    multiplicity 0..1;
+  }
 }
 
 relation FileSystemHasUsers {
-  Filesystem playsRole filesystem;
+  FileSystem playsRole filesystem;
   User playsRole user {
     multiplicity *;
   }
