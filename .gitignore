@@ -3,7 +3,6 @@
 .settings
 .project
 .*.swp
-.png
 
 #OS specific
 .DS_Store
