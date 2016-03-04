@@ -1,70 +1,83 @@
 package pt.tecnico.myDrive;
 
-class FileSystemManager{}
+class FileSystem;
 
-class FileSystem{}
-
-class User{
+class User {
 	String username;
 	String password;
 	String name;
-	String mask;
+	String umask;
 }
 
-class File{
+class File {
 	Integer id;
 	String name;
-	DateTime date;
+	DateTime modified;
 	String permissions;
 	String path;
 }
 
-class Directory extends File{
-	Integer dimension;
+class Directory extends File {
 }
 
-class TextFile extends File{
+class PlainFile extends File {
 	String content;
 }
 
-class PlainText extends TextFile{}
 
-class Linker extends TextFile{} 
+class Link extends PlainFile {
+} 
 
-class App extends TextFile{}
-
-relation DomainRootHasMyDriveApp{
-	.pt.ist.fenixframework.DomainRoot playsRole root {multiplicity 0..1;}
-	FileSystemManager playsRole manager {multiplicity 0..1;} 
+class App extends PlainFile {
 }
 
-relation DirContainsFile{
-	Directory playsRole directory {multiplicty 1;} 
-	File playsRole file {multiplicity *;}
+relation DomainRootHasMyDriveApp {
+	 .pt.ist.fenixframework.DomainRoot playsRole root {
+		multiplicity 0..1;
+	}
+	FileSystem playsRole filesystem {
+		multiplicity 0..1;
+	} 
 }
 
-relation UserOwnsFile{
-	User playsRole user {multiplicity 1;}
+relation DirContainsFile {
+	Directory playsRole directory {
+		multiplicity 1;
+	} 
+	File playsRole file {
+		multiplicity *;
+	}
+}
+
+relation UserOwnsFile {
+	User playsRole user {
+		multiplicity 1;
+	}
 	File playsRole file;
 }
 
-relation UserHasHomeDir{
+relation UserHasHomeDir {
 	User playsRole user;
-	Directory playsRole homedir {multiplicity 1;}
+	Directory playsRole homedir {
+		multiplicity 1;
+	}
 }
 
-relation FileSystemManagerManagesFileSystem{
-	FileSystemManager playsRole manager {multiplicity 0..1;}
-	FileSystem playsRole filesystem {multiplicity 0..1;}
+relation FileSystemHasUser {
+	FileSystem playsRole filesystem {
+		multiplicity 1;
+	}
+	User playsRole user {
+		multiplicity *;
+	}
 }
 
-relation FileSystemHasUser{
-	FileSystem playRole filesystem {multiplicity 1;}
-	User playsRole user {multiplicity *;}
-}
-
-relation FileSystemHasDir{
-	FileSystem playsRole filesystem {multiplicity 1;}
-	Directory playsRole directory {multiplicity 1..*;}
+relation FileSystemHasDir {
+	FileSystem playsRole filesystem2 {
+		multiplicity 1;
+	}
+	Directory playsRole directory {
+		multiplicity 1..*;
+	}
 }
 
