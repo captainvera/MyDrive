@@ -1,12 +1,14 @@
-package pt.tecnico.phonebook.domain;
+package pt.tecnico.myDrive;
 
-class FileSystemManager{};
+class FileSystemManager{}
 
-class FileSystem{};
+class FileSystem{}
 
 class User{
+  String name;
   String username;
   String password;
+  String umask;
 
 }
 
@@ -25,7 +27,7 @@ class TextFile extends File{
   String fileText;
 }
 
-class Link extends File{}
+class Linker extends File{}
 
 class Application extends File{}
 
