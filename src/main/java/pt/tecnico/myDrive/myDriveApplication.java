@@ -1,10 +1,10 @@
-package pt.tecnico.md;
+package pt.tecnico.myDrive;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.DomainRoot;
 import pt.ist.fenixframework.FenixFramework;
 
-public class Main {
+public class myDriveApplication {
 
     // FenixFramework will try automatic initialization when first accessed
     public static void main(String [] args) {
