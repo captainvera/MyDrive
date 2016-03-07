@@ -70,7 +70,7 @@ relation FileHasOwner {
 relation DirectoryContainsFiles {
     Directory playsRole directory;
     File playsRole file {
-        multiplicity *;
+        multiplicity 1..*;
     }
 }
 
