@@ -54,10 +54,10 @@ relation FileSystemContainsFiles {
 }
 
 relation UserHasHomeDirectory {
-  User playsRole user {
+  User playsRole user;
+  Directory playsRole homeDirectory {
     multiplicity 1;
   }
-  Directory playsRole;
 }
 
 relation FileHasOwner {
