@@ -1,9 +1,12 @@
 package pt.tecnico.myDrive.domain;
 
-public class File extends File_Base {
+import pt.tecnico.myDrive.visitors.GenericVisitor;
+
+public abstract class File extends File_Base {
 
   public File() {
     super();
-  }
+	}
 
+  public <T> T accept(GenericVisitor<T> v);
 }
