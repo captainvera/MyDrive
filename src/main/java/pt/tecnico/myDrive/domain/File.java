@@ -8,5 +8,11 @@ public abstract class File extends File_Base {
     super();
 	}
 
+	public String toString(){
+		return this.getName();
+	}
+
+	public abstract int getSize();
+
   public abstract <T> T accept(GenericVisitor<T> v);
 }

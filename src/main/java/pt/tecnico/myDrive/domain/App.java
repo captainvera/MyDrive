@@ -8,6 +8,13 @@ public class App extends App_Base {
     super();
   }
 
+	/**
+	 * TEMPORARY
+	 */
+	public int getSize(){
+		return 0;
+	}
+
   public <T> T accept(GenericVisitor<T> v){
 		return v.visit(this);
 	}
