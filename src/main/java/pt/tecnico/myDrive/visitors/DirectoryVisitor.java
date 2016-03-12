@@ -13,25 +13,25 @@ import pt.tecnico.myDrive.exceptions.NotADirectoryException;
  * Simple directory visitor. Allows throws and exception if the element being visited is not a Directory
  */
 
-public class DirectoryVisitor implements GenericVisitor<Boolean> {
+public class DirectoryVisitor implements GenericVisitor<Directory> {
 
-	@Override
-	public Boolean visit(Directory dir) {
-		return true;
-	}
+  @Override
+  public Directory visit(Directory dir) {
+    return dir;
+  }
 
-	@Override
-	public Boolean visit(PlainFile pf) {
-		return false;
-	}
+  @Override
+  public Directory visit(PlainFile pf) {
+    return null;
+  }
 
-	@Override
-	public Boolean visit(Link l) {
-		return false;
-	}
+  @Override
+  public Directory visit(Link l) {
+    return null;
+  }
 
-	@Override
-	public Boolean visit(App a) {	
-		return false;
-	}
+  @Override
+  public Directory visit(App a) {
+    return null;
+  }
 }
