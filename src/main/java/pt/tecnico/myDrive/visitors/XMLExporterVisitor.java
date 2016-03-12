@@ -28,7 +28,7 @@ public class XMLExporter implements GenericVisitor<Element>{
 		Element files = new Elemens("files");
 		element.addContent(files);
 		for(File f: dir.getFiles())
-			files.addContent(f.accept());
+			files.addContent(f.accept(this));
 
 		return element;
 	}
