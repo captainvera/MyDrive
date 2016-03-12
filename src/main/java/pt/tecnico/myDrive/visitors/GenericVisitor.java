@@ -4,6 +4,7 @@ import pt.tecnico.myDrive.domain.App;
 import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.domain.Link;
 import pt.tecnico.myDrive.domain.PlainFile;
+import pt.tecnico.myDrive.domain.User;
 
 public interface GenericVisitor<T> {
 	public T visit(Directory dir);
