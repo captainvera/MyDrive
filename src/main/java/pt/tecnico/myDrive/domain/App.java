@@ -9,6 +9,9 @@ public class App extends App_Base {
   }
 
   public <T> T accept(GenericVisitor<T> v){
-		return v.visit(this);
-	}
+    return v.visit(this);
+  }
+  @Override
+  public void remove() { }
+
 }

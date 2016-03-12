@@ -33,7 +33,7 @@ public class Directory extends Directory_Base {
   }
 
   /**
-   * Get a file by its name.
+   * Get a file inside the directory by its name.
    *
    * @param filename
    * @return The file which name is filename.
@@ -45,6 +45,9 @@ public class Directory extends Directory_Base {
         return file;
     throw new FileUnknownException(filename);
   }
+
+  @Override
+  public void remove() { }
 
   @Override
   public <T> T accept(GenericVisitor<T> v){

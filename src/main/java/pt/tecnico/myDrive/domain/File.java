@@ -9,4 +9,6 @@ public abstract class File extends File_Base {
 	}
 
   public abstract <T> T accept(GenericVisitor<T> v);
+
+  public abstract void remove();
 }
