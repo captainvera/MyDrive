@@ -6,6 +6,8 @@ import pt.tecnico.myDrive.domain.Link;
 import pt.tecnico.myDrive.domain.PlainFile;
 import pt.tecnico.myDrive.domain.User;
 
+import pt.tecnico.myDrive.visitors.GenericVisitor;
+
 import org.jdom2.Element;
 
 public class XMLExporter implements GenericVisitor<Element>{
