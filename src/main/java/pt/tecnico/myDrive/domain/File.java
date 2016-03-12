@@ -8,5 +8,5 @@ public abstract class File extends File_Base {
     super();
 	}
 
-  public <T> T accept(GenericVisitor<T> v);
+  public abstract <T> T accept(GenericVisitor<T> v);
 }
