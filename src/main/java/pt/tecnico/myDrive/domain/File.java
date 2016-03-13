@@ -14,9 +14,9 @@ public abstract class File extends File_Base {
 		setId(id);
 	}
 
-	public String toString(){
-		return this.getName();
-	}
+  public String toString(){
+    return this.getName();
+  }
 
 	/**
 	 * Basic remove implementation for FIle objects 
@@ -24,6 +24,8 @@ public abstract class File extends File_Base {
 	public void remove(){
 		setFileSystem(null);
 		setParent(null);			
+		setOWner(null);
+		deleteDomainObject();
 	}
 	
 	/**

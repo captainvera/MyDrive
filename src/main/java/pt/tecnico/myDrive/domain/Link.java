@@ -27,6 +27,8 @@ public class Link extends Link_Base {
   }
 
   @Override
-  public void remove() { }
+  public void remove() { 
+		super.remove();
+	}
 
 }
