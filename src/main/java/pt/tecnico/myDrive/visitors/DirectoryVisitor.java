@@ -4,7 +4,6 @@ import pt.tecnico.myDrive.domain.App;
 import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.domain.Link;
 import pt.tecnico.myDrive.domain.PlainFile;
-import pt.tecnico.myDrive.domain.User;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 
@@ -36,8 +35,4 @@ public class DirectoryVisitor implements GenericVisitor<Directory> {
     return null;
   }
 
-	@Override	
-	public Directory visit(User u){
-		return null;
-	}
 }
