@@ -63,22 +63,65 @@ public class XMLExporterVisitor implements GenericVisitor<Element>{
 		plain.addContent(plainOwner);
 		plain.addContent(plainPerm);
 		plain.addContent(plainContent);
+
+		return plain;
 	}
 
 	@Override
 	public Element visit(App a){
-		Element element = new Element("app");
+		Element app = new Element("app");
+		app.setAttribute("id",String.valueOf(a.getId()));
 		
-		element.setAttribute("data", a.getData());
-		return element;
-	}
+		Element appPath = new Element("path");
+		appPath.setText(a.getPath());
 
-	@Override
-	public Element visit(Link l){
-		Element element = new Element("link");
+		Element appName = new Element("name");
+		appName.setText(a.getName());
 		
-		element.setAttribute("data", l.getData());
-		return element; 
+		Element appOwner = new Element("owner");
+		appOwner.setText(a.getOwner().getUsername());
+	
+		Element appPerm = new Element("perm");
+		appPerm.setText(a.getUserPermission());
+		
+		Element appContent = new Element("method");
+		appContent.setText(a.getData());
+
+		app.addContent(appPath);
+		app.addContent(appName);
+		app.addContent(appOwner);
+		app.addContent(appPerm);
+		app.addContent(appContent);
+
+		return app;
+	}
+	@Override
+	public Element visit(Link l){ 
+		Element app = new Element("link");
+		link.setAttribute("id",String.valueOf(l.getId()));
+		
+		Element linkPath = new Element("path");
+		linkPath.setText(l.getPath());
+
+		Element linkName = new Element("name");
+		linkName.setText(l.getName());
+		
+		Element linkOwner = new Element("owner");
+		linkOwner.setText(l.getOwner().getUsername());
+	
+		Element linkPerm = new Element("perm");
+		linkPerm.setText(l.getUserPermission());
+		
+		Element linkContent = new Element("method");
+		linkContent.setText(l.getData());
+
+		link.addContent(linkPath);
+		link.addContent(linkName);
+		link.addContent(linkOwner);
+		link.addContent(linkPerm);
+		link.addContent(linkContent);
+
+		return link;
 	}
 
 	@Override
