@@ -30,7 +30,7 @@ public class myDriveApplication {
     System.out.println("*paaaaaan* Welcome to myDrive *paaaaaan*");
     try {
       if(args.length == 0) setupDrive();
-      else for (String s: args xmlInput());
+      // else for (String s: args xmlInput());
       testRun();
     } finally {
       // ensure an orderly shutdown
@@ -73,13 +73,13 @@ public class myDriveApplication {
 
 
   @Atomic
-  public static xmlOutput(){
-    System.out.println("blackbelly, please do")
+  public static void xmlOutput(){
+    System.out.println("blackbelly, please do");
   }
 
   @Atomic
-  public static xmlInput(){
-    System.out.println("blackbelly, please do")
+  public static void xmlInput(){
+    System.out.println("blackbelly, please do");
   }
 
 }
