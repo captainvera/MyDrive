@@ -109,12 +109,13 @@ public class Directory extends Directory_Base {
   public void remove() {
     for (File file : getFileSet())
       file.remove();
+    super.remove();
   }
 
 	@Override
 	public void execute(){
 	}
-	
+
   @Override
   public <T> T accept(GenericVisitor<T> v){
     return v.visit(this);
