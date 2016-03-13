@@ -18,7 +18,7 @@ public class PlainFile extends PlainFile_Base {
 	}
 
 	@Override
-	public void open(){
+	public void execute(){
 	}
 
   @Override
