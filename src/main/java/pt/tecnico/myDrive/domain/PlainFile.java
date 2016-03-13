@@ -27,6 +27,8 @@ public class PlainFile extends PlainFile_Base {
   }
 
   @Override
-  public void remove() { }
+  public void remove() { 
+		super.remove();
+	}
 
 }
