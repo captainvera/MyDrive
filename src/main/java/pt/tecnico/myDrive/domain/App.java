@@ -18,7 +18,7 @@ public class App extends App_Base {
 	}
 
 	@Override
-	public void open(){
+	public void execute(){
 	}
 
   @Override

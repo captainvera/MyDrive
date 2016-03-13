@@ -6,4 +6,6 @@ public class User extends User_Base {
     super();
   }
 
+  public void remove() { }
+
 }

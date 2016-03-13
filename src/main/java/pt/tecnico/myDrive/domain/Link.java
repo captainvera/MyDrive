@@ -8,7 +8,7 @@ public class Link extends Link_Base {
     super();
 		init(name, parent, id);
   }
-  
+
 	/**
 	 * TEMPORARY
 	 */
@@ -18,11 +18,15 @@ public class Link extends Link_Base {
 	}
 
 	@Override
-	public void open(){
+	public void execute(){
 	}
 
   @Override
   public <T> T accept(GenericVisitor<T> v){
 	  return v.visit(this);
   }
+
+  @Override
+  public void remove() { }
+
 }
