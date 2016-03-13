@@ -3,6 +3,7 @@ package pt.tecnico.myDrive.domain;
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
+import pt.tecnico.myDrive.exceptions.IllegalRemovalException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -11,8 +12,8 @@ public class Directory extends Directory_Base {
 
   public Directory(String name, Directory parent, Integer id) {
     super();
-		init(name, parent, id);
-	}
+    init(name, parent, id);
+  }
 
   /**
    * A top-level directory is a directory which its parent is itself.
@@ -112,9 +113,15 @@ public class Directory extends Directory_Base {
     super.remove();
   }
 
-	@Override
-	public void execute(){
-	}
+  @Override
+  public void execute(){
+  }
+
+  public void checkIllegalRemoval(String filename)
+    throws IllegalRemovalException {
+    if (filename.equals(".") || filename.equals(".."))
+      throw new IllegalRemovalException();
+  }
 
   @Override
   public <T> T accept(GenericVisitor<T> v){
