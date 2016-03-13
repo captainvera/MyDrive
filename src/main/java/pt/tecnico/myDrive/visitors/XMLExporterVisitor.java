@@ -4,7 +4,6 @@ import pt.tecnico.myDrive.domain.App;
 import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.domain.Link;
 import pt.tecnico.myDrive.domain.PlainFile;
-import pt.tecnico.myDrive.domain.User;
 import pt.tecnico.myDrive.domain.File;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
@@ -124,28 +123,4 @@ public class XMLExporterVisitor implements GenericVisitor<Element>{
 		return link;
 	}
 
-	@Override
-	public Element visit(User u){
-		Element user = new Element("user");
-		user.setAttribute("username", u.getUsername());
-		
-		Element userName = new Element("name");
-		userName.setText(u.getName());
-		
-		Element userPwd = new Element("pwd");
-		userPwd.setText(u.getPassword());
-
-		Element userHomeDir = new Element("home");
-		userHomeDir.setText(u.getHomeDirectory().getName());
-
-		Element userUmask = new Element("umask");
-		userUmask.setText(u.getUmask());
-		
-		user.addContent(userName);
-		user.addContent(userPwd);
-		user.addContent(userHomeDir);
-		user.addContent(userUmask);
-
-		return user;
-	}
 }
