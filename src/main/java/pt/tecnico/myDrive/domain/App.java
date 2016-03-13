@@ -25,10 +25,8 @@ public class App extends App_Base {
 	public <T> T accept(GenericVisitor<T> v){
 		return v.visit(this);
 	}
-  public <T> T accept(GenericVisitor<T> v){
-    return v.visit(this);
-  }
-  @Override
+  
+	@Override
   public void remove() { 
 		super.remove();
 	}

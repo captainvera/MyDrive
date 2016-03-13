@@ -3,7 +3,7 @@ package pt.tecnico.myDrive.domain;
 import org.jdom2.Element;
 import java.io.UnsupportedEncodingException;
 
-import pt.tecnico.myDrive.exceptions.ImportDocumentException; 
+import pt.tecnico.myDrive.exceptions.ImportDocumentException;
 
 public class User extends User_Base {
 
@@ -40,27 +40,24 @@ public class User extends User_Base {
 
 	public void xmlImport(Element userElement) throws ImportDocumentException{
 		try{
-			for(Element name: userElement.getChildren("name")){
-				if(name != null)
-					setName(new String(name.getText().getBytes("UTF-8")));
+			Element name = userElement.getChild("name");
+			if(name != null)
+				setName(new String(name.getText().getBytes("UTF-8")));
+
+			Element pwd = userElement.getChild("password");
+			if (pwd != null)
+				setPassword(new String(pwd.getText().getBytes("UTF-8")));
+
+			Element home = userElement.getChild("home");
+			if (home != null){
+				String path = new String(home.getText().getBytes("UTF-8"));
+				//setHomeDirectory(createDirbyPath(path)); mudar para a funcao do vicente
 			}
 
-			for(Element pwd: userElement.getChildren("password")){
-				if (pwd != null)
-					setPassword(new String(pwd.getText().getBytes("UTF-8"))); 			
-			}
+			Element umask = userElement.getChild("mask");
+			if(umask != null)
+				setUmask(new String(umask.getText().getBytes("UTF-8")));
 
-			for(Element home: userElement.getChildren("home")){
-				if (home != null){
-					String path = new String(home.getText().getBytes("UTF-8"));
-					//setHomeDirectory(createDirbyPath(path)); mudar para a funcao do vicente
-				}
-			}	
-
-			for(Element umask: userElement.getChildren("mask")){
-				if(umask != null)
-					setUmask(new String(umask.getText().getBytes("UTF-8")));
-			}
 		} catch(UnsupportedEncodingException e){
 			throw new ImportDocumentException(getUsername());
 		}
