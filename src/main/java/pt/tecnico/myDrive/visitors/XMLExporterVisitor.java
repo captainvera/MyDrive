@@ -96,7 +96,7 @@ public class XMLExporterVisitor implements GenericVisitor<Element>{
 	}
 	@Override
 	public Element visit(Link l){ 
-		Element app = new Element("link");
+		Element link = new Element("link");
 		link.setAttribute("id",String.valueOf(l.getId()));
 		
 		Element linkPath = new Element("path");
