@@ -19,29 +19,29 @@ public abstract class File extends File_Base {
   }
 
 	/**
-	 * Basic remove implementation for FIle objects 
+	 * Basic remove implementation for File objects
 	 */
 	public void remove(){
 		setFileSystem(null);
-		setParent(null);			
-		setOWner(null);
+		setParent(null);
+		setOwner(null);
 		deleteDomainObject();
 	}
-	
+
 	/**
 	 * Executes the file with diferent behaviour depending on the file type
 	 */
 	public abstract void execute();
-	
+
 	/**
-	 * The calculation of the size of the file will vary depending on subclass implementation 
+	 * The calculation of the size of the file will vary depending on subclass implementation
 	 *
-	 * @return Size of the file 
+	 * @return Size of the file
 	 */
 	public abstract int getSize();
 
 	/**
-	 * Generic method 
+	 * Generic method
 	 */
   public abstract <T> T accept(GenericVisitor<T> v);
 
