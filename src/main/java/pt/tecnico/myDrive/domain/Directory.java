@@ -52,6 +52,40 @@ public class Directory extends Directory_Base {
     throw new FileUnknownException(filename);
   }
 
+
+  public File getFileByPath(String path) {
+    String[] tokens = path.split("/");
+    String target = tokens[tokens.length()-1];
+    tokens.remove(tokens.length()-1);
+
+    Directory currentDir = getFileByPathHelper(tokens, target);
+
+    return currentDir.getFileByName(target);
+  }
+
+  private Directory getFileByPathHelper(String[] tokens) {
+    Directory currentDir = getFileByName(tokens[0]);
+    tokens.remove(0);
+    return (tokens.length == 0) ? this : currentDir.getFileByPathHelper(tokens);
+  }
+
+  public Directory createDirectoryFromPath(String path){
+    String[] tokens = path.split("/");
+
+    changeDirectory(path);
+
+    Directory parent;
+    Directory dir;
+    parent = createDirectory(tokens[0], getRootDirectory());
+
+    for (i = 1; i < tokens.size(); i++){
+      dir = createDirectory(tokens[i], parent);
+      parent = dir;
+    }
+
+    return dir;
+  }
+
   /**
    * @return Lists the files inside the directory using only their name.
    */
