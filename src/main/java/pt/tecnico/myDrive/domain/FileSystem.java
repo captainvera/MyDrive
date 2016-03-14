@@ -170,13 +170,13 @@ public class FileSystem extends FileSystem_Base {
       _currentDirectory = _loggedUser.getHomeDirectory();
     } else {
       /**
-       * TODO: Create wrong password exception
+       * TODO: Should throw WrongPasswordException
        */
       System.out.println("-- Wrong password. Login aborted");
     }
   }
 
-  public void login(String username, String password) throws UserUnknownException {
+  public void login(String username, String password) throws UserUnknownException, WrongPasswordException {
     log.trace("Logging in");
     if (!userExists(username)) {
       throw new UserUnknownException(username);
@@ -445,7 +445,7 @@ public class FileSystem extends FileSystem_Base {
       current = current.getFileByName(tok).accept(dv);
       if (current==null) {
         /**
-         * TODO: implement exception handling
+         * TODO: Implement exception handling
          */
         return null;
       }
