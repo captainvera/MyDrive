@@ -1,12 +1,17 @@
 package pt.tecnico.myDrive.domain;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
+import pt.tecnico.myDrive.visitors.DirectoryVisitor;
 
+import pt.tecnico.myDrive.exceptions.FileExistsException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
 import pt.tecnico.myDrive.exceptions.IllegalRemovalException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Directory extends Directory_Base {
 
@@ -53,38 +58,129 @@ public class Directory extends Directory_Base {
     throw new FileUnknownException(filename);
   }
 
-
-  public File getFileByPath(String path) {
+  /**
+   * Get a file by its path.
+   *
+   * @param path
+   * @return The file at the end of the path.
+   * @throws FileUnknownException
+   */
+  public File getFileByPath(String path) throws FileUnknownException {
     String[] tokens = path.split("/");
-    String target = tokens[tokens.length()-1];
-    tokens.remove(tokens.length()-1);
+    String target = tokens[tokens.length-1];
+    ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
+    tokensList.remove(tokensList.size()-1);
 
-    Directory currentDir = getFileByPathHelper(tokens, target);
+    Directory currentDir = getFileByPathHelper(tokensList);
 
     return currentDir.getFileByName(target);
   }
 
-  private Directory getFileByPathHelper(String[] tokens) {
-    Directory currentDir = getFileByName(tokens[0]);
+  /**
+   * Simple helper function to call when the path needs to be processed
+   */
+  private Directory getFileByPathHelper(ArrayList<String> tokens) throws FileUnknownException {
+    DirectoryVisitor visitor = new DirectoryVisitor();
+    Directory currentDir = getFileByName(tokens.get(0)).accept(visitor);
     tokens.remove(0);
-    return (tokens.length == 0) ? this : currentDir.getFileByPathHelper(tokens);
+    return (tokens.size() == 0) ? this : currentDir.getFileByPathHelper(tokens);
   }
 
-  public Directory createDirectoryFromPath(String path){
-    String[] tokens = path.split("/");
+  /**
+   * remove a file by its path.
+   *
+   * @param path
+   * @throws FileUnknownException
+   */
+  public void removeFileByPath(String path) throws FileUnknownException {
+    File file = getFileByPath(path);
+    Directory parent = file.getParent();
+    parent.removeFile(file);
+    file.remove();
+  }
 
-    changeDirectory(path);
+  /**
+   * List file content from a given path
+   *
+   */
+  public void listFileByPath(String path) throws FileUnknownException {
+    /*TO DO*/
+  }
 
-    Directory parent;
-    Directory dir;
-    parent = createDirectory(tokens[0], getRootDirectory());
-
-    for (i = 1; i < tokens.size(); i++){
-      dir = createDirectory(tokens[i], parent);
-      parent = dir;
+  /**
+   * Helper function to call when the directories in the path need to be processed/created
+   */
+  private Directory createFileByPathHelper(ArrayList<String> tokens) {
+    try {
+      DirectoryVisitor visitor = new DirectoryVisitor();
+      Directory currentDir = getFileByName(tokens.get(0)).accept(visitor);
+      tokens.remove(0);
+      return (tokens.size() == 0) ? this : currentDir.createFileByPathHelper(tokens);
+    } catch (FileUnknownException e){
+        Directory currentDir = this;
+        for (String token : tokens) {
+          currentDir = new Directory(token, currentDir, 2 /*TO DO*/);
+        }
+        return currentDir;
     }
+  }
 
-    return dir;
+  /**
+   * Create a PlainFile by its path.
+   *
+   * @param path
+   * @return The file created at the end of the path.
+   * @throws FileExistsException
+   */
+  public PlainFile createPlainFileByPath(String path) throws FileExistsException {
+    String[] tokens = path.split("/");
+    String target = tokens[tokens.length-1];
+    ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
+    tokensList.remove(tokensList.size()-1);
+
+    Directory currentDir = createFileByPathHelper(tokensList);
+
+    return new PlainFile(target, currentDir, 2 /*TO DO*/);
+  }
+
+  /**
+   * Create a Directory by its path.
+   *
+   * @param path
+   * @return The file created at the end of the path.
+   * @throws FileExistsException
+   */
+  public Directory createDirectoryByPath(String path) throws FileExistsException {
+    String[] tokens = path.split("/");
+    String target = tokens[tokens.length-1];
+    ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
+    tokensList.remove(tokensList.size()-1);
+
+    Directory currentDir = createFileByPathHelper(tokensList);
+
+    return new Directory(target, currentDir, 2 /*TO DO*/);
+  }
+
+  /**
+   * Create an App by its path.
+   *
+   * @param path
+   * @return The file created at the end of the path.
+   * @throws FileExistsException
+   */
+  public void createAppByPath(String path) throws FileExistsException {
+    /* Copy code from create'File'ByPath */
+  }
+
+  /**
+   * Create a Link by its path.
+   *
+   * @param path
+   * @return The file created at the end of the path.
+   * @throws FileExistsException
+   */
+  public void createLinkByPath(String path) throws FileExistsException {
+  /* Copy code from create'File'ByPath */
   }
 
   /**

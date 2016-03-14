@@ -27,11 +27,12 @@ public class myDriveApplication {
 
   // FenixFramework will try automatic initialization when first accessed
   public static void main(String [] args) {
-    System.out.println("*paaaaaan* Welcome to myDrive *paaaaaan*");
+    System.out.println("Welcome to myDrive");
     try {
       if(args.length == 0) setupDrive();
-      // else for (String s: args xmlInput());
-      testRun();
+			System.out.println("Setup returning to main");
+      // UNCOMMENT TO TEST OBJECT PERSISTENCE!
+			// testRun();
     } finally {
       // ensure an orderly shutdown
       FenixFramework.shutdown();
@@ -40,46 +41,78 @@ public class myDriveApplication {
 
   @Atomic
   public static void setupDrive(){
-    log.trace("Setup: " + FenixFramework.getDomainRoot());
+  	/**
+		 * Temporary main with basic tests
+		 * TODO: Change to match necessary description
+		 */
+	
+		log.trace("Setup: " + FenixFramework.getDomainRoot());
 
     FileSystem fs = FileSystem.getInstance();
-    if (!fs.getUserSet().isEmpty())
-      return;
 
-    /*create a default filesystem*/
-    User user = fs.createUser("root", "***");
-    fs.login(user.getUsername(), "***");
-    fs.changeDirectory(user.getHome().getParent());
-    Directory dir = fs.createDirectory("usr", fs.getCurrentDirectory());
-    fs.createDirectory("local", dir);
+		try{
+			fs.login("root","***");
+		}catch(Exception e){
+			System.out.println("PROBLEMO LOGIN");
+		}
+		
+		try{
+			System.out.println(fs.listPath());
+			fs.changeDirectory("home");
+			System.out.println(fs.listPath());
+			fs.changeDirectory("root");
+		}catch(Exception e){
+			System.out.println("CD ERROR");
+		}
+		PlainFile readme = fs.createPlainFile("README");
+		try{
+		System.out.println(fs.listDirectory());
+		} catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+		System.out.println(fs.listPath());
+		System.out.println(fs.currentDirectory());
+		try{
+			fs.createDirectory("test");
+			fs.changeDirectory("test");
+			System.out.println(fs.listPath());
+			fs.changeDirectory("..");
+			System.out.println(fs.listPath());
+			fs.changeDirectory(".");
+			System.out.println(fs.listPath());
+			fs.changeDirectory("..");
+			System.out.println(fs.listPath());
+			fs.changeDirectory("..");
+			System.out.println(fs.listPath());
+			fs.changeDirectory("..");
+		}catch(Exception e){
+		}	
+		
+		System.out.println("Successful setup!");
+	}
 
-  }
-
+	@Atomic
   public static void testRun() {
     log.trace("TestRun: " + FenixFramework.getDomainRoot());
-
+	
     FileSystem fs = FileSystem.getInstance();
-
-    User user = fs.login("root", "***");
-    PlainFile readme = fs.createPlainFile("README", user.getHome());
-    Directory dir = fs.createDirectory("/usr/local/bin");
-    fs.readPlainFile(readme);
-    removeDirectory(dir);
-    xmlOutput(); /*To be done by blackbelly*/
-    fs.remove(readme);
-    fs.listCurrentDirectory();
-    fs.logout();
+		try{
+ 			fs.login("root","***");
+			System.out.println(fs.listDirectory());
+		}catch(Exception e){
+			System.out.println("ERROR!");
+		}
   }
 
 
   @Atomic
   public static void xmlOutput(){
-    System.out.println("blackbelly, please do");
+    System.out.println("");
   }
 
   @Atomic
   public static void xmlInput(){
-    System.out.println("blackbelly, please do");
+    System.out.println("");
   }
 
 }
