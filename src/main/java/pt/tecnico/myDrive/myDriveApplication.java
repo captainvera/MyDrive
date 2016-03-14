@@ -50,16 +50,16 @@ public class myDriveApplication {
 
     FileSystem fs = FileSystem.getInstance();
 
-    try{
+    try {
       fs.login("root","***");
-    }catch(Exception e){
+    } catch(Exception e) {
       System.out.println("Couldn't login with root!");
     }
 
     /*
      * Criação do ficheiro README mudando o working directory
      * */
-    try{
+    try {
       log.debug("Showing Path");
       System.out.println(fs.listPath());
 
@@ -70,19 +70,19 @@ public class myDriveApplication {
       log.debug(fs.listDirectory());
       log.debug("Showing result of opening README");
       log.debug(fs.executeFile("README"));
-    }catch(Exception e){
+    } catch(Exception e) {
       System.out.println("Couldn't create README!");
     }
 
     /*
      * Criação do caminho /usr/local/bin absolutamente
      */
-    try{
+    try {
       log.debug("Creating /usr/local/bin by path");
       fs.createDirectoryByPath("/usr/local/bin");
       log.debug("Listing /usr/local");
       System.out.println(fs.listFileByPathSimple("/usr/local"));
-    } catch(Exception e){
+    } catch(Exception e) {
       System.out.println(e.getMessage());
     }
 
@@ -95,7 +95,7 @@ public class myDriveApplication {
     log.debug("[TestRun]: " + FenixFramework.getDomainRoot());
 
     FileSystem fs = FileSystem.getInstance();
-    try{
+    try {
       fs.login("root","***");
       log.debug("Showing path");
       System.out.println(fs.listPath());
@@ -111,7 +111,7 @@ public class myDriveApplication {
       log.debug("Listing /user/local");
       System.out.println(fs.listFileByPathSimple("/usr/local"));
 
-    }catch(Exception e){
+    } catch(Exception e) {
       log.debug("Exception on testRun!");
       System.out.println(e.getMessage());
     }
@@ -132,6 +132,7 @@ public class myDriveApplication {
   public static void xmlScan(File file){
     log.trace("xmlScan: " + FenixFramework.getDomainRoot());
     FileSystem fs = FileSystem.getInstance();
+    fs.reset();
     SAXBuilder builder = new SAXBuilder();
     try {
       Document document = (Document)builder.build(file);
