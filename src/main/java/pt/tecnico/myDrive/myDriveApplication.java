@@ -46,7 +46,7 @@ public class myDriveApplication {
      * Basic setup to test desired functionality
      */
 
-    log.trace("Setting root: " + FenixFramework.getDomainRoot());
+    log.debug("Setting root: " + FenixFramework.getDomainRoot());
 
     FileSystem fs = FileSystem.getInstance();
 
@@ -60,16 +60,16 @@ public class myDriveApplication {
      * Criação do ficheiro README mudando o working directory
      * */
     try{
-      log.trace("Showing Path");
+      log.debug("Showing Path");
       System.out.println(fs.listPath());
 
-      log.trace("Creating README");
+      log.debug("Creating README");
       PlainFile readme = fs.createPlainFile("README");
       readme.setData("Lista de utilizadores");
-      log.trace("Listing current Directory");
-      log.trace(fs.listDirectory());
-      log.trace("Showing result of opening README");
-      log.trace(fs.executeFile("README"));
+      log.debug("Listing current Directory");
+      log.debug(fs.listDirectory());
+      log.debug("Showing result of opening README");
+      log.debug(fs.executeFile("README"));
     }catch(Exception e){
       System.out.println("Couldn't create README!");
     }
@@ -78,9 +78,9 @@ public class myDriveApplication {
      * Criação do caminho /usr/local/bin absolutamente
      */
     try{
-      log.trace("Creating /usr/local/bin by path");
+      log.debug("Creating /usr/local/bin by path");
       fs.createDirectoryByPath("/usr/local/bin");
-      log.trace("Listing /usr/local");
+      log.debug("Listing /usr/local");
       System.out.println(fs.listFileByPathSimple("/usr/local"));
     } catch(Exception e){
       System.out.println(e.getMessage());
@@ -91,27 +91,27 @@ public class myDriveApplication {
 
   @Atomic
   public static void testRun() {
-    log.trace("[TestRun]: " + FenixFramework.getDomainRoot());
+    log.debug("[TestRun]: " + FenixFramework.getDomainRoot());
 
     FileSystem fs = FileSystem.getInstance();
     try{
       fs.login("root","***");
-      log.trace("Showing path");
+      log.debug("Showing path");
       System.out.println(fs.listPath());
-      log.trace("Listing current Directory");
+      log.debug("Listing current Directory");
       System.out.println(fs.listDirectory());
 
 
-      log.trace("Removing README");
+      log.debug("Removing README");
       fs.removeFileByPath("/home/root/README");
-      log.trace("Listing current Directory");
+      log.debug("Listing current Directory");
       System.out.println(fs.listDirectory());
 
-      log.trace("Listing /user/local");
+      log.debug("Listing /user/local");
       System.out.println(fs.listFileByPathSimple("/usr/local"));
 
     }catch(Exception e){
-      log.trace("Exception on testRun!");
+      log.debug("Exception on testRun!");
       System.out.println(e.getMessage());
     }
   }
