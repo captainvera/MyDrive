@@ -3,8 +3,12 @@ package pt.tecnico.myDrive.domain;
 import pt.ist.fenixframework.FenixFramework;
 import org.joda.time.DateTime;
 
+import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.*;
 import java.lang.reflect.InvocationTargetException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +30,7 @@ public class FileSystem extends FileSystem_Base {
 
   private User _loggedUser;
   private Directory _currentDirectory;
- 
+
   private FileSystem() {
     System.out.println("-- Constructing new FileSystem");
     setRoot(FenixFramework.getDomainRoot());
@@ -48,6 +52,11 @@ public class FileSystem extends FileSystem_Base {
 
     if(fs != null){
       System.out.println("-- Returning existing FileSystem instance");
+      try{
+        fs.init();
+      }catch(Exception e){
+        System.out.println(e.getMessage());
+      }
       return fs;
     }
 
@@ -67,7 +76,7 @@ public class FileSystem extends FileSystem_Base {
   /**
    * Does basic FileSystem initialization
    */
-  private void init() throws RootDirectoryNotFoundException {
+  public void init() throws RootDirectoryNotFoundException {
     /**
      * Creation of root directory and home folder if there are no files,
      * means we're initializing a new filesystem
@@ -286,7 +295,6 @@ public class FileSystem extends FileSystem_Base {
 
   private void removeFile(File f){
     f.remove();
-    removeFiles(f);
   }
 
   /**
@@ -367,6 +375,165 @@ public class FileSystem extends FileSystem_Base {
   public String listDirectory() 
     throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
     return _currentDirectory.listFilesAll();
+  }
+
+  /**
+   * ------------------------------------------------------
+   * Operations by path
+   */
+
+  /**
+   * Get a file by its path.
+   *
+   * @param path
+   * @return The file at the end of the path.
+   * @throws FileUnknownException
+   */
+  public File getFileByPath(String path) throws FileUnknownException, NotADirectoryException {
+    Directory current;
+    DirectoryVisitor dv = new DirectoryVisitor();
+
+    String[] tokens = path.split("/");
+    String target = tokens[tokens.length-1];
+
+    ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
+    tokensList.remove(tokensList.size()-1);
+
+    if(path.charAt(0) == '/'){
+      current = _rootDirectory;
+      tokensList.remove(0);   
+    }else{
+      current = _currentDirectory;
+    }
+
+    for(String tok : tokensList){
+      current = current.getFileByName(tok).accept(dv);
+      if(current==null){
+        /**
+         * TODO: implement exception handling
+         */
+        return null;
+      }
+    }
+    return current.getFileByName(target);
+  }
+
+  /**
+   * List file content from a given path
+   *
+   */
+  public String listFileByPathSimple(String path) throws FileUnknownException, NotADirectoryException{
+    DirectoryVisitor dv = new DirectoryVisitor();
+    Directory d = getFileByPath(path).accept(dv);
+    return d.listFilesSimple(); 
+  }
+
+  /**
+   * remove a file by its path.
+   *
+   * @param path
+   * @throws FileUnknownException
+   */
+  public void removeFileByPath(String path) throws FileUnknownException, NotADirectoryException{
+    removeFile(getFileByPath(path));
+  }
+  /**
+   * Helper function to call when the directories in the path need to be processed/created
+   */
+  private Directory createFileByPathHelper(Directory current, ArrayList<String> tokensList) {
+    File temp ;
+    DirectoryVisitor dv = new DirectoryVisitor();
+
+    for(String tok : tokensList){
+      try{
+        temp = current.getFileByName(tok);
+        current = temp.accept(dv);
+      }catch(FileUnknownException e){
+        current = createDirectory(tok, current, _rootUser);
+      }
+      if(current==null){
+        System.out.println("Conflicting file names");
+        return null;
+      }
+    }
+    return current;
+  }
+
+  /**
+   * Create a PlainFile by its path.
+   *
+   * @param path
+   * @return The file created at the end of the path.
+   * @throws FileExistsException
+   */
+  public PlainFile createPlainFileByPath(String path) throws FileExistsException {
+    Directory current;
+    String[] tokens = path.split("/");
+    String target = tokens[tokens.length-1];
+
+    ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
+    tokensList.remove(tokensList.size()-1);
+
+    if(path.charAt(0) == '/'){
+      current = _rootDirectory;
+      tokensList.remove(0); 
+    }else{
+      current = _currentDirectory;
+    }
+
+    Directory currentDir = createFileByPathHelper(current, tokensList);
+
+    return createPlainFile(target, currentDir, _rootUser);
+  }
+
+  /**
+   * Create a Directory by its path.
+   *
+   * @param path
+   * @return The file created at the end of the path.
+   * @throws FileExistsException
+   */
+  public Directory createDirectoryByPath(String path) throws FileExistsException {
+
+    Directory current;
+    String[] tokens = path.split("/");
+    String target = tokens[tokens.length-1];
+
+    ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
+    tokensList.remove(tokensList.size()-1);
+
+    if(path.charAt(0) == '/'){
+      current = _rootDirectory;
+      tokensList.remove(0); 
+    }else{
+      current = _currentDirectory;
+    }
+
+    Directory currentDir = createFileByPathHelper(current, tokensList);
+
+    return createDirectory(target, currentDir, _rootUser);
+  }
+
+  /**
+   * Create an App by its path.
+   *
+   * @param path
+   * @return The file created at the end of the path.
+   * @throws FileExistsException
+   */
+  public void createAppByPath(String path) throws FileExistsException {
+    /* Copy code from create'File'ByPath */
+  }
+
+  /**
+   * Create a Link by its path.
+   *
+   * @param path
+   * @return The file created at the end of the path.
+   * @throws FileExistsException
+   */
+  public void createLinkByPath(String path) throws FileExistsException {
+    /* Copy code from create'File'ByPath */
   }
 
 }
