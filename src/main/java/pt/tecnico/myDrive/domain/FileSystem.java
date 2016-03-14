@@ -1,5 +1,21 @@
 package pt.tecnico.myDrive.domain;
 
+import pt.tecnico.myDrive.domain.App;
+import pt.tecnico.myDrive.domain.Directory;
+import pt.tecnico.myDrive.domain.Link;
+import pt.tecnico.myDrive.domain.User;
+import pt.tecnico.myDrive.domain.File;
+import pt.tecnico.myDrive.domain.PlainFile;
+
+import org.jdom2.Element;
+import org.jdom2.Document;
+import java.io.UnsupportedEncodingException;
+
+import pt.tecnico.myDrive.visitors.XMLExporterVisitor;
+import pt.tecnico.myDrive.visitors.DirectoryVisitor;
+
+import pt.tecnico.myDrive.exceptions.ImportDocumentException;
+
 import pt.ist.fenixframework.FenixFramework;
 import org.joda.time.DateTime;
 
@@ -422,7 +438,8 @@ public class FileSystem extends FileSystem_Base {
    * List file content from a given path
    *
    */
-  public String listFileByPathSimple(String path) throws FileUnknownException, NotADirectoryException{
+  public String listFileByPathSimple(String path) throws IllegalAccessException, FileUnknownException, NotADirectoryException,
+          NoSuchMethodException, InvocationTargetException {
     DirectoryVisitor dv = new DirectoryVisitor();
     Directory d = getFileByPath(path).accept(dv);
     return d.listFilesSimple(); 
@@ -536,4 +553,19 @@ public class FileSystem extends FileSystem_Base {
     /* Copy code from create'File'ByPath */
   }
 
+
+	public Document xmlExport(){
+		DirectoryVisitor visitor = new DirectoryVisitor();
+		XMLExporterVisitor xml = new XMLExporterVisitor();
+		Element mydrive = new Element("myDrive");
+		Document doc = new Document(mydrive);
+
+		for(User u: getUsersSet())
+			mydrive.addContent(u.xmlExport());
+
+		for (File f: getFilesSet())
+			mydrive.addContent(f.accept(xml));
+
+		return doc;
+	}
 }

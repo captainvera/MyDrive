@@ -11,6 +11,11 @@ public class User extends User_Base {
 		super();
 	}
 
+	public User(Directory homedir){
+		super();
+		setHomeDirectory(homedir);
+	}
+
 	public void remove() { }
 
 	public Element xmlExport(){
@@ -40,6 +45,8 @@ public class User extends User_Base {
 
 	public void xmlImport(Element userElement) throws ImportDocumentException{
 		try{
+			setUsername(userElement.getAttribute("username").getValue());
+
 			Element name = userElement.getChild("name");
 			if(name != null)
 				setName(new String(name.getText().getBytes("UTF-8")));
@@ -47,12 +54,6 @@ public class User extends User_Base {
 			Element pwd = userElement.getChild("password");
 			if (pwd != null)
 				setPassword(new String(pwd.getText().getBytes("UTF-8")));
-
-			Element home = userElement.getChild("home");
-			if (home != null){
-				String path = new String(home.getText().getBytes("UTF-8"));
-				//setHomeDirectory(createDirbyPath(path)); mudar para a funcao do vicente
-			}
 
 			Element umask = userElement.getChild("mask");
 			if(umask != null)
