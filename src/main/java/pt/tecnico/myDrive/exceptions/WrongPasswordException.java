@@ -5,10 +5,6 @@ package pt.tecnico.myDrive.exceptions;
  */
 public class WrongPasswordException extends Exception {
 
-  public WrongPasswordException() {
-    super("Wrong password");
-  }
-
   /** The username whose password is wrong. */
   private final String _username;
 
