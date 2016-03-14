@@ -402,8 +402,8 @@ public class FileSystem extends FileSystem_Base {
    */
   public String listDirectory()
     throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-    return _currentDirectory.listFilesAll();
-  }
+      return _currentDirectory.listFilesAll();
+    }
 
   /**
    * @return result of executing file
@@ -462,7 +462,7 @@ public class FileSystem extends FileSystem_Base {
            DirectoryVisitor dv = new DirectoryVisitor();
            Directory d = getFileByPath(path).accept(dv);
            return d.listFilesSimple();
-  }
+         }
 
   /**
    * remove a file by its path.
@@ -575,23 +575,43 @@ public class FileSystem extends FileSystem_Base {
 
   public Document xmlExport() {
     XMLExporterVisitor xml = new XMLExporterVisitor();
+    DirectoryVisitor isDirectory = new DirectoryVisitor();
     Element mydrive = new Element("myDrive");
     Document doc = new Document(mydrive);
 
-    for (User u: getUsersSet())
-      mydrive.addContent(u.xmlExport());
-    for (File f: getFilesSet())
-      mydrive.addContent(f.accept(xml));
-
+    for (User u: getUsersSet()){
+      if(!u.getUsername().equals("root"))
+        mydrive.addContent(u.xmlExport());
+    }
+    for (File f: getFilesSet()){
+      if(f.getOwner().getUsername().equals("root")){
+        if(f.accept(isDirectory) != null){
+          Directory dir = f.accept(isDirectory);
+          if(dir.getSize() == 2){
+            if(dir.getPath().equals("home/root"))
+              mydrive.addContent(f.accept(xml));
+          }
+        }
+        else mydrive.addContent(f.accept(xml));
+      }
+      else mydrive.addContent(f.accept(xml));
+    }
     return doc;
   }
 
   public void xmlImport(Element firstElement) {
     try {
       for (Element userElement: firstElement.getChildren("user")) {
-        String path = new String(userElement.getChild("home").getText().getBytes("UTF-8"));
+        String username = new String(userElement.getAttribute("username").getValue());
+        Element homeElement = userElement.getChild("home");
+  
+        String path;
+        if (homeElement == null) path = "/home" + "/" + username;
+        else path = new String(homeElement.getText().getBytes("UTF-8"));
+
         Directory homedir = createDirectoryByPath(path);
-        User u = new User(homedir);
+
+        User u = new User(homedir, username);
         u.setFileSystem(this);
         u.xmlImport(userElement);
       }
