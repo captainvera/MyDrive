@@ -31,7 +31,6 @@ public class myDriveApplication {
     log.trace("Welcome to myDrive");
     try {
       if(args.length == 0) setupDrive();
-      /** testRun(); */
       xmlPrint();
     } finally {
       // ensure an orderly shutdown
@@ -49,11 +48,9 @@ public class myDriveApplication {
     log.debug("Setting root: " + FenixFramework.getDomainRoot());
 
     FileSystem fs = FileSystem.getInstance();
-    log.debug("Listing Size: " + fs._rootDirectory.getSize());
 
     try {
       fs.login("root","***");
-    log.debug("Listing directory: " + fs._rootDirectory.listFilesSimple());
     } catch(Exception e) {
       System.out.println("Couldn't login with root!");
     }
@@ -62,16 +59,22 @@ public class myDriveApplication {
      * Criação do ficheiro README mudando o working directory
      * */
     try {
-      log.debug("Showing Path");
+      log.debug("Showing Current Directory Path");
       System.out.println(fs.listPath());
 
       log.debug("Creating README");
-      PlainFile readme = fs.createPlainFile("README");
+      PlainFile readme = fs.createPlainFileByPath("/home/README");
       readme.setData("Lista de utilizadores");
+
+      log.debug("Changing directory to /home");
+      fs.changeDirectory("..");
+
+      log.debug("Showing Current Directory Path");
+      System.out.println(fs.listPath());
       log.debug("Listing current Directory");
-      log.debug(fs.listDirectory());
+      System.out.println(fs.listDirectory());
       log.debug("Showing result of opening README");
-      log.debug(fs.executeFile("README"));
+      System.out.println(fs.executeFile("README"));
 
     } catch(Exception e) {
       System.out.println("Couldn't create README!");
@@ -86,15 +89,20 @@ public class myDriveApplication {
       log.debug("Listing /usr/local");
       System.out.println(fs.listFileByPathSimple("/usr/local"));
 
-      log.debug("Removing /home");
-      fs.removeFileByPath("/home");
+      log.debug("Removing /usr/local/bin"); 
+      fs.removeFileByPath("/usr/local/bin");
 
-      log.debug("Root directory shiet");
-      log.debug(fs._rootDirectory.getSize());
-      log.debug(fs._rootDirectory.listFilesSimple());
-      log.debug("Changing directory");
-      fs.changeDirectory("/");
-      log.debug(fs._currentDirectory.listFilesSimple());
+      log.debug("Listing /usr/local");
+      System.out.println(fs.listFileByPathSimple("/usr/local"));
+    
+      
+      log.debug("Listing /home");
+      System.out.println(fs.listFileByPathSimple("/home"));
+      log.debug("Removing /home/README");
+      fs.removeFileByPath("/home/README");
+      log.debug("Listing /home");
+      System.out.println(fs.listFileByPathSimple("/home"));
+      
 
     } catch(Exception e) {
       System.out.println(e.getMessage());
@@ -102,34 +110,6 @@ public class myDriveApplication {
 
     log.trace("Successful default setup!");
   }
-
-  @Atomic
-  public static void testRun() {
-    log.trace("executing testRun()");
-    log.debug("[TestRun]: " + FenixFramework.getDomainRoot());
-
-    FileSystem fs = FileSystem.getInstance();
-    try {
-      fs.login("root","***");
-      log.debug("Showing path");
-      System.out.println(fs.listPath());
-      log.debug("Listing current Directory");
-      System.out.println(fs.listDirectory());
-
-      log.debug("Removing README");
-      fs.removeFileByPath("/home/root/README");
-      log.debug("Listing current Directory");
-      System.out.println(fs.listDirectory());
-
-      log.debug("Listing /usr/local");
-      System.out.println(fs.listFileByPathSimple("/usr/local"));
-
-    } catch(Exception e) {
-      log.debug("Exception on testRun!");
-      System.out.println(e.getMessage());
-    }
-  }
-
 
   @Atomic
   public static void xmlPrint() {
