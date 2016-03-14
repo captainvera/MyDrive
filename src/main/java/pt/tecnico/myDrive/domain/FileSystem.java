@@ -52,9 +52,9 @@ public class FileSystem extends FileSystem_Base {
   private FileSystem() {
     log.trace("Constructing new FileSystem");
     setRoot(FenixFramework.getDomainRoot());
-    try{
+    try {
       init();
-    }catch(RootDirectoryNotFoundException e){
+    } catch(RootDirectoryNotFoundException e) {
       System.out.println("-- Couldn't find Root Directory. Rebuilding File System");
       cleanup();
       cleanInit();
@@ -64,15 +64,15 @@ public class FileSystem extends FileSystem_Base {
   /**
    * @return current instance of FileSystem if stored, or a new FileSystem otherwise
    */
-  public static FileSystem getInstance(){
+  public static FileSystem getInstance() {
     log.trace("FileSystem instance requested");
     FileSystem fs = FenixFramework.getDomainRoot().getFileSystem();
 
-    if(fs != null){
+    if (fs != null) {
       log.trace("Returning existing FileSystem instance");
-      try{
+      try {
         fs.init();
-      }catch(Exception e){
+      } catch(Exception e) {
         System.out.println(e.getMessage());
       }
       return fs;
@@ -83,12 +83,10 @@ public class FileSystem extends FileSystem_Base {
   }
 
   private void cleanup() {
-    for(File f: getFilesSet()){
+    for (File f: getFilesSet())
       f.remove();
-    }
-    for(User u: getUsersSet()){
+    for (User u: getUsersSet())
       u.remove();
-    }
   }
 
   /**
@@ -102,13 +100,13 @@ public class FileSystem extends FileSystem_Base {
      * root directory
      */
 
-    if(this.getFilesSet().size() == 0){
+    if (this.getFilesSet().size() == 0) {
       cleanInit();
-    }else{
+    } else{
       log.trace("Initializing existing FileSystem");
       _rootUser = getUserByUsername("root");
       _rootDirectory = getRootDirectory();
-      if(_rootDirectory == null){
+      if (_rootDirectory == null) {
         throw new RootDirectoryNotFoundException();
 
       }
@@ -118,7 +116,7 @@ public class FileSystem extends FileSystem_Base {
   }
 
 
-  private void cleanInit(){
+  private void cleanInit() {
 
     log.trace("Initializing new FileSystem");
     setIdCounter(0);
@@ -137,6 +135,7 @@ public class FileSystem extends FileSystem_Base {
 
     _currentDirectory = _rootDirectory;
   }
+
   /**
    * Verifies if the file f is a directory and gets the corresponding directory
    * @return Directory corresponding to f argument, or null if its not a Directory
@@ -144,7 +143,7 @@ public class FileSystem extends FileSystem_Base {
   public Directory assertDirectory(File f) throws NotADirectoryException {
     DirectoryVisitor dv = new DirectoryVisitor();
     Directory dir = f.accept(dv);
-    if(dir == null){
+    if (dir == null) {
       throw new NotADirectoryException(f.getName());
     }
     return dir;
@@ -154,11 +153,11 @@ public class FileSystem extends FileSystem_Base {
   /**
    * Logins a user into the filesystem, changing current directory to home directory
    */
-  private void login(User user, String password){
-    if(user.getPassword().equals(password)){
+  private void login(User user, String password) {
+    if (user.getPassword().equals(password)) {
       _loggedUser = user;
       _currentDirectory = _loggedUser.getHomeDirectory();
-    }else{
+    } else {
       /**
        * TODO: Create wrong password exception
        */
@@ -168,7 +167,7 @@ public class FileSystem extends FileSystem_Base {
 
   public void login(String username, String password) throws UserUnknownException {
     log.trace("Logging in");
-    if(!userExists(username)){
+    if (!userExists(username)) {
       throw new UserUnknownException(username);
     }
     login(getUserByUsername(username), password);
@@ -177,11 +176,11 @@ public class FileSystem extends FileSystem_Base {
   /**
    * Verifies if a username only contains letters and digits
    */
-  private Boolean isValidUsername(String username){
+  private Boolean isValidUsername(String username) {
     char[] characters = username.toCharArray();
 
-    for(char c: characters){
-      if(!Character.isLetter(c) && !Character.isDigit(c)){
+    for (char c: characters) {
+      if (!Character.isLetter(c) && !Character.isDigit(c)) {
         return false;
       }
     }
@@ -192,9 +191,9 @@ public class FileSystem extends FileSystem_Base {
    * Searches Users Set by username (since username is unique) to find a specified user.
    * Returns null if no user is found. Does not throw exception here
    */
-  private User getUserByUsername(String username){
-    for(User user: this.getUsersSet()){
-      if(user.getUsername().equalsIgnoreCase(username)){
+  private User getUserByUsername(String username) {
+    for (User user: this.getUsersSet()) {
+      if (user.getUsername().equalsIgnoreCase(username)) {
         return user;
       }
     }
@@ -204,11 +203,11 @@ public class FileSystem extends FileSystem_Base {
   /**
    * Verifies if a user exists by its username. Usernames are unique
    */
-  private Boolean userExists(String username){
+  private Boolean userExists(String username) {
     return (getUserByUsername(username)!=null);
   }
 
-  private Boolean userExists(User user){
+  private Boolean userExists(User user) {
     return userExists(user.getName());
   }
 
@@ -225,10 +224,10 @@ public class FileSystem extends FileSystem_Base {
      * Must also heck if it already exists, throw exception in such case
      */
 
-    if(!isValidUsername(username))
+    if (!isValidUsername(username))
       throw new InvalidUsernameException(username);
 
-    if(userExists(username))
+    if (userExists(username))
       throw new UserExistsException(username);
 
     user.setFileSystem(this);
@@ -241,12 +240,12 @@ public class FileSystem extends FileSystem_Base {
      * TODO: Solve error throwing here. Exceptions shouldn't happen;
      * Should be handled elsewhere
      */
-    try{
+    try {
       Directory home = assertDirectory(_rootDirectory.getFileByName("home"));
       createDirectory(username, home, user);
-    }catch(FileUnknownException e){
+    } catch(FileUnknownException e) {
       System.out.println(e.getMessage());
-    }catch(NotADirectoryException e){
+    } catch(NotADirectoryException e) {
       System.out.println(e.getMessage());
     }
 
@@ -279,7 +278,7 @@ public class FileSystem extends FileSystem_Base {
    * File creation and deletion methods. Permissions should be checked here
    */
 
-  private Directory createDirectory(String name, Directory parent, User owner){
+  private Directory createDirectory(String name, Directory parent, User owner) {
     Directory dir;
     setIdCounter(getIdCounter()+1);
     dir = new Directory(name,parent,getIdCounter(),owner);
@@ -287,7 +286,7 @@ public class FileSystem extends FileSystem_Base {
     return dir;
   }
 
-  private PlainFile createPlainFile(String name, Directory parent, User owner){
+  private PlainFile createPlainFile(String name, Directory parent, User owner) {
     PlainFile pf;
     setIdCounter(getIdCounter()+1);
     pf = new PlainFile(name,parent,getIdCounter(),owner);
@@ -295,7 +294,7 @@ public class FileSystem extends FileSystem_Base {
     return pf;
   }
 
-  private App createApp(String name, Directory parent, User owner){
+  private App createApp(String name, Directory parent, User owner) {
     App app;
     setIdCounter(getIdCounter()+1);
     app = new App(name,parent,getIdCounter(),owner);
@@ -303,7 +302,7 @@ public class FileSystem extends FileSystem_Base {
     return app;
   }
 
-  private Link createLink(String name, Directory parent, User owner){
+  private Link createLink(String name, Directory parent, User owner) {
     Link link;
     setIdCounter(getIdCounter()+1);
     link = new Link(name,parent,getIdCounter(),owner);
@@ -311,7 +310,7 @@ public class FileSystem extends FileSystem_Base {
     return link;
   }
 
-  private void removeFile(File f){
+  private void removeFile(File f) {
     f.remove();
   }
 
@@ -319,19 +318,19 @@ public class FileSystem extends FileSystem_Base {
    * Public file creation methods
    */
 
-  public Directory createDirectory(String name){
+  public Directory createDirectory(String name) {
     return createDirectory(name,_currentDirectory,_loggedUser);
   }
 
-  public PlainFile createPlainFile(String name){
+  public PlainFile createPlainFile(String name) {
     return createPlainFile(name,_currentDirectory,_loggedUser);
   }
 
-  public App createApp(String name){
+  public App createApp(String name) {
     return createApp(name,_currentDirectory,_loggedUser);
   }
 
-  public Link createLink(String name){
+  public Link createLink(String name) {
     return createLink(name,_currentDirectory,_loggedUser);
   }
 
@@ -346,9 +345,9 @@ public class FileSystem extends FileSystem_Base {
   public Directory getRootDirectory() {
     Directory dir;
     DirectoryVisitor dv = new DirectoryVisitor();
-    for(File f: getFilesSet()){
+    for (File f: getFilesSet()) {
       dir = f.accept(dv);
-      if(dir != null && dir.isTopLevelDirectory())
+      if (dir != null && dir.isTopLevelDirectory())
         return dir;
     }
 
@@ -376,14 +375,14 @@ public class FileSystem extends FileSystem_Base {
   /**
    * @return current working directory path
    */
-  public String listPath(){
+  public String listPath() {
     return _currentDirectory.getPath();
   }
 
   /**
    * @return current working directory name
    */
-  public String currentDirectory(){
+  public String currentDirectory() {
     return _currentDirectory.getName();
   }
 
@@ -424,16 +423,16 @@ public class FileSystem extends FileSystem_Base {
     ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
     tokensList.remove(tokensList.size()-1);
 
-    if(path.charAt(0) == '/'){
+    if (path.charAt(0) == '/') {
       current = _rootDirectory;
       tokensList.remove(0);
-    }else{
+    } else{
       current = _currentDirectory;
     }
 
-    for(String tok : tokensList){
+    for (String tok : tokensList) {
       current = current.getFileByName(tok).accept(dv);
-      if(current==null){
+      if (current==null) {
         /**
          * TODO: implement exception handling
          */
@@ -470,14 +469,14 @@ public class FileSystem extends FileSystem_Base {
     File temp ;
     DirectoryVisitor dv = new DirectoryVisitor();
 
-    for(String tok : tokensList){
-      try{
+    for (String tok : tokensList) {
+      try {
         temp = current.getFileByName(tok);
         current = temp.accept(dv);
-      }catch(FileUnknownException e){
+      } catch(FileUnknownException e) {
         current = createDirectory(tok, current, _rootUser);
       }
-      if(current==null){
+      if (current==null) {
         System.out.println("Conflicting file names");
         return null;
       }
@@ -500,7 +499,7 @@ public class FileSystem extends FileSystem_Base {
     ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
     tokensList.remove(tokensList.size()-1);
 
-    if(path.charAt(0) == '/'){
+    if (path.charAt(0) == '/') {
       current = _rootDirectory;
       tokensList.remove(0);
     }else{
@@ -528,7 +527,7 @@ public class FileSystem extends FileSystem_Base {
     ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
     tokensList.remove(tokensList.size()-1);
 
-    if(path.charAt(0) == '/'){
+    if (path.charAt(0) == '/') {
       current = _rootDirectory;
       tokensList.remove(0);
     }else{
@@ -563,12 +562,12 @@ public class FileSystem extends FileSystem_Base {
   }
 
 
-  public Document xmlExport(){
+  public Document xmlExport() {
     XMLExporterVisitor xml = new XMLExporterVisitor();
     Element mydrive = new Element("myDrive");
     Document doc = new Document(mydrive);
 
-    for(User u: getUsersSet())
+    for (User u: getUsersSet())
       mydrive.addContent(u.xmlExport());
     for (File f: getFilesSet())
       mydrive.addContent(f.accept(xml));
@@ -576,9 +575,9 @@ public class FileSystem extends FileSystem_Base {
     return doc;
   }
 
-  public void xmlImport(Element firstElement){
-    try{
-      for(Element userElement: firstElement.getChildren("user")){
+  public void xmlImport(Element firstElement) {
+    try {
+      for (Element userElement: firstElement.getChildren("user")) {
         String path = new String(userElement.getChild("home").getText().getBytes("UTF-8"));
         Directory homedir = createDirectoryByPath(path);
         User u = new User(homedir);
@@ -586,7 +585,7 @@ public class FileSystem extends FileSystem_Base {
         u.xmlImport(userElement);
       }
 
-      for(Element dirElement: firstElement.getChildren("dir")){
+      for (Element dirElement: firstElement.getChildren("dir")) {
         String name = dirElement.getChild("name").getText();
         String path = dirElement.getChild("path").getText();
         path = path + "/" + name;
@@ -594,14 +593,14 @@ public class FileSystem extends FileSystem_Base {
 
         Element owner = dirElement.getChild("owner");
         User u = getUserByUsername(new String(owner.getText()));
-        if(u== null)
+        if (u== null)
           System.out.println("NULL USER");
         dir.setOwner(u);
 
         dir.xmlImport(dirElement);
       }
 
-      for(Element plainElement: firstElement.getChildren("plain")){
+      for (Element plainElement: firstElement.getChildren("plain")) {
         String name = plainElement.getChild("name").getText();
         String path = plainElement.getChild("path").getText();
         path = path + "/" + name;
@@ -614,7 +613,7 @@ public class FileSystem extends FileSystem_Base {
         plain.xmlImport(plainElement);
       }
 
-    } catch(UnsupportedEncodingException |  FileExistsException | UserUnknownException | ImportDocumentException e){
+    } catch (UnsupportedEncodingException |  FileExistsException | UserUnknownException | ImportDocumentException e) {
       System.out.println("Error in import filesystem");
     }
   }
