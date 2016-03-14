@@ -595,7 +595,7 @@ public class FileSystem extends FileSystem_Base {
         if(f.accept(isDirectory) != null){
           Directory dir = f.accept(isDirectory);
           if(dir.getSize() == 2){
-            if(dir.getPath().equals("home/root"))
+            if(!dir.getPath().equals("home/root"))
               mydrive.addContent(f.accept(xml));
           }
         }
