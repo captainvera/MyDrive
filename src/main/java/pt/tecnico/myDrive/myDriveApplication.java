@@ -31,9 +31,8 @@ public class myDriveApplication {
     log.trace("Welcome to myDrive");
     try {
       // if(args.length == 0) setupDrive();
-      log.trace("setupDrive() return to main");
-      log.trace("executing testRun()");
       testRun();
+      xmlPrint();
     } finally {
       // ensure an orderly shutdown
       FenixFramework.shutdown();
@@ -46,6 +45,7 @@ public class myDriveApplication {
      * Basic setup to test desired functionality
      */
 
+    log.trace("executing setupDrive()");
     log.debug("Setting root: " + FenixFramework.getDomainRoot());
 
     FileSystem fs = FileSystem.getInstance();
@@ -91,6 +91,7 @@ public class myDriveApplication {
 
   @Atomic
   public static void testRun() {
+    log.trace("executing testRun()");
     log.debug("[TestRun]: " + FenixFramework.getDomainRoot());
 
     FileSystem fs = FileSystem.getInstance();
@@ -118,13 +119,26 @@ public class myDriveApplication {
 
 
   @Atomic
-  public static void xmlOutput(){
-    log.trace("");
+  public static void xmlPrint() {
+    log.trace("xmlPrint: " + FenixFramework.getDomainRoot());
+    Document doc = FileSystem.getInstance().xmlExport();
+    XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
+    try { xmlOutput.output(doc, new PrintStream(System.out));
+    } catch (IOException e) { System.out.println(e); }
   }
 
+
   @Atomic
-  public static void xmlInput(){
-    log.trace("");
+  public static void xmlScan(File file){
+    log.trace("xmlScan: " + FenixFramework.getDomainRoot());
+    FileSystem fs = FileSystem.getInstance();
+    SAXBuilder builder = new SAXBuilder();
+    try {
+      Document document = (Document)builder.build(file);
+      fs.xmlImport(document.getRootElement());
+    } catch (JDOMException | IOException e) {
+      e.printStackTrace();
+    }
   }
 
 }
