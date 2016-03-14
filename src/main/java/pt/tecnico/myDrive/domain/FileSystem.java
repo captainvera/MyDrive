@@ -50,7 +50,7 @@ public class FileSystem extends FileSystem_Base {
   private Directory _currentDirectory;
 
   private FileSystem() {
-    log.trace("-- Constructing new FileSystem");
+    log.trace("Constructing new FileSystem");
     setRoot(FenixFramework.getDomainRoot());
     try{
       init();
@@ -65,11 +65,11 @@ public class FileSystem extends FileSystem_Base {
    * @return current instance of FileSystem if stored, or a new FileSystem otherwise
    */
   public static FileSystem getInstance(){
-    log.trace("-- FileSystem instance requested");
+    log.trace("FileSystem instance requested");
     FileSystem fs = FenixFramework.getDomainRoot().getFileSystem();
 
     if(fs != null){
-      log.trace("-- Returning existing FileSystem instance");
+      log.trace("Returning existing FileSystem instance");
       try{
         fs.init();
       }catch(Exception e){
@@ -78,7 +78,7 @@ public class FileSystem extends FileSystem_Base {
       return fs;
     }
 
-    log.trace("-- Returning new FileSystem instance");
+    log.trace("Returning new FileSystem instance");
     return new FileSystem();
   }
 
@@ -105,7 +105,7 @@ public class FileSystem extends FileSystem_Base {
     if(this.getFilesSet().size() == 0){
       cleanInit();
     }else{
-      log.trace("-- Initializing existing FileSystem");
+      log.trace("Initializing existing FileSystem");
       _rootUser = getUserByUsername("root");
       _rootDirectory = getRootDirectory();
       if(_rootDirectory == null){
@@ -114,23 +114,23 @@ public class FileSystem extends FileSystem_Base {
       }
       _currentDirectory = _rootDirectory;
     }
-    log.trace("-- Finished FileSystem initialization");
+    log.trace("Finished FileSystem initialization");
   }
 
 
   private void cleanInit(){
 
-    log.trace("-- Initializing new FileSystem");
+    log.trace("Initializing new FileSystem");
     setIdCounter(0);
 
-    log.trace("-- Creating root user");
+    log.trace("Creating root user");
     _rootUser = createRootUser();
 
-    log.trace("-- Creating root directory");
+    log.trace("Creating root directory");
     _rootDirectory = createDirectory("/",null,_rootUser);
     _rootDirectory.setParent(_rootDirectory);
 
-    log.trace("-- Creating home directory");
+    log.trace("Creating home directory");
     Directory homeDir = createDirectory("home",_rootDirectory,_rootUser);
 
     _rootUser.setHomeDirectory(createDirectory("root", homeDir, _rootUser));
@@ -167,7 +167,7 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void login(String username, String password) throws UserUnknownException {
-    log.trace("-- Logging in");
+    log.trace("Logging in");
     if(!userExists(username)){
       throw new UserUnknownException(username);
     }
@@ -250,7 +250,7 @@ public class FileSystem extends FileSystem_Base {
       System.out.println(e.getMessage());
     }
 
-    log.trace("-- Added user " + username);
+    log.trace("Added user " + username);
     addUsers(user);
 
     return user;
