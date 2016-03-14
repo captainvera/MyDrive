@@ -37,7 +37,7 @@ public class FileSystem extends FileSystem_Base {
 
   private static final Logger log = LogManager.getRootLogger();
 
-  private Directory _rootDirectory;
+  public Directory _rootDirectory;
   private User _rootUser;
 
   /**
@@ -47,7 +47,7 @@ public class FileSystem extends FileSystem_Base {
    */
 
   private User _loggedUser;
-  private Directory _currentDirectory;
+  public Directory _currentDirectory;
 
   private FileSystem() {
     log.trace("Constructing new FileSystem");
@@ -139,6 +139,8 @@ public class FileSystem extends FileSystem_Base {
     _rootDirectory = createDirectory("/",null,_rootUser);
     _rootDirectory.setParent(_rootDirectory);
 
+    log.debug("Size in cleanInit:" + _rootDirectory.getSize());
+
     log.trace("Creating home directory");
     Directory homeDir = createDirectory("home",_rootDirectory,_rootUser);
 
@@ -170,13 +172,13 @@ public class FileSystem extends FileSystem_Base {
       _currentDirectory = _loggedUser.getHomeDirectory();
     } else {
       /**
-       * TODO: Create wrong password exception
+       * TODO: Should throw WrongPasswordException
        */
       System.out.println("-- Wrong password. Login aborted");
     }
   }
 
-  public void login(String username, String password) throws UserUnknownException {
+  public void login(String username, String password) throws UserUnknownException, WrongPasswordException {
     log.trace("Logging in");
     if (!userExists(username)) {
       throw new UserUnknownException(username);
@@ -346,7 +348,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
 
-
   /**
    * Finds Root Directory
    * Does not throw exception if Root is not found
@@ -425,6 +426,7 @@ public class FileSystem extends FileSystem_Base {
    * @throws FileUnknownException
    */
   public File getFileByPath(String path) throws FileUnknownException, NotADirectoryException {
+    if (path.equals("/")) return _rootDirectory;
     Directory current;
     DirectoryVisitor dv = new DirectoryVisitor();
 
@@ -445,7 +447,7 @@ public class FileSystem extends FileSystem_Base {
       current = current.getFileByName(tok).accept(dv);
       if (current==null) {
         /**
-         * TODO: implement exception handling
+         * TODO: Implement exception handling
          */
         return null;
       }
@@ -470,8 +472,8 @@ public class FileSystem extends FileSystem_Base {
    * @param path
    * @throws FileUnknownException
    */
-  public void removeFileByPath(String path) throws FileUnknownException, NotADirectoryException{
-    removeFile(getFileByPath(path));
+  public void removeFileByPath(String path) throws FileUnknownException, NotADirectoryException {
+    removeFile (getFileByPath(path));
   }
   /**
    * Helper function to call when the directories in the path need to be processed/created
@@ -547,7 +549,14 @@ public class FileSystem extends FileSystem_Base {
 
     Directory currentDir = createFileByPathHelper(current, tokensList);
 
-    return createDirectory(target, currentDir, _rootUser);
+    try {
+      DirectoryVisitor dv = new DirectoryVisitor();
+      return currentDir.getFileByName(target).accept(dv);
+    }
+    catch (FileUnknownException e) {
+      return createDirectory(target, currentDir, _rootUser);
+    }
+
   }
 
   /**
@@ -650,3 +659,4 @@ public class FileSystem extends FileSystem_Base {
   }
 
 }
+

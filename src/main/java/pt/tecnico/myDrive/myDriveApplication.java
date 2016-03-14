@@ -30,8 +30,8 @@ public class myDriveApplication {
   public static void main(String [] args) {
     log.trace("Welcome to myDrive");
     try {
-      // if(args.length == 0) setupDrive();
-      testRun();
+      if(args.length == 0) setupDrive();
+      /** testRun(); */
       xmlPrint();
     } finally {
       // ensure an orderly shutdown
@@ -49,9 +49,11 @@ public class myDriveApplication {
     log.debug("Setting root: " + FenixFramework.getDomainRoot());
 
     FileSystem fs = FileSystem.getInstance();
+    log.debug("Listing Size: " + fs._rootDirectory.getSize());
 
     try {
       fs.login("root","***");
+    log.debug("Listing directory: " + fs._rootDirectory.listFilesSimple());
     } catch(Exception e) {
       System.out.println("Couldn't login with root!");
     }
@@ -70,6 +72,7 @@ public class myDriveApplication {
       log.debug(fs.listDirectory());
       log.debug("Showing result of opening README");
       log.debug(fs.executeFile("README"));
+
     } catch(Exception e) {
       System.out.println("Couldn't create README!");
     }
@@ -82,6 +85,17 @@ public class myDriveApplication {
       fs.createDirectoryByPath("/usr/local/bin");
       log.debug("Listing /usr/local");
       System.out.println(fs.listFileByPathSimple("/usr/local"));
+
+      log.debug("Removing /home");
+      fs.removeFileByPath("/home");
+
+      log.debug("Root directory shiet");
+      log.debug(fs._rootDirectory.getSize());
+      log.debug(fs._rootDirectory.listFilesSimple());
+      log.debug("Changing directory");
+      fs.changeDirectory("/");
+      log.debug(fs._currentDirectory.listFilesSimple());
+
     } catch(Exception e) {
       System.out.println(e.getMessage());
     }
@@ -102,13 +116,12 @@ public class myDriveApplication {
       log.debug("Listing current Directory");
       System.out.println(fs.listDirectory());
 
-
       log.debug("Removing README");
       fs.removeFileByPath("/home/root/README");
       log.debug("Listing current Directory");
       System.out.println(fs.listDirectory());
 
-      log.debug("Listing /user/local");
+      log.debug("Listing /usr/local");
       System.out.println(fs.listFileByPathSimple("/usr/local"));
 
     } catch(Exception e) {
