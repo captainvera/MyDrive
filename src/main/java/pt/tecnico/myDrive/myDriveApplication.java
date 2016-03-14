@@ -23,39 +23,39 @@ import pt.ist.fenixframework.DomainRoot;
 import pt.ist.fenixframework.FenixFramework;
 
 public class myDriveApplication {
-  static final Logger log = LogManager.getRootLogger();
+	static final Logger log = LogManager.getRootLogger();
 
-  // FenixFramework will try automatic initialization when first accessed
-  public static void main(String [] args) {
-    System.out.println("Welcome to myDrive");
-    try {
-      if(args.length == 0) setupDrive();
-			System.out.println("Setup returning to main");
-      // UNCOMMENT TO TEST OBJECT PERSISTENCE!
-			// testRun();
-    } finally {
-      // ensure an orderly shutdown
-      FenixFramework.shutdown();
-    }
-  }
+	// FenixFramework will try automatic initialization when first accessed
+	public static void main(String [] args) {
+		System.out.println("-- Welcome to myDrive");
+		try {
+			// if(args.length == 0) setupDrive();
+			System.out.println("-- Setup returning to main");
+			// UNCOMMENT TO TEST OBJECT PERSISTENCE!
+			testRun();
+		} finally {
+			// ensure an orderly shutdown
+			FenixFramework.shutdown();
+		}
+	}
 
-  @Atomic
-  public static void setupDrive(){
-  	/**
+	@Atomic
+	public static void setupDrive(){
+		/**
 		 * Temporary main with basic tests
 		 * TODO: Change to match necessary description
 		 */
-	
-		log.trace("Setup: " + FenixFramework.getDomainRoot());
 
-    FileSystem fs = FileSystem.getInstance();
+		System.out.println("Setup: " + FenixFramework.getDomainRoot());
+
+		FileSystem fs = FileSystem.getInstance();
 
 		try{
 			fs.login("root","***");
 		}catch(Exception e){
 			System.out.println("PROBLEMO LOGIN");
 		}
-		
+
 		try{
 			System.out.println(fs.listPath());
 			fs.changeDirectory("home");
@@ -66,7 +66,7 @@ public class myDriveApplication {
 		}
 		PlainFile readme = fs.createPlainFile("README");
 		try{
-		System.out.println(fs.listDirectory());
+			System.out.println(fs.listDirectory());
 		} catch(Exception e){
 			System.out.println(e.getMessage());
 		}
@@ -87,32 +87,32 @@ public class myDriveApplication {
 			fs.changeDirectory("..");
 		}catch(Exception e){
 		}	
-		
+
 		System.out.println("Successful setup!");
 	}
 
 	@Atomic
-  public static void testRun() {
-    log.trace("TestRun: " + FenixFramework.getDomainRoot());
-	
-    FileSystem fs = FileSystem.getInstance();
+	public static void testRun() {
+		System.out.println("TestRun: " + FenixFramework.getDomainRoot());
+
+		FileSystem fs = FileSystem.getInstance();
 		try{
- 			fs.login("root","***");
+			fs.login("root","***");
 			System.out.println(fs.listDirectory());
 		}catch(Exception e){
 			System.out.println("ERROR!");
 		}
-  }
+	}
 
 
-  @Atomic
-  public static void xmlOutput(){
-    System.out.println("");
-  }
+	@Atomic
+	public static void xmlOutput(){
+		System.out.println("");
+	}
 
-  @Atomic
-  public static void xmlInput(){
-    System.out.println("");
-  }
+	@Atomic
+	public static void xmlInput(){
+		System.out.println("");
+	}
 
 }

@@ -6,9 +6,14 @@ import org.joda.time.DateTime;
 import pt.tecnico.myDrive.exceptions.*;
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import pt.tecnico.myDrive.visitors.DirectoryVisitor;
 
 public class FileSystem extends FileSystem_Base {
+
+  static final Logger log = LogManager.getRootLogger();
 
   private Directory _rootDirectory;
   private User _rootUser;
@@ -21,33 +26,48 @@ public class FileSystem extends FileSystem_Base {
 
   private User _loggedUser;
   private Directory _currentDirectory;
-
+ 
   private FileSystem() {
-    System.out.println("FileSystem constructor");
+    System.out.println("-- Constructing new FileSystem");
     setRoot(FenixFramework.getDomainRoot());
-    init();
+    try{
+      init();
+    }catch(RootDirectoryNotFoundException e){
+      System.out.println("-- Couldn't find Root Directory. Rebuilding File System");
+      cleanup();
+      cleanInit();
+    }
   }
 
   /**
    * @return current instance of FileSystem if stored, or a new FileSystem otherwise
    */
   public static FileSystem getInstance(){
-    System.out.println("Fetching File System");
+    System.out.println("-- FileSystem instance requested");
     FileSystem fs = FenixFramework.getDomainRoot().getFileSystem();
-    System.out.println("Got fs");
+
     if(fs != null){
-      System.out.println("ITs not null");
+      System.out.println("-- Returning existing FileSystem instance");
       return fs;
     }
 
-    System.out.println("New FileSystem");
+    System.out.println("-- Returning new FileSystem instance");
     return new FileSystem();
   }
+
+  private void cleanup() {
+    for(File f: getFilesSet()){
+      f.remove();
+    }
+    for(User u: getUsersSet()){
+      u.remove();
+    }
+  } 
 
   /**
    * Does basic FileSystem initialization
    */
-  public void init() {
+  private void init() throws RootDirectoryNotFoundException {
     /**
      * Creation of root directory and home folder if there are no files,
      * means we're initializing a new filesystem
@@ -55,35 +75,41 @@ public class FileSystem extends FileSystem_Base {
      * root directory
      */
 
-    System.out.println("Initializing FileSystem");  
-
     if(this.getFilesSet().size() == 0){
-      setIdCounter(0);
-      System.out.println("Creating root user");
-      _rootUser = createRootUser();
-
-      System.out.println("Creating root directory");
-      _rootDirectory = createDirectory("/",null,_rootUser);
-      _rootDirectory.setParent(_rootDirectory);
-
-      System.out.println("Creating home directory");
-      Directory homeDir = createDirectory("home",_rootDirectory,_rootUser); 
-
-      _rootUser.setHomeDirectory(createDirectory("root", homeDir, _rootUser));  
-
-      _currentDirectory = _rootDirectory;
-      System.out.println("End init");
+      cleanInit();
     }else{
+      System.out.println("-- Initializing existing FileSystem");
       _rootUser = getUserByUsername("root");
       _rootDirectory = getRootDirectory();
       if(_rootDirectory == null){
-        System.out.println("FileSystem has files but no root directory");
+        throw new RootDirectoryNotFoundException();
+
       }
       _currentDirectory = _rootDirectory;
     }
-    System.out.println("Finished FileSystem initialization");
+    System.out.println("-- Finished FileSystem initialization");
   }
 
+
+  private void cleanInit(){
+
+    System.out.println("-- Initializing new FileSystem");
+    setIdCounter(0);
+
+    System.out.println("-- Creating root user");
+    _rootUser = createRootUser();
+
+    System.out.println("-- Creating root directory");
+    _rootDirectory = createDirectory("/",null,_rootUser);
+    _rootDirectory.setParent(_rootDirectory);
+
+    System.out.println("-- Creating home directory");
+    Directory homeDir = createDirectory("home",_rootDirectory,_rootUser); 
+
+    _rootUser.setHomeDirectory(createDirectory("root", homeDir, _rootUser));  
+
+    _currentDirectory = _rootDirectory;
+  }
   /**
    * Verifies if the file f is a directory and gets the corresponding directory
    * @return Directory corresponding to f argument, or null if its not a Directory
@@ -109,17 +135,16 @@ public class FileSystem extends FileSystem_Base {
       /**
        * TODO: Create wrong password exception
        */
-      System.out.println("COuldn't login! Wrong password.");
+      System.out.println("-- Wrong password. Login aborted");
     }
   }
 
   public void login(String username, String password) throws UserUnknownException {
-    System.out.println("Logging in");
+    System.out.println("-- Logging in");
     if(!userExists(username)){
       throw new UserUnknownException(username);
     }
     login(getUserByUsername(username), password);
-
   }
 
   /**
@@ -198,7 +223,7 @@ public class FileSystem extends FileSystem_Base {
       System.out.println(e.getMessage());
     }
 
-    System.out.println("Added user");
+    System.out.println("-- Added user " + username);
     addUsers(user);
 
     return user;
@@ -217,7 +242,6 @@ public class FileSystem extends FileSystem_Base {
     user.setUmask("");
     user.setName("Super User");
 
-    System.out.println("Added root user");
     addUsers(user);
 
     return user;
@@ -321,7 +345,6 @@ public class FileSystem extends FileSystem_Base {
    * ----------------------------------------------------
    * Public FileSystem usage methods
    * Allows execution of several commands on the current FileSystem
-   *
    */
 
   /**
