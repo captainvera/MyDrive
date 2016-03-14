@@ -31,6 +31,7 @@ public class myDriveApplication {
     log.trace("Welcome to myDrive");
     try {
       if(args.length == 0) setupDrive();
+      else xmlScan(new java.io.File(args[0]));
       /** testRun(); */
       xmlPrint();
     } finally {
@@ -145,7 +146,7 @@ public class myDriveApplication {
   public static void xmlScan(File file){
     log.trace("xmlScan: " + FenixFramework.getDomainRoot());
     FileSystem fs = FileSystem.getInstance();
-    fs.reset();
+   // fs.reset();
     SAXBuilder builder = new SAXBuilder();
     try {
       Document document = (Document)builder.build(file);
