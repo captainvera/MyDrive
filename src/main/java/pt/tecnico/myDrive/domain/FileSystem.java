@@ -396,6 +396,13 @@ public class FileSystem extends FileSystem_Base {
   }
 
   /**
+   * @return result of executing file
+   */
+  public String executeFile(String file) throws FileUnknownException {
+    return _currentDirectory.getFileByName(file).execute(); 
+  }
+
+  /**
    * ------------------------------------------------------
    * Operations by path
    */
