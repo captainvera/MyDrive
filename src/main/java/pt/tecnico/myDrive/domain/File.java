@@ -4,14 +4,20 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 public abstract class File extends File_Base {
 
-  public File() {
+  
+	public File() {
     super();
   }
 
-	protected void init(String name, Directory parent, Integer id){
+	public File(String name, Directory parent, Integer id, User owner){
+		init(name,parent,id,owner);
+	}
+	
+	protected void init(String name, Directory parent, Integer id, User owner){
 		setName(name);
 		setParent(parent);
 		setId(id);
+		setOwner(owner);
 	}
 
   public String toString(){
