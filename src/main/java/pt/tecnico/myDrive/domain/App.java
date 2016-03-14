@@ -4,9 +4,8 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 public class App extends App_Base {
 
-  public App(String name, Directory parent, Integer id) {
-    super();
-		init(name, parent, id);
+  public App(String name, Directory parent, Integer id, User owner) {
+		init(name, parent, id, owner);
   }
 
 	/**

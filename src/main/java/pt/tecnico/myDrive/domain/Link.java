@@ -4,9 +4,8 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 public class Link extends Link_Base {
 	
-  public Link(String name, Directory parent, Integer id) {
-    super();
-		init(name, parent, id);
+  public Link(String name, Directory parent, Integer id, User owner) {
+		init(name, parent, id, owner);
   }
 
 	/**
