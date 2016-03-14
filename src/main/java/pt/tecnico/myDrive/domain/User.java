@@ -29,7 +29,7 @@ public class User extends User_Base {
     userPwd.setText(getPassword());
 
     Element userHomeDir = new Element("home");
-    userHomeDir.setText(getHomeDirectory().getName());
+    userHomeDir.setText(getHomeDirectory().getPath());
 
     Element userUmask = new Element("umask");
     userUmask.setText(getUmask());

@@ -18,7 +18,7 @@ public class XMLExporterVisitor implements GenericVisitor<Element>{
     directory.setAttribute("id",String.valueOf(dir.getId()));
 
     Element dirPath = new Element("path");
-    dirPath.setText(dir.getPath());
+    dirPath.setText(dir.getParent().getPath());
 
     Element dirName = new Element("name");
     dirName.setText(dir.getName());
