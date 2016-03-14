@@ -23,7 +23,8 @@ public class Link extends Link_Base {
 		}
 
 	@Override
-		public void execute(){
+		public String execute(){
+      return "Link functionality not implemented yet.";
 		}
 
 	@Override

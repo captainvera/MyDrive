@@ -127,7 +127,14 @@ public class Directory extends Directory_Base {
   }
 
   @Override
-  public void execute(){
+  public String execute(){
+    String s = "Couldn't list directory.";
+    try{
+      s = listFilesAll();
+    }catch(Exception e){
+      System.out.println("-- Error executing directory: " + e.getMessage());
+    }
+    return s;
   }
 
   public void checkIllegalRemoval(String filename)

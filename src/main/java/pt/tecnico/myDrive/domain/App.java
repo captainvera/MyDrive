@@ -24,7 +24,8 @@ public class App extends App_Base {
 	}
 
 	@Override
-	public void execute(){
+	public String execute(){
+    return "App execution not implemented yet.";
 	}
 
   @Override

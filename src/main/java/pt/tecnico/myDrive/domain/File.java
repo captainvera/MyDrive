@@ -37,7 +37,7 @@ public abstract class File extends File_Base {
 	/**
 	 * Executes the file with diferent behaviour depending on the file type
 	 */
-	public abstract void execute();
+	public abstract String execute();
 
 	/**
 	 * The calculation of the size of the file will vary depending on subclass implementation

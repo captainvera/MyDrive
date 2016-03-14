@@ -27,8 +27,9 @@ public class PlainFile extends PlainFile_Base {
 	}
 
 	@Override
-	public void execute(){
-	}
+	public String execute(){
+	  return getData();
+  }
 
   @Override
   public <T> T accept(GenericVisitor<T> v){
