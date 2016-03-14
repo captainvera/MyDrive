@@ -37,11 +37,11 @@ public class Directory extends Directory_Base {
    * @throws FileUnknownException
    */
   public File getFileByName(String filename) throws FileUnknownException {
-    if(filename.equals(".")){
+    if(filename.equals(".")) {
       return this;
-    }else if(filename.equals("..")){
+    } else if(filename.equals("..")) {
       return getParent();
-    }else{
+    } else {
       for (File file : getFileSet()){
         if (filename.equals(file.getName())){
           return file;
@@ -119,11 +119,33 @@ public class Directory extends Directory_Base {
   @Override
   public int getSize() { return 2 + getFileSet().size(); }
 
+  /**
+   * @return True if file is in directory, false otherwise.
+   */
+  public boolean hasFile(String filename) {
+    for (File file : getFileSet())
+      if (filename.equals(file.getName()))
+        return true;
+    return false;
+  }
+
   @Override
   public void remove() {
     for (File file : getFileSet())
       file.remove();
-    super.remove();
+
+    setOwner(null);
+    setParent(null);
+    setFileSystem(null);
+    setUser(null);
+    deleteDomainObject();
+  }
+
+  /**
+   * @return True if directory has no files other than itself and its parent.
+   */
+  public boolean isEmpty() {
+    return getSize() == 2;
   }
 
   @Override
