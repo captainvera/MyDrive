@@ -1,6 +1,7 @@
 package pt.tecnico.myDrive.domain;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
+import pt.tecnico.myDrive.visitors.DirectoryVisitor;
 
 import org.jdom2.Element;
 import java.io.UnsupportedEncodingException;
@@ -15,6 +16,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
 public class Directory extends Directory_Base {
+
+
 
 	public Directory(String name, Directory parent, Integer id, User owner) {
 		init(name, parent, id, owner);
@@ -35,7 +38,7 @@ public class Directory extends Directory_Base {
 	 * @return The string corresponding to the path the directory.
 	 */
 	@Override
-	public String getPath() { return isTopLevelDirectory() ? getName() : getPathHelper(); }
+		public String getPath() { return isTopLevelDirectory() ? getName() : getPathHelper(); }
 
 	/**
 	 * Simple helper function to call when the path needs to be processed
@@ -71,16 +74,16 @@ public class Directory extends Directory_Base {
 	 */
 	public String listFilesSimple()
 		throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-		return listFilesGeneric(this.getClass().getMethod("getName"));
-	}
+			return listFilesGeneric(this.getClass().getMethod("getName"));
+		}
 
 	/**
 	 * @return List of the files inside the directory using their toString method.
 	 */
 	public String listFilesAll()
 		throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-		return listFilesGeneric (this.getClass().getMethod("toString"));
-	}
+			return listFilesGeneric (this.getClass().getMethod("toString"));
+		}
 
 	/**
 	 * List files in a generic way.
@@ -98,18 +101,17 @@ public class Directory extends Directory_Base {
 	 */
 	private String listFilesGeneric (Method method)
 		throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-		/**
-		 * Replaces the occurence of this directory and parent directories' names
-		 * respectively for "." and ".."
-		 */
-		String self = ((String) method.invoke(this)).replaceAll(getName(), ".") + "\n";
-		String parent = ((String) method.invoke(getParent())).replaceAll(getParent().getName(), "..") + "\n";
-		String list = self + parent;
-		for (File file: getFileSet())
-			list += method.invoke(file) + "\n";
-		return list;
-	}
-
+			/**
+			 * Replaces the occurence of this directory and parent directories' names
+			 * respectively for "." and ".."
+			 */
+			String self = ((String) method.invoke(this)).replaceAll(getName(), ".") + "\n";
+			String parent = ((String) method.invoke(getParent())).replaceAll(getParent().getName(), "..") + "\n";
+			String list = self + parent;
+			for (File file: getFileSet())
+				list += method.invoke(file) + "\n";
+			return list;
+		}
 
 	/**
 	 * The size of a directory is given by the number of files inside it.
@@ -117,31 +119,39 @@ public class Directory extends Directory_Base {
 	 * @return The size of a directory.
 	 */
 	@Override
-	public int getSize() { return 2 + getFileSet().size(); }
+		public int getSize() { return 2 + getFileSet().size(); }
 
 	@Override
-	public void remove() {
-		for (File file : getFileSet())
-			file.remove();
-		super.remove();
-	}
+		public void remove() {
+			for (File file : getFileSet())
+				file.remove();
+			super.remove();
+		}
 
 	@Override
-	public void execute(){
-	}
+		public void execute(){
+		}
 
 	public void checkIllegalRemoval(String filename)
 		throws IllegalRemovalException {
-		if (filename.equals(".") || filename.equals(".."))
-			throw new IllegalRemovalException();
-	}
+			if (filename.equals(".") || filename.equals(".."))
+				throw new IllegalRemovalException();
+		}
+
+	public void removeByName(String filename)
+		throws FileUnknownException, IllegalRemovalException {
+			checkIllegalRemoval(filename);
+			File f = getFileByName(filename);
+			removeFile(f);
+			f.remove();
+		}
 
 	@Override
-	public <T> T accept(GenericVisitor<T> v){
-		return v.visit(this);
-	}
+		public <T> T accept(GenericVisitor<T> v){
+			return v.visit(this);
+		}
 
-  public void xmlImport(Element dirElement) throws ImportDocumentException, UserUnknownException{
+	public void xmlImport(Element dirElement) throws ImportDocumentException, UserUnknownException{
 		try{
 			setId(dirElement.getAttribute("id").getIntValue());
 
@@ -153,5 +163,4 @@ public class Directory extends Directory_Base {
 			throw new ImportDocumentException(String.valueOf(getId()));
 		}
 	}
-
 }
