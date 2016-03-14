@@ -46,7 +46,6 @@ public class User extends User_Base {
 	public void xmlImport(Element userElement) throws ImportDocumentException{
 		try{
 			setUsername(userElement.getAttribute("username").getValue());
-
 			Element name = userElement.getChild("name");
 			if(name != null)
 				setName(new String(name.getText().getBytes("UTF-8")));

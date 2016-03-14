@@ -43,7 +43,7 @@ public class XMLExporterVisitor implements GenericVisitor<Element>{
 		plain.setAttribute("id",String.valueOf(pf.getId()));
 		
 		Element plainPath = new Element("path");
-		plainPath.setText(pf.getPath());
+		plainPath.setText(pf.getParent().getPath());
 
 		Element plainName = new Element("name");
 		plainName.setText(pf.getName());
@@ -72,7 +72,7 @@ public class XMLExporterVisitor implements GenericVisitor<Element>{
 		app.setAttribute("id",String.valueOf(a.getId()));
 		
 		Element appPath = new Element("path");
-		appPath.setText(a.getPath());
+		appPath.setText(a.getParent().getPath());
 
 		Element appName = new Element("name");
 		appName.setText(a.getName());
@@ -100,7 +100,7 @@ public class XMLExporterVisitor implements GenericVisitor<Element>{
 		link.setAttribute("id",String.valueOf(l.getId()));
 		
 		Element linkPath = new Element("path");
-		linkPath.setText(l.getPath());
+		linkPath.setText(l.getParent().getPath());
 
 		Element linkName = new Element("name");
 		linkName.setText(l.getName());

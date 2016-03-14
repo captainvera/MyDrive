@@ -58,7 +58,7 @@ public abstract class File extends File_Base {
    *
    * @return The path corresponding to its location in the filesystem.
    */
-  public String getPath() { return getParent().getPath() + getName(); }
+  public String getPath() { return getParent().getPath() + "/" + getName(); }
 
 }
 
