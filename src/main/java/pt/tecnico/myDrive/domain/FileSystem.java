@@ -37,7 +37,7 @@ public class FileSystem extends FileSystem_Base {
 
   private static final Logger log = LogManager.getRootLogger();
 
-  public Directory _rootDirectory;
+  private  Directory _rootDirectory;
   private User _rootUser;
 
   /**
@@ -47,7 +47,7 @@ public class FileSystem extends FileSystem_Base {
    */
 
   private User _loggedUser;
-  public Directory _currentDirectory;
+  private Directory _currentDirectory;
 
   private FileSystem() {
     log.trace("Constructing new FileSystem");
@@ -138,8 +138,6 @@ public class FileSystem extends FileSystem_Base {
     log.trace("Creating root directory");
     _rootDirectory = createDirectory("/",null,_rootUser);
     _rootDirectory.setParent(_rootDirectory);
-
-    log.debug("Size in cleanInit:" + _rootDirectory.getSize());
 
     log.trace("Creating home directory");
     Directory homeDir = createDirectory("home",_rootDirectory,_rootUser);
