@@ -56,8 +56,7 @@ public class FileSystem extends FileSystem_Base {
       init();
     } catch(RootDirectoryNotFoundException e) {
       System.out.println("-- Couldn't find Root Directory. Rebuilding File System");
-      cleanup();
-      cleanInit();
+      reset();
     }
   }
 
@@ -90,6 +89,15 @@ public class FileSystem extends FileSystem_Base {
   }
 
   /**
+   * Resets the filesystem. Wipes all data stored in it and creates its initial
+   * data.
+   */
+  public void reset() {
+    cleanup();
+    cleanInit();
+  }
+
+  /**
    * Does basic FileSystem initialization
    */
   public void init() throws RootDirectoryNotFoundException {
@@ -116,8 +124,11 @@ public class FileSystem extends FileSystem_Base {
   }
 
 
+  /**
+   * Creates the initial data for the filesystem, such as, root user, root
+   * directory and root's user home directory.
+   */
   private void cleanInit() {
-
     log.trace("Initializing new FileSystem");
     setIdCounter(0);
 
