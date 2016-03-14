@@ -12,46 +12,46 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 public class App extends App_Base {
 
   public App(String name, Directory parent, Integer id, User owner) {
-		init(name, parent, id, owner);
+    init(name, parent, id, owner);
   }
 
-	/**
-	 * TEMPORARY
-	 */
-	@Override
-	public int getSize(){
-		return 0;
-	}
-
-	@Override
-	public String execute(){
-    return "App execution not implemented yet.";
-	}
+  /**
+   * TEMPORARY
+   */
+  @Override
+  public int getSize(){
+    return 0;
+  }
 
   @Override
-	public <T> T accept(GenericVisitor<T> v){
-		return v.visit(this);
-	}
+  public String execute(){
+    return "App execution not implemented yet.";
+  }
 
-	@Override
+  @Override
+  public <T> T accept(GenericVisitor<T> v){
+    return v.visit(this);
+  }
+
+  @Override
   public void remove() {
-		super.remove();
-	}
+    super.remove();
+  }
 
   public void xmlImport(Element appElement) throws ImportDocumentException{
-		try{
-			setId(appElement.getAttribute("id").getIntValue());
+    try{
+      setId(appElement.getAttribute("id").getIntValue());
 
-			Element perm = appElement.getChild("perm");
-			if (perm != null)
-				setUserPermission(new String(perm.getText().getBytes("UTF-8")));
+      Element perm = appElement.getChild("perm");
+      if (perm != null)
+        setUserPermission(new String(perm.getText().getBytes("UTF-8")));
 
-			Element value = appElement.getChild("method");
-			if (value != null)
-				setData(new String(value.getText().getBytes("UTF-8")));
+      Element value = appElement.getChild("method");
+      if (value != null)
+        setData(new String(value.getText().getBytes("UTF-8")));
 
-		} catch(UnsupportedEncodingException | DataConversionException e){
-			throw new ImportDocumentException(String.valueOf(getId()));
-		}
-	}
+    } catch(UnsupportedEncodingException | DataConversionException e){
+      throw new ImportDocumentException(String.valueOf(getId()));
+    }
+  }
 }

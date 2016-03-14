@@ -4,51 +4,51 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 public abstract class File extends File_Base {
 
-  
-	public File() {
+
+  public File() {
     super();
   }
 
-	public File(String name, Directory parent, Integer id, User owner){
-		init(name,parent,id,owner);
-	}
-	
-	protected void init(String name, Directory parent, Integer id, User owner){
-		setName(name);
-		setParent(parent);
-		setId(id);
-		setOwner(owner);
-	}
+  public File(String name, Directory parent, Integer id, User owner){
+    init(name,parent,id,owner);
+  }
+
+  protected void init(String name, Directory parent, Integer id, User owner){
+    setName(name);
+    setParent(parent);
+    setId(id);
+    setOwner(owner);
+  }
 
   public String toString(){
     return this.getName();
   }
 
-	/**
-	 * Basic remove implementation for File objects
-	 */
-	public void remove(){
-		setFileSystem(null);
-		setParent(null);
-		setOwner(null);
-		deleteDomainObject();
-	}
+  /**
+   * Basic remove implementation for File objects
+   */
+  public void remove(){
+    setFileSystem(null);
+    setParent(null);
+    setOwner(null);
+    deleteDomainObject();
+  }
 
-	/**
-	 * Executes the file with diferent behaviour depending on the file type
-	 */
-	public abstract String execute();
+  /**
+   * Executes the file with diferent behaviour depending on the file type
+   */
+  public abstract String execute();
 
-	/**
-	 * The calculation of the size of the file will vary depending on subclass implementation
-	 *
-	 * @return Size of the file
-	 */
-	public abstract int getSize();
+  /**
+   * The calculation of the size of the file will vary depending on subclass implementation
+   *
+   * @return Size of the file
+   */
+  public abstract int getSize();
 
-	/**
-	 * Generic method
-	 */
+  /**
+   * Generic method
+   */
   public abstract <T> T accept(GenericVisitor<T> v);
 
 

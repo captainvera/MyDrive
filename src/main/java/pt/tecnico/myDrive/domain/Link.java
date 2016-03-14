@@ -11,49 +11,49 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 public class Link extends Link_Base {
 
-	public Link(String name, Directory parent, Integer id, User owner) {
-		init(name, parent, id, owner);
-	}
-	/**
-	 * TEMPORARY
-	 */
-	@Override
-		public int getSize(){
-			return 0;
-		}
+  public Link(String name, Directory parent, Integer id, User owner) {
+    init(name, parent, id, owner);
+  }
+  /**
+   * TEMPORARY
+   */
+  @Override
+  public int getSize(){
+    return 0;
+  }
 
-	@Override
-		public String execute(){
-      return "Link functionality not implemented yet.";
-		}
+  @Override
+  public String execute(){
+    return "Link functionality not implemented yet.";
+  }
 
-	@Override
-		public <T> T accept(GenericVisitor<T> v){
-			return v.visit(this);
-		}
+  @Override
+  public <T> T accept(GenericVisitor<T> v){
+    return v.visit(this);
+  }
 
-	@Override
-		public void remove() {
-			super.remove();
-		}
-	/**
-	 * @param xml Element
-	 */
-	public void xmlImport(Element linkElement) throws ImportDocumentException{
-		try{
-			setId(linkElement.getAttribute("id").getIntValue());
+  @Override
+  public void remove() {
+    super.remove();
+  }
+  /**
+   * @param xml Element
+   */
+  public void xmlImport(Element linkElement) throws ImportDocumentException{
+    try{
+      setId(linkElement.getAttribute("id").getIntValue());
 
-			Element perm = linkElement.getChild("perm");
-			if (perm != null)
-				setUserPermission(new String(perm.getText().getBytes("UTF-8")));
+      Element perm = linkElement.getChild("perm");
+      if (perm != null)
+        setUserPermission(new String(perm.getText().getBytes("UTF-8")));
 
-			Element value = linkElement.getChild("value");
-			if (value != null)
-				setData(new String(value.getText().getBytes("UTF-8")));
+      Element value = linkElement.getChild("value");
+      if (value != null)
+        setData(new String(value.getText().getBytes("UTF-8")));
 
-		} catch(UnsupportedEncodingException | DataConversionException e){
-			throw new ImportDocumentException(String.valueOf(getId()));
-		}
-	}
+    } catch(UnsupportedEncodingException | DataConversionException e){
+      throw new ImportDocumentException(String.valueOf(getId()));
+    }
+  }
 
 }

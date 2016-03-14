@@ -156,15 +156,15 @@ public class Directory extends Directory_Base {
     return v.visit(this);
   }
 
-  public void xmlImport(Element dirElement) throws ImportDocumentException{ 
+  public void xmlImport(Element dirElement) throws ImportDocumentException{
     try{
       setId(dirElement.getAttribute("id").getIntValue());
 
       Element perm = dirElement.getChild("perm");
       if (perm != null)
         setUserPermission(new String(perm.getText().getBytes("UTF-8")));
-			
-			
+
+
     } catch(UnsupportedEncodingException | DataConversionException e){
       throw new ImportDocumentException(String.valueOf(getId()));
     }

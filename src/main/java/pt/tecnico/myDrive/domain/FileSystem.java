@@ -448,10 +448,10 @@ public class FileSystem extends FileSystem_Base {
    *
    */
   public String listFileByPathSimple(String path) throws IllegalAccessException, FileUnknownException, NotADirectoryException,
-          NoSuchMethodException, InvocationTargetException {
-    DirectoryVisitor dv = new DirectoryVisitor();
-    Directory d = getFileByPath(path).accept(dv);
-    return d.listFilesSimple();
+         NoSuchMethodException, InvocationTargetException {
+           DirectoryVisitor dv = new DirectoryVisitor();
+           Directory d = getFileByPath(path).accept(dv);
+           return d.listFilesSimple();
   }
 
   /**
@@ -563,60 +563,60 @@ public class FileSystem extends FileSystem_Base {
   }
 
 
-	public Document xmlExport(){
-		XMLExporterVisitor xml = new XMLExporterVisitor();
-		Element mydrive = new Element("myDrive");
-		Document doc = new Document(mydrive);
+  public Document xmlExport(){
+    XMLExporterVisitor xml = new XMLExporterVisitor();
+    Element mydrive = new Element("myDrive");
+    Document doc = new Document(mydrive);
 
-		for(User u: getUsersSet())
-			mydrive.addContent(u.xmlExport());
-		for (File f: getFilesSet())
-			mydrive.addContent(f.accept(xml));
+    for(User u: getUsersSet())
+      mydrive.addContent(u.xmlExport());
+    for (File f: getFilesSet())
+      mydrive.addContent(f.accept(xml));
 
-		return doc;
-	}
+    return doc;
+  }
 
-	public void xmlImport(Element firstElement){
-		try{
-			for(Element userElement: firstElement.getChildren("user")){
-				String path = new String(userElement.getChild("home").getText().getBytes("UTF-8"));
-				Directory homedir = createDirectoryByPath(path);
-				User u = new User(homedir);
-				u.setFileSystem(this);
-				u.xmlImport(userElement);
-			}
+  public void xmlImport(Element firstElement){
+    try{
+      for(Element userElement: firstElement.getChildren("user")){
+        String path = new String(userElement.getChild("home").getText().getBytes("UTF-8"));
+        Directory homedir = createDirectoryByPath(path);
+        User u = new User(homedir);
+        u.setFileSystem(this);
+        u.xmlImport(userElement);
+      }
 
-			for(Element dirElement: firstElement.getChildren("dir")){
-				String name = dirElement.getChild("name").getText();
-				String path = dirElement.getChild("path").getText();
-				path = path + "/" + name;
-				Directory dir = createDirectoryByPath(path);
+      for(Element dirElement: firstElement.getChildren("dir")){
+        String name = dirElement.getChild("name").getText();
+        String path = dirElement.getChild("path").getText();
+        path = path + "/" + name;
+        Directory dir = createDirectoryByPath(path);
 
-				Element owner = dirElement.getChild("owner");
-				User u = getUserByUsername(new String(owner.getText()));
-				if(u== null)
-					System.out.println("NULL USER");
-				dir.setOwner(u);
+        Element owner = dirElement.getChild("owner");
+        User u = getUserByUsername(new String(owner.getText()));
+        if(u== null)
+          System.out.println("NULL USER");
+        dir.setOwner(u);
 
-				dir.xmlImport(dirElement);
-			}
+        dir.xmlImport(dirElement);
+      }
 
-			for(Element plainElement: firstElement.getChildren("plain")){
-				String name = plainElement.getChild("name").getText();
-				String path = plainElement.getChild("path").getText();
-				path = path + "/" + name;
-				PlainFile plain = createPlainFileByPath(path);
+      for(Element plainElement: firstElement.getChildren("plain")){
+        String name = plainElement.getChild("name").getText();
+        String path = plainElement.getChild("path").getText();
+        path = path + "/" + name;
+        PlainFile plain = createPlainFileByPath(path);
 
-				Element owner = plainElement.getChild("owner");
-				User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8")));
-				plain.setOwner(u);
+        Element owner = plainElement.getChild("owner");
+        User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8")));
+        plain.setOwner(u);
 
-				plain.xmlImport(plainElement);
-			}
+        plain.xmlImport(plainElement);
+      }
 
-		} catch(UnsupportedEncodingException |  FileExistsException | UserUnknownException | ImportDocumentException e){
-			System.out.println("Error in import filesystem");
-		}
-	}
+    } catch(UnsupportedEncodingException |  FileExistsException | UserUnknownException | ImportDocumentException e){
+      System.out.println("Error in import filesystem");
+    }
+  }
 
 }
