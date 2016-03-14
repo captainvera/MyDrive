@@ -106,8 +106,14 @@ public class Directory extends Directory_Base {
     String self = ((String) method.invoke(this)).replaceAll(getName(), ".") + "\n";
     String parent = ((String) method.invoke(getParent())).replaceAll(getParent().getName(), "..") + "\n";
     String list = self + parent;
-    for (File file: getFileSet())
-      list += method.invoke(file) + "\n";
+    for (File file: getFileSet()){
+      /*
+       * TODO: Replace by a function in File that detects Top level files
+       */
+      if(file.getParent()!=file){
+        list += method.invoke(file) + "\n";
+      }
+    }
     return list;
   }
 
