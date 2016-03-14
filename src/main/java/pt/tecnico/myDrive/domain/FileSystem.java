@@ -368,30 +368,20 @@ public class FileSystem extends FileSystem_Base {
 		Element mydrive = new Element("myDrive");
 		Document doc = new Document(mydrive);
 
-		for(User u: getUsersSet()){
-			if(!u.getUsername().equals("root"))
-				mydrive.addContent(u.xmlExport());
-		}
+		for(User u: getUsersSet())
+			mydrive.addContent(u.xmlExport());
 
-		for (File f: getFilesSet()){
-			if(f.getOwner().getUsername().equals("root")){
-				Directory dir = f.accept(visitor);
-				if(dir != null){
-					if(dir.getFileSet() == null)
-						mydrive.addContent(dir.accept(xml));
-				}
-			}
-			else
+		for (File f: getFilesSet())
 				mydrive.addContent(f.accept(xml));
-		}
+		
 		return doc;
 	}
 
-	public void xmlImport(Element firstElement){
+	/*public void xmlImport(Element firstElement){
 		try{
 			for(Element userElement: firstElement.getChildren("user")){
 				String path = new String(userElement.getChild("home").getText().getBytes("UTF-8"));
-				Directory homedir = getRootDirectory().createDirByPath(path);
+				Directory homedir = createDirByPath(path);
 				User u = new User(homedir);
 				u.xmlImport(userElement);
 			}
@@ -400,10 +390,10 @@ public class FileSystem extends FileSystem_Base {
 				String name = dirElement.getChild("name").getText();
 				String path = dirElement.getChild("path").getText();
 				path = path + "/" + name;
-				Directory dir = getRootDirectory().createDirByPath(path);
+				Directory dir = createDirByPath(path);
 
 				Element owner = dirElement.getChild("owner");
-				User u = getUserbyUsername(new String(owner.getText().getBytes("UTF-8")));
+				User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8")));
 				dir.setOwner(u);
 
 				dir.xmlImport(dirElement);
@@ -413,10 +403,10 @@ public class FileSystem extends FileSystem_Base {
 				String name = plainElement.getChild("name").getText();
 				String path = plainElement.getChild("path").getText();
 				path = path + "/" + name;
-				PlainFile plain = getRootDirectory().createPlainByPath(path);
+				PlainFile plain = createPlainByPath(path);
 
 				Element owner = plainElement.getChild("owner");
-				User u = getUserbyUsername(new String(owner.getText().getBytes("UTF-8")));
+				User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8")));
 				plain.setOwner(u);
 
 				plain.xmlImport(plainElement);
@@ -426,10 +416,10 @@ public class FileSystem extends FileSystem_Base {
 				String name = linkElement.getChild("name").getText();
 				String path = linkElement.getChild("path").getText();
 				path = path + "/" + name;
-				Link link = getRootDirectory().createLinkByPath(path);
+				Link link = createLinkByPath(path);
 
 				Element owner = linkElement.getChild("owner");
-				User u = getUserbyUsername(new String(owner.getText().getBytes("UTF-8")));
+				User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8")));
 				link.setOwner(u);
 
 				link.xmlImport(linkElement);
@@ -439,15 +429,15 @@ public class FileSystem extends FileSystem_Base {
 				String name = appElement.getChild("name").getText();
 				String path = appElement.getChild("path").getText();
 				path = path + "/" + name;
-				App app = getRootDirectory().createAppByPath(path);
+				App app = createAppByPath(path);
 
 				Element owner = appElement.getChild("owner");
-				User u = getUserbyUsername(new String(owner.getText().getBytes("UTF-8")));
+				User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8")));
 				app.setOwner(u);
 				app.xmlImport(appElement);
 			}
 		} catch(Exception e){
 			throw new ImportDocumentException("in fs");
 		}
-	}
+	}*/
 }
