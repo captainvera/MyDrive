@@ -136,7 +136,10 @@ public class FileSystem extends FileSystem_Base {
     _rootUser = createRootUser();
 
     log.trace("Creating root directory");
-    _rootDirectory = createDirectory("/",null,_rootUser);
+    setIdCounter(getIdCounter()+1);
+    _rootDirectory = new RootDirectory("/",null,getIdCounter(),_rootUser);
+    addFiles(_rootDirectory);
+
     _rootDirectory.setParent(_rootDirectory);
 
     log.trace("Creating home directory");
@@ -401,8 +404,8 @@ public class FileSystem extends FileSystem_Base {
    */
   public String listDirectory()
     throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-      return _currentDirectory.listFilesAll();
-    }
+    return _currentDirectory.listFilesAll();
+  }
 
   /**
    * @return result of executing file
@@ -462,7 +465,7 @@ public class FileSystem extends FileSystem_Base {
            DirectoryVisitor dv = new DirectoryVisitor();
            Directory d = getFileByPath(path).accept(dv);
            return d.listFilesSimple();
-         }
+  }
 
   /**
    * remove a file by its path.
@@ -611,7 +614,7 @@ public class FileSystem extends FileSystem_Base {
       for (Element userElement: firstElement.getChildren("user")) {
         String username = new String(userElement.getAttribute("username").getValue());
         Element homeElement = userElement.getChild("home");
-  
+
         String path;
         if (homeElement == null) path = "/home" + "/" + username;
         else path = new String(homeElement.getText().getBytes("UTF-8"));

@@ -11,7 +11,8 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 public class PlainFile extends PlainFile_Base {
 
-  public PlainFile(){
+  public PlainFile() {
+    super();
   }
 
   public PlainFile(String name, Directory parent, Integer id, User owner) {

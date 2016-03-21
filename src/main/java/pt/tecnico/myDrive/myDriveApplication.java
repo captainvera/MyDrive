@@ -78,7 +78,7 @@ public class myDriveApplication {
       System.out.println(fs.executeFile("README"));
 
     } catch(Exception e) {
-      System.out.println("Couldn't create README!");
+      System.out.println("Exception caught: " + e.getMessage());
     }
 
     /*
@@ -90,23 +90,27 @@ public class myDriveApplication {
       log.debug("Listing /usr/local");
       System.out.println(fs.listFileByPathSimple("/usr/local"));
 
-      log.debug("Removing /usr/local/bin"); 
+      log.debug("Removing /usr/local/bin");
       fs.removeFileByPath("/usr/local/bin");
 
       log.debug("Listing /usr/local");
       System.out.println(fs.listFileByPathSimple("/usr/local"));
-    
-      
+
+
       log.debug("Listing /home");
       System.out.println(fs.listFileByPathSimple("/home"));
       log.debug("Removing /home/README");
       fs.removeFileByPath("/home/README");
       log.debug("Listing /home");
       System.out.println(fs.listFileByPathSimple("/home"));
-      
+
+      log.debug("Removing every file -- remove from '/'");
+      fs.removeFileByPath("/");
+
+      log.debug("Number of files in file system: " + fs.getFilesSet().size());
 
     } catch(Exception e) {
-      System.out.println(e.getMessage());
+      System.out.println("Exception caught: " + e.getMessage());
     }
 
     log.trace("Successful default setup!");

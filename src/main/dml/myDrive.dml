@@ -26,6 +26,8 @@ class PlainFile extends File {
 
 class Directory extends File;
 
+class RootDirectory extends Directory;
+
 class Link extends PlainFile;
 
 class App extends PlainFile;

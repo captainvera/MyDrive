@@ -28,10 +28,18 @@ public abstract class File extends File_Base {
    * Basic remove implementation for File objects
    */
   public void remove(){
-    setFileSystem(null);
-    setParent(null);
-    setOwner(null);
+    nullifyRelations();
     deleteDomainObject();
+  }
+
+  /**
+   * Nullifies relations, that is, deletes/cancels any relation between this
+   * object and eventual others.
+   */
+  protected void nullifyRelations() {
+    setOwner(null);
+    setParent(null);
+    setFileSystem(null);
   }
 
   /**
