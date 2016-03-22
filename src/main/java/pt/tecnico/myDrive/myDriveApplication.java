@@ -3,7 +3,6 @@ package pt.tecnico.myDrive;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.File;
 
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -18,6 +17,7 @@ import pt.tecnico.myDrive.domain.FileSystem;
 import pt.tecnico.myDrive.domain.User;
 import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.domain.PlainFile;
+import pt.tecnico.myDrive.domain.File;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.DomainRoot;
@@ -78,7 +78,7 @@ public class myDriveApplication {
       System.out.println(fs.executeFile("README"));
 
     } catch(Exception e) {
-      System.out.println("Exception caught: " + e.getMessage());
+      e.printStackTrace();
     }
 
     /*
@@ -104,13 +104,21 @@ public class myDriveApplication {
       log.debug("Listing /home");
       System.out.println(fs.listFileByPathSimple("/home"));
 
+      log.debug("Number of files in file system pre-remove: " + fs.getFilesSet().size());
+      log.debug("Files pre-remove: ");
+      for (File f : fs.getFilesSet())
+        System.out.println(f);
+
       log.debug("Removing every file -- remove from '/'");
       fs.removeFileByPath("/");
 
-      log.debug("Number of files in file system: " + fs.getFilesSet().size());
+      log.debug("Number of files in file system pos-remove: " + fs.getFilesSet().size());
+      log.debug("Files pos-remove: ");
+      for (File f : fs.getFilesSet())
+        System.out.println(f);
 
     } catch(Exception e) {
-      System.out.println("Exception caught: " + e.getMessage());
+      e.printStackTrace();
     }
 
     log.trace("Successful default setup!");
@@ -127,7 +135,7 @@ public class myDriveApplication {
 
 
   @Atomic
-  public static void xmlScan(File file){
+  public static void xmlScan(java.io.File file){
     log.trace("xmlScan: " + FenixFramework.getDomainRoot());
     FileSystem fs = FileSystem.getInstance();
     SAXBuilder builder = new SAXBuilder();

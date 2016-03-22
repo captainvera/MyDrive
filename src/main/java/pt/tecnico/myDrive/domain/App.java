@@ -11,8 +11,30 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 public class App extends App_Base {
 
-  public App(String name, Directory parent, Integer id, User owner) {
-    init(name, parent, id, owner);
+  /** Placeholder for FenixFramework */
+  protected App () {
+    super();
+  }
+
+  private App(AppBuilder appBuilder){
+    super.init(appBuilder);
+  }
+
+  public static class AppBuilder
+      extends GenericPFBuilder<App, AppBuilder> {
+
+      @Override
+      public AppBuilder getThis() { return this; }
+
+      @Override
+      public App build() {
+        validate();
+        return new App(getThis());
+      }
+
+      public static AppBuilder create() {
+        return new AppBuilder();
+      }
   }
 
   /**

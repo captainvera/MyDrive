@@ -5,12 +5,30 @@ import pt.tecnico.myDrive.domain.User;
 
 public class RootDirectory extends RootDirectory_Base {
 
-    public RootDirectory() {
-        super();
-    }
+  /** Placeholder for FenixFramework */
+  public RootDirectory() {
+    super();
+  }
 
-  public RootDirectory(String name, Directory parent, Integer id, User owner){
-    init(name, parent, id, owner);
+  public RootDirectory(RootDirectoryBuilder rootDirectoryBuilder) {
+    super.init(rootDirectoryBuilder);
+  }
+
+  public static class RootDirectoryBuilder
+      extends GenericDirectoryBuilder<RootDirectory, RootDirectoryBuilder> {
+
+      @Override
+      public RootDirectoryBuilder getThis() { return this; }
+
+      @Override
+      public RootDirectory build() {
+        validate();
+        return new RootDirectory(getThis());
+      }
+
+      public static RootDirectoryBuilder create() {
+        return new RootDirectoryBuilder();
+      }
   }
 
   /**

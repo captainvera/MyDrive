@@ -9,6 +9,7 @@ import pt.tecnico.myDrive.domain.PlainFile;
 
 import org.jdom2.Element;
 import org.jdom2.Document;
+
 import java.io.UnsupportedEncodingException;
 
 import pt.tecnico.myDrive.visitors.XMLExporterVisitor;
@@ -17,10 +18,12 @@ import pt.tecnico.myDrive.visitors.DirectoryVisitor;
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
 
 import pt.ist.fenixframework.FenixFramework;
+
 import org.joda.time.DateTime;
 
 import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.*;
+
 import java.lang.reflect.InvocationTargetException;
 
 import java.util.ArrayList;
@@ -136,11 +139,7 @@ public class FileSystem extends FileSystem_Base {
     _rootUser = createRootUser();
 
     log.trace("Creating root directory");
-    setIdCounter(getIdCounter()+1);
-    _rootDirectory = new RootDirectory("/",null,getIdCounter(),_rootUser);
-    addFiles(_rootDirectory);
-
-    _rootDirectory.setParent(_rootDirectory);
+    _rootDirectory = createRootDirectory();
 
     log.trace("Creating home directory");
     Directory homeDir = createDirectory("home",_rootDirectory,_rootUser);
@@ -269,58 +268,97 @@ public class FileSystem extends FileSystem_Base {
     return user;
   }
 
+  // TODO: Refactor methods below
+
   /**
    * Creates Root User
    * It's home directory isn't created here to avoid conflicts in FileSystem init
    */
 
   public User createRootUser() {
-    User user = new User();
-    user.setFileSystem(this);
-    user.setUsername("root");
-    user.setPassword("***");
-    user.setUmask("");
-    user.setName("Super User");
+    User user =
+      User.UserBuilder.create()
+      .withFileSystem(this)
+      .withUsername("root")
+      .withName("Super User")
+      .withPassword("***")
+      .withUmask("") // TODO
+      .build();
 
-    addUsers(user);
-
+    System.out.println("Size: " + getUsersSet().size());
     return user;
+  }
+
+  public Directory createRootDirectory() {
+    // TODO: Permissions
+
+    RootDirectory rd =
+      RootDirectory.RootDirectoryBuilder.create()
+      .withId(getIdCounter())
+      .withName("/")
+      .withOwner(_rootUser)
+      .withFileSystem(this)
+      .build();
+
+    return rd;
   }
 
   /**
    * ------------------------------------------------------------
-   * File creation and deletion methods. Permissions should be checked here
+   * File creation and deletion methods.
+   * TODO: Permissions should be checked here
    */
 
   private Directory createDirectory(String name, Directory parent, User owner) {
-    Directory dir;
     setIdCounter(getIdCounter()+1);
-    dir = new Directory(name,parent,getIdCounter(),owner);
-    addFiles(dir);
+    Directory dir =
+      Directory.DirectoryBuilder.create()
+      .withId(getIdCounter())
+      .withOwner(owner)
+      .withParent(parent)
+      .withName(name)
+      .withFileSystem(this)
+      .build();
+
     return dir;
   }
 
   private PlainFile createPlainFile(String name, Directory parent, User owner) {
-    PlainFile pf;
     setIdCounter(getIdCounter()+1);
-    pf = new PlainFile(name,parent,getIdCounter(),owner);
-    addFiles(pf);
+    PlainFile pf =
+      PlainFile.PFBuilder.create()
+      .withId(getIdCounter())
+      .withOwner(owner)
+      .withParent(parent)
+      .withName(name)
+      .withFileSystem(this)
+      .build();
     return pf;
   }
 
   private App createApp(String name, Directory parent, User owner) {
-    App app;
     setIdCounter(getIdCounter()+1);
-    app = new App(name,parent,getIdCounter(),owner);
-    addFiles(app);
+    App app =
+      App.AppBuilder.create()
+      .withId(getIdCounter())
+      .withOwner(owner)
+      .withParent(parent)
+      .withName(name)
+      .withFileSystem(this)
+      .build();
     return app;
   }
 
   private Link createLink(String name, Directory parent, User owner) {
-    Link link;
     setIdCounter(getIdCounter()+1);
-    link = new Link(name,parent,getIdCounter(),owner);
-    addFiles(link);
+    Link link =
+      Link.LinkBuilder.create()
+      .withId(getIdCounter())
+      .withOwner(owner)
+      .withParent(parent)
+      .withName(name)
+      .withFileSystem(this)
+      .build();
     return link;
   }
 
@@ -457,14 +495,38 @@ public class FileSystem extends FileSystem_Base {
   }
 
   /**
-   * List file content from a given path
+   * @param path
+   * @return A string containing a simple list of files
    *
+   * @throws IllegalAccessException
+   * @throws FileUnknownException
+   * @throws NotADirectoryException
+   * @throws NoSuchMethodException
+   * @throws InvocationTargetException
    */
   public String listFileByPathSimple(String path) throws IllegalAccessException, FileUnknownException, NotADirectoryException,
          NoSuchMethodException, InvocationTargetException {
            DirectoryVisitor dv = new DirectoryVisitor();
            Directory d = getFileByPath(path).accept(dv);
            return d.listFilesSimple();
+  }
+
+
+  /**
+   * @param path
+   * @return A string containing a list of files with all of their properties.
+   *
+   * @throws IllegalAccessException
+   * @throws FileUnknownException
+   * @throws NotADirectoryException
+   * @throws NoSuchMethodException
+   * @throws InvocationTargetException
+   */
+  public String listFileByPathAll(String path) throws IllegalAccessException, FileUnknownException, NotADirectoryException,
+         NoSuchMethodException, InvocationTargetException {
+           DirectoryVisitor dv = new DirectoryVisitor();
+           Directory d = getFileByPath(path).accept(dv);
+           return d.listFilesAll();
   }
 
   /**
