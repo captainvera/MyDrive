@@ -310,8 +310,18 @@ public class FileSystem extends FileSystem_Base {
    * TODO: Permissions should be checked here
    */
 
+  private boolean isValidFilename(String filename){
+    char[] characters = filename.toCharArray();
+
+    for (char c: characters) {
+      if (!Character.isLetter(c) && !Character.isDigit(c)) {
+        return false;
+      }
+    }
+    return true; 
+  }
+
   private Directory createDirectory(String name, Directory parent, User owner) {
-    setIdCounter(getIdCounter()+1);
     Directory dir =
       Directory.DirectoryBuilder.create()
       .withId(getIdCounter())
@@ -371,19 +381,27 @@ public class FileSystem extends FileSystem_Base {
    * Public file creation methods
    */
 
-  public Directory createDirectory(String name) {
+  public Directory createDirectory(String name) throws InvalidFilenameException {
+    if(!isValidFilename(name))
+      throw new InvalidFilenameException(name);
     return createDirectory(name,_currentDirectory,_loggedUser);
   }
 
-  public PlainFile createPlainFile(String name) {
+  public PlainFile createPlainFile(String name) throws InvalidFilenameException  {
+    if(!isValidFilename(name))
+      throw new InvalidFilenameException(name);
     return createPlainFile(name,_currentDirectory,_loggedUser);
   }
 
-  public App createApp(String name) {
+  public App createApp(String name) throws InvalidFilenameException {
+    if(!isValidFilename(name))
+      throw new InvalidFilenameException(name);
     return createApp(name,_currentDirectory,_loggedUser);
   }
 
-  public Link createLink(String name) {
+  public Link createLink(String name) throws InvalidFilenameException {
+    if(!isValidFilename(name))
+      throw new InvalidFilenameException(name);
     return createLink(name,_currentDirectory,_loggedUser);
   }
 

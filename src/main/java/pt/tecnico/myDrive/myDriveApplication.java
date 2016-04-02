@@ -31,7 +31,7 @@ public class myDriveApplication {
     log.trace("Welcome to myDrive");
     try {
       if(args.length > 0) xmlScan(new java.io.File(args[0]));
-      setupDrive();
+      else setupDrive();
       xmlPrint();
     } finally {
       // ensure an orderly shutdown
