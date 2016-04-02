@@ -764,4 +764,13 @@ public class FileSystem extends FileSystem_Base {
     if(username.length() <= 3) throw new InvalidUsernameSizeException(username);
   }
 
+  /**
+   * Verifies if filepath has atmost 1024 characters
+   * @param filepath
+   * @throws InvalidFilepathSizeException
+   */
+  private void checkFilepathSize(String filepath) throws InvalidFilepathSizeException {
+    if(filepath.length() >= 1024) throw new InvalidFilepathSizeException(1024);
+  }
+
 }
