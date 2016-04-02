@@ -187,20 +187,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   /**
-   * Verifies if a username only contains letters and digits
-   */
-  private Boolean isValidUsername(String username) {
-    char[] characters = username.toCharArray();
-
-    for (char c: characters) {
-      if (!Character.isLetter(c) && !Character.isDigit(c)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
    * Searches Users Set by username (since username is unique) to find a specified user.
    * Returns null if no user is found. Does not throw exception here
    */
@@ -232,13 +218,7 @@ public class FileSystem extends FileSystem_Base {
   public User createUser(String username, String name, String password) throws UserExistsException, InvalidUsernameException {
     User user = new User();
 
-    /**
-     * We must check if the username is a valid one: only letters and decimals
-     * Must also heck if it already exists, throw exception in such case
-     */
-
-    if (!isValidUsername(username))
-      throw new InvalidUsernameException(username);
+    checkUsername(username);
 
     if (userExists(username))
       throw new UserExistsException(username);
@@ -310,17 +290,6 @@ public class FileSystem extends FileSystem_Base {
    * TODO: Permissions should be checked here
    */
 
-  private boolean isValidFilename(String filename){
-    char[] characters = filename.toCharArray();
-
-    for (char c: characters) {
-      if (!Character.isLetter(c) && !Character.isDigit(c)) {
-        return false;
-      }
-    }
-    return true; 
-  }
-
   private Directory createDirectory(String name, Directory parent, User owner) {
     Directory dir =
       Directory.DirectoryBuilder.create()
@@ -382,26 +351,22 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public Directory createDirectory(String name) throws InvalidFilenameException {
-    if(!isValidFilename(name))
-      throw new InvalidFilenameException(name);
+    checkFilename(name);
     return createDirectory(name,_currentDirectory,_loggedUser);
   }
 
   public PlainFile createPlainFile(String name) throws InvalidFilenameException  {
-    if(!isValidFilename(name))
-      throw new InvalidFilenameException(name);
+    checkFilename(name);
     return createPlainFile(name,_currentDirectory,_loggedUser);
   }
 
   public App createApp(String name) throws InvalidFilenameException {
-    if(!isValidFilename(name))
-      throw new InvalidFilenameException(name);
+    checkFilename(name);
     return createApp(name,_currentDirectory,_loggedUser);
   }
 
   public Link createLink(String name) throws InvalidFilenameException {
-    if(!isValidFilename(name))
-      throw new InvalidFilenameException(name);
+    checkFilename(name);
     return createLink(name,_currentDirectory,_loggedUser);
   }
 
@@ -755,5 +720,39 @@ public class FileSystem extends FileSystem_Base {
     }
   }
 
-}
+  /* ****************************************************************************
+   * |                            Checking methods                              |
+   * ****************************************************************************
+   */
 
+  /**
+   * Verifies if username only contains letters and digits
+   * @param username
+   * @throws InvalidUsernameException
+   */
+  private void checkUsername(String username) throws InvalidUsernameException {
+    char[] characters = username.toCharArray();
+
+    for (char c: characters) {
+      if (!Character.isLetter(c) && !Character.isDigit(c)) {
+        throw new InvalidUsernameException(username);
+      }
+    }
+  }
+
+  /**
+   * Verifies if filename only contains letters and digits
+   * @param filename
+   * @return
+   */
+  private void checkFilename(String filename) throws InvalidFilenameException {
+    char[] characters = filename.toCharArray();
+
+    for (char c: characters) {
+      if (!Character.isLetter(c) && !Character.isDigit(c)) {
+        throw new InvalidFilenameException(filename);
+      }
+    }
+  }
+
+}
