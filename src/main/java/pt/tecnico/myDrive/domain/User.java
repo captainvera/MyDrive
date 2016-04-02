@@ -138,25 +138,4 @@ public class User extends User_Base {
 
     return user;
   }
-
-
-  public void xmlImport(Element userElement) throws ImportDocumentException{
-    try{
-
-      Element name = userElement.getChild("name");
-      if(name != null) setName(new String(name.getText().getBytes("UTF-8")));
-      else setName(getUsername());
-
-      Element pwd = userElement.getChild("password");
-      if (pwd != null) setPassword(new String(pwd.getText().getBytes("UTF-8")));
-      else setPassword(getUsername());
-
-      Element umask = userElement.getChild("mask");
-      if(umask != null) setUmask(new String(umask.getText().getBytes("UTF-8")));
-      else setUmask("rwxd----");
-
-    } catch(UnsupportedEncodingException e){
-      throw new ImportDocumentException(getUsername());
-    }
-  }
 }
