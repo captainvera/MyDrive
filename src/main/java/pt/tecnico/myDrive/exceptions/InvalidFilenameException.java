@@ -1,23 +1,23 @@
 package pt.tecnico.myDrive.exceptions;
 
 /**
- * This exception is thrown whenever an attempt is made to perform an operation
- * that requires a non existent user, but the user already exists.
+ * This exception is thrown whenever an attempt is made to perform a creation
+ * of a user with an username of invalid length.
  */
 public class InvalidFilenameException extends Exception {
 
-  /** The user's username. */
+  /** The file's name. */
   private final String _filename;
 
   /**
-   * @param username the user's username.
+   * @param file
    */
   public InvalidFilenameException(String filename) {
     _filename = filename;
   }
 
   /**
-   * @return Returns the user's username.
+   * @return Returns the file's name.
    */
   public String getFilename() { return _filename; }
 
