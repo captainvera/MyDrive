@@ -6,26 +6,26 @@ package pt.tecnico.myDrive.exceptions;
  */
 public class InvalidUsernameSizeException extends Exception {
 
-  /** The user's username. */
-  private final String _username;
+  /** The minimum valid username size. */
+  private final int _minSize;
 
   /**
-   * @param username the user's username.
+   * @param minSize
    */
-  public InvalidUsernameSizeException(String username) {
-    _username = username;
+  public InvalidUsernameSizeException(int minSize) {
+    _minSize = minSize;
   }
 
   /**
-   * @return Returns the user's username.
+   * @return Returns minimum valid username size.
    */
-  public String getUsername() { return _username; }
+  public int getMinSize() { return _minSize; }
 
   /**
    * @return Returns the detailed message of this throwable.
    */
   @Override
   public String getMessage() {
-    return "Username '" + getUsername() + "' is invalid";
+    return "An username must have atleast '" + getMinSize() + "' characters";
   }
 }

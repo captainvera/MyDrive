@@ -761,7 +761,7 @@ public class FileSystem extends FileSystem_Base {
    * @throws InvalidUsernameSizeException
    */
   private void checkUsernameSize(String username) throws InvalidUsernameSizeException {
-    if(username.length() <= 3) throw new InvalidUsernameSizeException(username);
+    if(username.length() <= 3) throw new InvalidUsernameSizeException(3);
   }
 
   /**
