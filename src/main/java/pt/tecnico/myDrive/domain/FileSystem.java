@@ -151,20 +151,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   /**
-   * Verifies if the file f is a directory and gets the corresponding directory
-   * @return Directory corresponding to f argument, or null if its not a Directory
-   */
-  public Directory assertDirectory(File f) throws NotADirectoryException {
-    DirectoryVisitor dv = new DirectoryVisitor();
-    Directory dir = f.accept(dv);
-    if (dir == null) {
-      throw new NotADirectoryException(f.getName());
-    }
-    return dir;
-  }
-
-
-  /**
    * Logins a user into the filesystem, changing current directory to home directory
    */
   private void login(User user, String password) {
@@ -187,6 +173,11 @@ public class FileSystem extends FileSystem_Base {
     login(getUserByUsername(username), password);
   }
 
+  /**
+   *
+   * @param user
+   * @return True if user is the root user
+   */
   private boolean isRoot(User user) {
     return user == _rootUser;
   }
@@ -275,9 +266,12 @@ public class FileSystem extends FileSystem_Base {
     return user;
   }
 
-  public Directory createRootDirectory() {
-    // TODO: Permissions
+  /* ****************************************************************************
+   * |                 FileSystem's File creation methods                       |
+   * ****************************************************************************
+   */
 
+  public Directory createRootDirectory() {
     RootDirectory rd =
       RootDirectory.RootDirectoryBuilder.create()
       .withId(getIdCounter())
@@ -289,13 +283,8 @@ public class FileSystem extends FileSystem_Base {
     return rd;
   }
 
-  /**
-   * ------------------------------------------------------------
-   * File creation and deletion methods.
-   * TODO: Permissions should be checked here
-   */
-
   private Directory createDirectory(String name, Directory parent, User owner) {
+    setIdCounter(getIdCounter()+1);
     Directory dir =
       Directory.DirectoryBuilder.create()
       .withId(getIdCounter())
@@ -351,8 +340,9 @@ public class FileSystem extends FileSystem_Base {
     f.remove();
   }
 
-  /**
-   * Public file creation methods
+  /* ****************************************************************************
+   * |                     Public File creation methods                         |
+   * ****************************************************************************
    */
 
   public Directory createDirectory(String name)
@@ -406,6 +396,7 @@ public class FileSystem extends FileSystem_Base {
 
     return null;
   }
+
   /**
    * Changes current working directory
    */
@@ -453,9 +444,9 @@ public class FileSystem extends FileSystem_Base {
     return file.execute();
   }
 
-  /**
-   * ------------------------------------------------------
-   * Operations by path
+  /* ****************************************************************************
+   * |                          Operations by Path                              |
+   * ****************************************************************************
    */
 
   /**
@@ -857,6 +848,24 @@ public class FileSystem extends FileSystem_Base {
       return file.getUserPermission();
     else
       return file.getOthersPermission();
+  }
+
+  /* ****************************************************************************
+   * |                           Asserting methods                              |
+   * ****************************************************************************
+   */
+
+  /**
+   * Verifies if the file f is a directory and gets the corresponding directory
+   * @return Directory corresponding to f argument, or null if its not a Directory
+   */
+  public Directory assertDirectory(File f) throws NotADirectoryException {
+    DirectoryVisitor dv = new DirectoryVisitor();
+    Directory dir = f.accept(dv);
+    if (dir == null) {
+      throw new NotADirectoryException(f.getName());
+    }
+    return dir;
   }
 
 }
