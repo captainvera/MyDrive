@@ -222,7 +222,7 @@ public class FileSystem extends FileSystem_Base {
     user.setFileSystem(this);
     user.setUsername(username);
     user.setPassword(password);
-    user.setUmask("");
+    user.setUmask("rwxd----");
     user.setName(name);
 
     /**
@@ -259,7 +259,7 @@ public class FileSystem extends FileSystem_Base {
       .withUsername("root")
       .withName("Super User")
       .withPassword("***")
-      .withUmask("") // TODO
+      .withUmask("rwxdr-x-")
       .build();
 
     System.out.println("Size: " + getUsersSet().size());

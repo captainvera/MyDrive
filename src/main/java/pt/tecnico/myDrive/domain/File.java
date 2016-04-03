@@ -60,6 +60,10 @@ public abstract class File extends File_Base {
 
       public T withOwner(User owner) {
         _owner = owner;
+
+        // File initial permissions are the ones defined in the owner's umask
+        _userPermission = owner.getUmask().substring(0, 3);
+        _othersPermission = owner.getUmask().substring(4, 7);
         return getThis();
       }
 
@@ -75,16 +79,6 @@ public abstract class File extends File_Base {
 
       public T withFileSystem(FileSystem fileSystem) {
         _fileSystem = fileSystem;
-        return getThis();
-      }
-
-      public T withUserPermission(String userPermission) {
-        _userPermission = userPermission;
-        return getThis();
-      }
-
-      public T withOthersPermission(String othersPermission) {
-        _othersPermission = othersPermission;
         return getThis();
       }
 
