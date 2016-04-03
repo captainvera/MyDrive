@@ -142,7 +142,7 @@ public class myDriveApplication {
     try {
       Document document = (Document)builder.build(file);
       fs.xmlImport(document.getRootElement());
-    } catch (JDOMException | IOException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
