@@ -4,6 +4,11 @@ class FileSystem {
   Integer idCounter;
 }
 
+class Login {
+  DateTime expirationDate;
+  Long token;
+}
+
 class User {
   String username;
   String password;
@@ -52,6 +57,20 @@ relation FileSystemContainsFiles {
   FileSystem playsRole fileSystem;
   File playsRole files {
     multiplicity 1..*;
+  }
+}
+
+relation LoginHasUser {
+  Login playsRole login;
+  User playsRole user {
+    multiplicity 1;
+  }
+}
+
+relation LoginHasCurrentDirectory {
+  Login playsRole login;
+  Directory playsRole currentDirectory {
+    multiplicity 1;
   }
 }
 
