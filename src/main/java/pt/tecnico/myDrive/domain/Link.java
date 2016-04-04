@@ -16,25 +16,8 @@ public class Link extends Link_Base {
     super();
   }
 
-  private Link(LinkBuilder linkBuilder){
-    super.init(linkBuilder);
-  }
-
-  public static class LinkBuilder
-      extends GenericPFBuilder<Link, LinkBuilder> {
-
-      @Override
-      public LinkBuilder getThis() { return this; }
-
-      @Override
-      public Link build() {
-        validate();
-        return new Link(getThis());
-      }
-
-      public static LinkBuilder create() {
-        return new LinkBuilder();
-      }
+  public Link(Integer id, String name, Directory parent, User owner) {
+    init(id, name, parent, owner);
   }
 
   /**

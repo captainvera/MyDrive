@@ -16,57 +16,18 @@ public class PlainFile extends PlainFile_Base {
     super();
   }
 
-  private PlainFile(GenericPFBuilder GenericPFBuilder){
-    init(GenericPFBuilder);
+  public PlainFile(Integer id, String name, Directory parent, User owner) {
+    this(id, name, parent, owner, "");
   }
 
-  protected void init(GenericPFBuilder GenericPFBuilder) {
-    super.init(GenericPFBuilder);
-    setData(GenericPFBuilder._content);
+  public PlainFile(Integer id, String name, Directory parent, User owner, String data) {
+    init(id, name, parent, owner, data);
   }
 
-  /**
-   * Generic abstract plain file builder.
-   * All PlainFile's direct subclasses will inherit from this builder.
-   */
-  public abstract static class GenericPFBuilder
-    <P extends PlainFile, T extends GenericPFBuilder<P,T>>
-      extends File.GenericFileBuilder<P,T> {
-
-      private String _content;
-
-      public T withContent(String content){
-        _content = content;
-        return getThis();
-      }
-
-      @Override
-      public void validate() {
-        // TODO
-      }
-    }
-
-  /**
-   * Concrete plain file builder.
-   * Since plain file is not abstract, thereby instanciable, it is 'buildable'.
-   */
-  public static class PFBuilder
-      extends GenericPFBuilder<PlainFile, PFBuilder> {
-
-      @Override
-      public PFBuilder getThis() { return this; }
-
-      @Override
-      public PlainFile build() {
-        validate();
-        return new PlainFile(getThis());
-      }
-
-      public static PFBuilder create() {
-        return new PFBuilder();
-      }
+  protected void init(Integer id, String name, Directory parent, User owner, String data) {
+    super.init(id, name, parent, owner);
+    setData(data);
   }
-
 
   /**
    * TEMPORARY

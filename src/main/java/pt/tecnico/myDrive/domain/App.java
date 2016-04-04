@@ -16,32 +16,15 @@ public class App extends App_Base {
     super();
   }
 
-  private App(AppBuilder appBuilder){
-    super.init(appBuilder);
-  }
-
-  public static class AppBuilder
-      extends GenericPFBuilder<App, AppBuilder> {
-
-      @Override
-      public AppBuilder getThis() { return this; }
-
-      @Override
-      public App build() {
-        validate();
-        return new App(getThis());
-      }
-
-      public static AppBuilder create() {
-        return new AppBuilder();
-      }
+  public App(Integer id, String name, Directory parent, User owner) {
+    init(id, name, parent, owner);
   }
 
   /**
    * TEMPORARY
    */
   @Override
-  public int getSize(){
+  public int getSize() {
     return 0;
   }
 

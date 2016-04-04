@@ -22,46 +22,8 @@ public class Directory extends Directory_Base {
     super();
   }
 
-  private Directory(DirectoryBuilder directoryBuilder){
-    super.init(directoryBuilder);
-  }
-
-  /**
-   * Generic abstract directory builder.
-   * All Directorie's direct subclasses will inherit from this builder.
-   */
-  public abstract static class GenericDirectoryBuilder
-    <P extends Directory, T extends GenericDirectoryBuilder<P, T>>
-      extends File.GenericFileBuilder<P,T> {
-
-      @Override
-      public void validate() {
-        // TODO
-      }
-
-    }
-
-  /**
-   * Concrete directory builder.
-   * Since directory is not abstract, thereby instanciable, it is 'buildable'.
-   */
-  public static class DirectoryBuilder
-      extends GenericDirectoryBuilder<Directory, DirectoryBuilder> {
-
-      @Override
-      public DirectoryBuilder getThis() {
-        return this;
-      }
-
-      @Override
-      public Directory build() {
-        validate();
-        return new Directory(getThis());
-      }
-
-      public static DirectoryBuilder create () {
-        return new DirectoryBuilder();
-      }
+  public Directory(Integer id, String name, Directory parent, User owner) {
+    init(id, name, parent, owner);
   }
 
   /**

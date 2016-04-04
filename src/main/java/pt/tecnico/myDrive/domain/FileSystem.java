@@ -206,24 +206,36 @@ public class FileSystem extends FileSystem_Base {
     return userExists(user.getName());
   }
 
+
+  /* ****************************************************************************
+   * |                 FileSystem's Users creation methods                       |
+   * ****************************************************************************
+   */
+
+  /**
+   * Creates Root User
+   * Its home directory isn't created here to avoid conflicts in FileSystem init
+   */
+  public User createRootUser() {
+    User user = new User("root", "Super User", "***", "rwxdr-x-");
+    addUsers(user);
+    return user;
+  }
+
   /**
    * Creates a new user, checking for username constraints
    * Also creates its home directory
    * @return the created User
    */
-  public User createUser(String username, String name, String password) throws UserExistsException, InvalidUsernameException {
-    User user = new User();
+  public User createUser(String username, String name, String password)
+    throws UserExistsException, InvalidUsernameException {
 
     checkUsername(username);
 
     if (userExists(username))
       throw new UserExistsException(username);
 
-    user.setFileSystem(this);
-    user.setUsername(username);
-    user.setPassword(password);
-    user.setUmask("rwxd----");
-    user.setName(name);
+    User user = new User(username, name, password, "rwxd----");
 
     /**
      * TODO: Solve error throwing here. Exceptions shouldn't happen;
@@ -245,94 +257,43 @@ public class FileSystem extends FileSystem_Base {
     return user;
   }
 
-  // TODO: Refactor methods below
-
-  /**
-   * Creates Root User
-   * It's home directory isn't created here to avoid conflicts in FileSystem init
-   */
-
-  public User createRootUser() {
-    User user =
-      User.UserBuilder.create()
-      .withFileSystem(this)
-      .withUsername("root")
-      .withName("Super User")
-      .withPassword("***")
-      .withUmask("rwxdr-x-")
-      .build();
-
-    System.out.println("Size: " + getUsersSet().size());
-    return user;
-  }
-
   /* ****************************************************************************
-   * |                 FileSystem's File creation methods                       |
+   * |                 FileSystem's Files creation methods                       |
    * ****************************************************************************
    */
 
-  public Directory createRootDirectory() {
-    RootDirectory rd =
-      RootDirectory.RootDirectoryBuilder.create()
-      .withId(getIdCounter())
-      .withName("/")
-      .withOwner(_rootUser)
-      .withFileSystem(this)
-      .build();
+  public int incrementIdCounter() {
+    setIdCounter(getIdCounter()+1);
+    return getIdCounter();
+  }
 
+  public Directory createRootDirectory() {
+    RootDirectory rd = new RootDirectory(0, "/", _rootUser);
+    addFiles(rd);
     return rd;
   }
 
   private Directory createDirectory(String name, Directory parent, User owner) {
-    setIdCounter(getIdCounter()+1);
-    Directory dir =
-      Directory.DirectoryBuilder.create()
-      .withId(getIdCounter())
-      .withOwner(owner)
-      .withParent(parent)
-      .withName(name)
-      .withFileSystem(this)
-      .build();
-
+    Directory dir = new Directory(incrementIdCounter(), name, parent, owner);
+    addFiles(dir);
     return dir;
   }
 
   private PlainFile createPlainFile(String name, Directory parent, User owner) {
-    setIdCounter(getIdCounter()+1);
-    PlainFile pf =
-      PlainFile.PFBuilder.create()
-      .withId(getIdCounter())
-      .withOwner(owner)
-      .withParent(parent)
-      .withName(name)
-      .withFileSystem(this)
-      .build();
+    PlainFile pf = new PlainFile(incrementIdCounter(), name, parent, owner);
+    addFiles(pf);
     return pf;
   }
 
   private App createApp(String name, Directory parent, User owner) {
-    setIdCounter(getIdCounter()+1);
-    App app =
-      App.AppBuilder.create()
-      .withId(getIdCounter())
-      .withOwner(owner)
-      .withParent(parent)
-      .withName(name)
-      .withFileSystem(this)
-      .build();
+    App app = new App(incrementIdCounter(), name, parent, owner);
+    addFiles(app);
     return app;
   }
 
   private Link createLink(String name, Directory parent, User owner) {
-    setIdCounter(getIdCounter()+1);
-    Link link =
-      Link.LinkBuilder.create()
-      .withId(getIdCounter())
-      .withOwner(owner)
-      .withParent(parent)
-      .withName(name)
-      .withFileSystem(this)
-      .build();
+    Link link = new Link(incrementIdCounter(), name, parent, owner);
+    addFiles(link);
     return link;
   }
 
@@ -843,7 +804,7 @@ public class FileSystem extends FileSystem_Base {
 
   private String getPermissions(User user, File file) {
     if (isRoot(user))
-      return "rwdx";
+      return "rwxd";
     else if (file.getOwner() == user)
       return file.getUserPermission();
     else

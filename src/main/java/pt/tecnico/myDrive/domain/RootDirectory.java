@@ -10,25 +10,8 @@ public class RootDirectory extends RootDirectory_Base {
     super();
   }
 
-  public RootDirectory(RootDirectoryBuilder rootDirectoryBuilder) {
-    super.init(rootDirectoryBuilder);
-  }
-
-  public static class RootDirectoryBuilder
-      extends GenericDirectoryBuilder<RootDirectory, RootDirectoryBuilder> {
-
-      @Override
-      public RootDirectoryBuilder getThis() { return this; }
-
-      @Override
-      public RootDirectory build() {
-        validate();
-        return new RootDirectory(getThis());
-      }
-
-      public static RootDirectoryBuilder create() {
-        return new RootDirectoryBuilder();
-      }
+  public RootDirectory(Integer id, String name, User owner) {
+    init(id, name, this, owner);
   }
 
   /**
