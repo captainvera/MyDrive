@@ -51,6 +51,7 @@ public class FileSystem extends FileSystem_Base {
 
   private User _loggedUser;
   private Directory _currentDirectory;
+  private Login _login;
 
   private FileSystem() {
     log.trace("Constructing new FileSystem");
@@ -87,8 +88,11 @@ public class FileSystem extends FileSystem_Base {
   private void cleanup() {
     for (File f: getFilesSet())
       f.remove();
+    for (Login login: getLoginsSet())
+    	login.remove();
     for (User u: getUsersSet())
       u.remove();
+    
   }
 
   /**
@@ -153,24 +157,51 @@ public class FileSystem extends FileSystem_Base {
   /**
    * Logins a user into the filesystem, changing current directory to home directory
    */
-  private void login(User user, String password) {
+  private long login(User user, String password) throws WrongPasswordException {
     if (user.getPassword().equals(password)) {
-      _loggedUser = user;
-      _currentDirectory = _loggedUser.getHomeDirectory();
+    	cullLogins();
+    	_loggedUser = user;
+    	_currentDirectory = _loggedUser.getHomeDirectory();
+    	_login = new Login(user, _currentDirectory, new DateTime().plusHours(2));
+    	addLogins(_login);     
     } else {
-      /**
-       * TODO: Should throw WrongPasswordException
-       */
+      // if password was incorrect;
       System.out.println("-- Wrong password. Login aborted");
+      throw new WrongPasswordException(user.getUsername());
     }
+    return _login.getToken();
   }
 
-  public void login(String username, String password) throws UserUnknownException, WrongPasswordException {
+  public long login(String username, String password) throws UserUnknownException, WrongPasswordException {
     log.trace("Logging in");
     if (!userExists(username)) {
       throw new UserUnknownException(username);
     }
-    login(getUserByUsername(username), password);
+    log.debug("Chinese2");
+    return login(getUserByUsername(username), password);
+  }
+  
+  /**
+   * Verify Token.
+   */
+  private boolean verifyToken(long token){
+  	for (Login login: this.getLoginsSet()){
+  		if(login.getToken().equals(token) && new DateTime().compareTo(login.getExpirationDate()) < 0)
+  			return true;
+  	}
+  	return false;
+  	
+  }
+  
+  /**
+   * Culls invalid Logins.
+   */
+  private void cullLogins(){
+  	for (Login login: this.getLoginsSet()){
+  		if(new DateTime().compareTo(login.getExpirationDate()) > 0)
+  			login.remove();
+  	}
+
   }
 
   /**
@@ -193,6 +224,17 @@ public class FileSystem extends FileSystem_Base {
       }
     }
     return null;
+  }
+  /**
+   * Searches Logins Set by User's username (since username is unique) to find a specific Login.
+   * Returns null if no login is found.
+   */
+  private Login getLoginByUser(User user){
+  	for(Login login: this.getLoginsSet()){
+  		if(login.getUser().equals(user))
+  			return login;
+  	}
+		return null;
   }
 
   /**
@@ -340,7 +382,6 @@ public class FileSystem extends FileSystem_Base {
    * Does not throw exception if Root is not found
    * TODO: Should throw exception
    */
-
   public Directory getRootDirectory() {
     Directory dir;
     DirectoryVisitor dv = new DirectoryVisitor();

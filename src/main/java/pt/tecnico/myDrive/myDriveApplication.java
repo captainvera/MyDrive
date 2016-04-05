@@ -109,8 +109,6 @@ public class myDriveApplication {
       for (File f : fs.getFilesSet())
         System.out.println(f);
 
-      log.debug("Removing every file -- remove from '/'");
-      fs.removeFileByPath("/");
 
       log.debug("Number of files in file system pos-remove: " + fs.getFilesSet().size());
       log.debug("Files pos-remove: ");
