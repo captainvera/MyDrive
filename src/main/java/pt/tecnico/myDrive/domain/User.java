@@ -28,8 +28,23 @@ public class User extends User_Base {
     setHomeDirectory(homeDir);
   }
 
-  // TODO
-  public void remove() { }
+
+  /**
+   * Basic remove implementation for User objects
+   */
+ public void remove() { 
+ 	nullifyRelations();
+ 	deleteDomainObject();
+ }
+ 
+ /**
+  * Nullifies relations, that is, deletes/cancels any relation between this
+  * object and eventual others.
+  */
+ protected void nullifyRelations() {
+   setHomeDirectory(null);
+   setFileSystem(null);
+ }
 
   public Element xmlExport(){
     Element user = new Element("user");
