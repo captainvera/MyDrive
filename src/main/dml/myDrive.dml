@@ -60,6 +60,13 @@ relation FileSystemContainsFiles {
   }
 }
 
+relation FileSystemContainsLogins {
+  FileSystem playsRole fileSystem;
+  Login playsRole logins {
+    multiplicity 1..*;
+  }
+}
+
 relation LoginHasUser {
   Login playsRole login;
   User playsRole user {
@@ -94,5 +101,3 @@ relation DirectoryContainsFiles {
     multiplicity *;
   }
 }
-
-
