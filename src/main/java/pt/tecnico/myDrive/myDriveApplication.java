@@ -38,6 +38,13 @@ public class myDriveApplication {
       FenixFramework.shutdown();
     }
   }
+  
+  @Atomic
+  public static void init(){
+  	log.trace("Initializing: " + FenixFramework.getDomainRoot());
+  	FileSystem.getInstance().cleanup();
+  }
+  
 
   @Atomic
   public static void setupDrive(){
@@ -109,7 +116,7 @@ public class myDriveApplication {
       for (File f : fs.getFilesSet())
         System.out.println(f);
 
-
+      
       log.debug("Number of files in file system pos-remove: " + fs.getFilesSet().size());
       log.debug("Files pos-remove: ");
       for (File f : fs.getFilesSet())

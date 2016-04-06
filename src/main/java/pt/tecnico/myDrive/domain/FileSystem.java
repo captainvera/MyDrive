@@ -85,7 +85,7 @@ public class FileSystem extends FileSystem_Base {
     return new FileSystem();
   }
 
-  private void cleanup() {
+  public void cleanup() {
     for (File f: getFilesSet())
       f.remove();
     for (Login login: getLoginsSet())
