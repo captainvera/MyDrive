@@ -63,7 +63,7 @@ relation FileSystemContainsFiles {
 relation FileSystemContainsLogins {
   FileSystem playsRole fileSystem;
   Login playsRole logins {
-    multiplicity 1..*;
+    multiplicity 0..*;
   }
 }
 
