@@ -16,7 +16,7 @@ import pt.tecnico.myDrive.visitors.XMLExporterVisitor;
 import pt.tecnico.myDrive.visitors.DirectoryVisitor;
 
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
-
+import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.FenixFramework;
 
 import org.joda.time.DateTime;
@@ -93,12 +93,34 @@ public class FileSystem extends FileSystem_Base {
     for (User u: getUsersSet())
     	u.remove();
   }
+  
+  public void cleanupInit() {
+    for (Login login: getLoginsSet())
+      login.remove();
+    System.out.println("Logins deleted.");
+    try{
+    	File file = getFileByPath("/");
+      checkDeletionPermissions(getUserByUsername("root"), file);
+      removeFile (file);
+    }catch (InsufficientPermissionsException | FileUnknownException | NotADirectoryException e){
+    	e.printStackTrace();
+    }
+    System.out.println("Files deleted.");
+    for (User u: getUsersSet()){
+      System.out.println("Got user: " + u.getUsername());
 
+    	if(u.getUsername() != "root")
+    		u.remove();
+    }
+    System.out.println("Users deleted.");
+
+  }
 
   /**
    * Resets the filesystem. Wipes all data stored in it and creates its initial
    * data.
    */
+  @Atomic
   public void reset() {
     cleanup();
     cleanInit();
@@ -183,7 +205,7 @@ public class FileSystem extends FileSystem_Base {
   /**
    * Verify Token. 
    */
-  private boolean verifyToken(long token){
+  public boolean verifyToken(long token){
   	for (Login login: this.getLoginsSet()){
   		if(login.getToken().equals(token) && new DateTime().compareTo(login.getExpirationDate()) < 0){
   			login.extendToken();
