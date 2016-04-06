@@ -14,12 +14,12 @@ public class Login extends Login_Base {
 	/**
 	 * Login constructor, receives logged user, currentDirectory and expiration date.
 	 */
-	public Login(User user, Directory currentDirectory, DateTime validity) {
+	public Login(User user, Directory currentDirectory) {
 		super();
 		setCurrentDirectory(currentDirectory);
 		setUser(user);
-		setExpirationDate(validity);
 		setToken(new BigInteger(64, new Random()).longValue());
+		extendToken();
 	}
   /**
    * Basic remove implementation for Login objects
@@ -36,5 +36,11 @@ public class Login extends Login_Base {
  protected void nullifyRelations() {
    setUser(null);
    setCurrentDirectory(null);
+   setFileSystem(null);
    }
+ 
+public void extendToken() {
+	setExpirationDate(new DateTime().plusHours(2));
+	
+}
 }

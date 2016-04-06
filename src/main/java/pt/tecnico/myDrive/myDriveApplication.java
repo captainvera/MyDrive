@@ -18,6 +18,7 @@ import pt.tecnico.myDrive.domain.User;
 import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.domain.PlainFile;
 import pt.tecnico.myDrive.domain.File;
+import pt.tecnico.myDrive.services.LoginService;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.DomainRoot;
@@ -38,13 +39,13 @@ public class myDriveApplication {
       FenixFramework.shutdown();
     }
   }
-  
+
   @Atomic
   public static void init(){
   	log.trace("Initializing: " + FenixFramework.getDomainRoot());
-  	FileSystem.getInstance().cleanup();
+  	FileSystem.getInstance().reset();
   }
-  
+
 
   @Atomic
   public static void setupDrive(){
@@ -58,9 +59,12 @@ public class myDriveApplication {
     FileSystem fs = FileSystem.getInstance();
 
     try {
-      fs.login("root","***");
+      LoginService login = new LoginService("root","***");
+      login.execute();
+      long token = login.result();
     } catch(Exception e) {
       System.out.println("Couldn't login with root!");
+      e.printStackTrace();
     }
 
     /*
@@ -116,7 +120,7 @@ public class myDriveApplication {
       for (File f : fs.getFilesSet())
         System.out.println(f);
 
-      
+
       log.debug("Number of files in file system pos-remove: " + fs.getFilesSet().size());
       log.debug("Files pos-remove: ");
       for (File f : fs.getFilesSet())

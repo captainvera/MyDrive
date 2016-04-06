@@ -85,15 +85,15 @@ public class FileSystem extends FileSystem_Base {
     return new FileSystem();
   }
 
-  public void cleanup() {
-    for (File f: getFilesSet())
-      f.remove();
+  protected void cleanup() {
     for (Login login: getLoginsSet())
-    	login.remove();
+      login.remove();
+    for (File file: getFilesSet())
+    	file.remove();
     for (User u: getUsersSet())
-      u.remove();
-    
+    	u.remove();
   }
+
 
   /**
    * Resets the filesystem. Wipes all data stored in it and creates its initial
@@ -162,8 +162,8 @@ public class FileSystem extends FileSystem_Base {
     	cullLogins();
     	_loggedUser = user;
     	_currentDirectory = _loggedUser.getHomeDirectory();
-    	_login = new Login(user, _currentDirectory, new DateTime().plusHours(2));
-    	addLogins(_login);     
+    	_login = new Login(user, _currentDirectory);
+    	addLogins(_login);
     } else {
       // if password was incorrect;
       System.out.println("-- Wrong password. Login aborted");
@@ -177,22 +177,22 @@ public class FileSystem extends FileSystem_Base {
     if (!userExists(username)) {
       throw new UserUnknownException(username);
     }
-    log.debug("Chinese2");
     return login(getUserByUsername(username), password);
   }
-  
+
   /**
-   * Verify Token.
+   * Verify Token. 
    */
   private boolean verifyToken(long token){
   	for (Login login: this.getLoginsSet()){
-  		if(login.getToken().equals(token) && new DateTime().compareTo(login.getExpirationDate()) < 0)
+  		if(login.getToken().equals(token) && new DateTime().compareTo(login.getExpirationDate()) < 0){
+  			login.extendToken();
   			return true;
+  		}
   	}
   	return false;
-  	
   }
-  
+
   /**
    * Culls invalid Logins.
    */
