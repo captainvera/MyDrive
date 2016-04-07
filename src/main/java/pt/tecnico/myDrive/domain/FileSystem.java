@@ -84,36 +84,21 @@ public class FileSystem extends FileSystem_Base {
     log.trace("Returning new FileSystem instance");
     return new FileSystem();
   }
-
-  protected void cleanup() {
-    for (Login login: getLoginsSet())
-      login.remove();
-    for (File file: getFilesSet())
-    	file.remove();
-    for (User u: getUsersSet())
-    	u.remove();
-  }
   
-  public void cleanupInit() {
+  public void cleanup() {
+  	_loggedUser = getUserByUsername("root");
     for (Login login: getLoginsSet())
       login.remove();
-    System.out.println("Logins deleted.");
     try{
     	File file = getFileByPath("/");
-      checkDeletionPermissions(getUserByUsername("root"), file);
-      removeFile (file);
+      removeFile(file);
+      getFilesSet().clear();
     }catch (InsufficientPermissionsException | FileUnknownException | NotADirectoryException e){
     	e.printStackTrace();
     }
-    System.out.println("Files deleted.");
     for (User u: getUsersSet()){
-      System.out.println("Got user: " + u.getUsername());
-
-    	if(u.getUsername() != "root")
     		u.remove();
     }
-    System.out.println("Users deleted.");
-
   }
 
   /**
@@ -305,6 +290,7 @@ public class FileSystem extends FileSystem_Base {
      * TODO: Solve error throwing here. Exceptions shouldn't happen;
      * Should be handled elsewhere
      */
+    log.trace("Adding user " + username);
     try {
       Directory home = assertDirectory(_rootDirectory.getFileByName("home"));
       Directory userHome = createDirectory(username, home, user);
@@ -314,6 +300,7 @@ public class FileSystem extends FileSystem_Base {
     } catch(NotADirectoryException e) {
       System.out.println(e.getMessage());
     }
+    
 
     log.trace("Added user " + username);
     addUsers(user);
@@ -691,6 +678,7 @@ public class FileSystem extends FileSystem_Base {
    */
   public Boolean isFileExportValid(File f) {
     DirectoryVisitor isDirectory = new DirectoryVisitor();
+    
     if(f.getOwner().getUsername().equals("root")){
       Directory dir = f.accept(isDirectory);
       if(dir != null){
@@ -713,7 +701,9 @@ public class FileSystem extends FileSystem_Base {
         mydrive.addContent(u.xmlExport());
     }
     for (File f: getFilesSet()){
+
       if(isFileExportValid(f)) mydrive.addContent(f.accept(xml));
+
     }
     return doc;
   }
