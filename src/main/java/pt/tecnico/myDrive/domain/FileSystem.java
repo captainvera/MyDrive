@@ -213,6 +213,10 @@ public class FileSystem extends FileSystem_Base {
   	for (Login login: this.getLoginsSet()){
   		if(login.verifyToken(token) && login.notExpired()){
   			login.extendToken();
+  			_login.setCurrentDirectory(_currentDirectory);
+  			_login = login;
+  			_loggedUser = login.getUser();
+  			_currentDirectory = login.getCurrentDirectory();
   			return true;
   		}
   	}
