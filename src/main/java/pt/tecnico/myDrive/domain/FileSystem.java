@@ -168,7 +168,12 @@ public class FileSystem extends FileSystem_Base {
     	_loggedUser = user;
     	_currentDirectory = _loggedUser.getHomeDirectory();
     	Long tok = new BigInteger(64, new Random()).longValue();
-    	
+    	while(true){
+    		if(verifyTokenUnique(tok)){
+    			break;
+    		}
+    		tok = new BigInteger(64, new Random()).longValue();
+    	}
     	_login = new Login(user, _currentDirectory, tok);
     	addLogins(_login);
     	return tok;
@@ -186,7 +191,21 @@ public class FileSystem extends FileSystem_Base {
     }
     return login(getUserByUsername(username), password);
   }
-
+  
+  /**
+   * Verify Token is unique for creation.
+   */
+  public boolean verifyTokenUnique(long token){
+  	if(this.getLoginsSet().size() == 0)
+  		return true;
+  	for (Login login: this.getLoginsSet()){
+  		if(login.verifyToken(token)){
+  			return true;
+  		}
+  	}
+  	return false;
+  }
+  
   /**
    * Verify Token.
    */
