@@ -1,5 +1,6 @@
 package pt.tecnico.myDrive.service;
 import org.junit.Test;
+import pt.tecnico.myDrive.exceptions.FileExistsException;
 import pt.tecnico.myDrive.domain.FileSystem;
 import pt.tecnico.myDrive.domain.PlainFile;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
@@ -12,7 +13,7 @@ public class WriteFileTest extends AbstractServiceTest {
 	 * @see pt.tecnico.myDrive.service.AbstractServiceTest#populate()
 	 */
 	@Override
-	protected void populate() {
+	protected void populate() throws Exception{
 		FileSystem fs = FileSystem.getInstance();
 		PlainFile readme = fs.createPlainFileByPath("/home/README");
 

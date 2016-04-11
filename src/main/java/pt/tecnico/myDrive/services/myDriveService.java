@@ -1,7 +1,6 @@
 
 package pt.tecnico.myDrive.services;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,23 +12,21 @@ import pt.ist.fenixframework.Atomic;
 public abstract class myDriveService {
     protected static final Logger log = LogManager.getRootLogger();
 
-	/**
-	 *
-	 */
 	public myDriveService() {
 	}
 
 	static FileSystem getFileSystem(){
 		return FileSystem.getInstance();
-	}	
-
-
+	}		
+	
 	@Atomic
     public final void execute() throws Exception {
         dispatch();
 	}
 
-
+	protected boolean verifyToken(long token){
+		return getFileSystem().verifyToken(token);
+	}
     protected abstract void dispatch() throws Exception;
     
 }
