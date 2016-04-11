@@ -25,9 +25,7 @@ import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.*;
 
 import java.lang.reflect.InvocationTargetException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.math.BigInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -85,35 +83,20 @@ public class FileSystem extends FileSystem_Base {
     return new FileSystem();
   }
 
-  protected void cleanup() {
+  public void cleanup() {
+  	_loggedUser = getUserByUsername("root");
     for (Login login: getLoginsSet())
       login.remove();
-    for (File file: getFilesSet())
-    	file.remove();
-    for (User u: getUsersSet())
-    	u.remove();
-  }
-  
-  public void cleanupInit() {
-    for (Login login: getLoginsSet())
-      login.remove();
-    System.out.println("Logins deleted.");
     try{
     	File file = getFileByPath("/");
-      checkDeletionPermissions(getUserByUsername("root"), file);
-      removeFile (file);
+      removeFile(file);
+      getFilesSet().clear();
     }catch (InsufficientPermissionsException | FileUnknownException | NotADirectoryException e){
     	e.printStackTrace();
     }
-    System.out.println("Files deleted.");
     for (User u: getUsersSet()){
-      System.out.println("Got user: " + u.getUsername());
-
-    	if(u.getUsername() != "root")
     		u.remove();
     }
-    System.out.println("Users deleted.");
-
   }
 
   /**
@@ -184,14 +167,21 @@ public class FileSystem extends FileSystem_Base {
     	cullLogins();
     	_loggedUser = user;
     	_currentDirectory = _loggedUser.getHomeDirectory();
-    	_login = new Login(user, _currentDirectory);
+    	Long tok = new BigInteger(64, new Random()).longValue();
+    	while(true){
+    		if(verifyTokenUnique(tok)){
+    			break;
+    		}
+    		tok = new BigInteger(64, new Random()).longValue();
+    	}
+    	_login = new Login(user, _currentDirectory, tok);
     	addLogins(_login);
+    	return tok;
     } else {
       // if password was incorrect;
       System.out.println("-- Wrong password. Login aborted");
       throw new WrongPasswordException(user.getUsername());
     }
-    return _login.getToken();
   }
 
   public long login(String username, String password) throws UserUnknownException, WrongPasswordException {
@@ -201,17 +191,39 @@ public class FileSystem extends FileSystem_Base {
     }
     return login(getUserByUsername(username), password);
   }
-
+  
   /**
-   * Verify Token. 
+   * Verify Token is unique for creation.
    */
-  public boolean verifyToken(long token){
+  public boolean verifyTokenUnique(long token){
+  	if(this.getLoginsSet().size() == 0)
+  		return true;
   	for (Login login: this.getLoginsSet()){
-  		if(login.getToken().equals(token) && new DateTime().compareTo(login.getExpirationDate()) < 0){
-  			login.extendToken();
+  		if(login.verifyToken(token)){
   			return true;
   		}
   	}
+  	return false;
+  }
+  
+  /**
+   * Verify Token.
+   */
+  public boolean verifyToken(long token){
+  	for (Login login: this.getLoginsSet()){
+  		if(login.verifyToken(token) && login.notExpired()){
+  			login.extendToken();
+  			_login.setCurrentDirectory(_currentDirectory);
+  			_login = login;
+  			_loggedUser = login.getUser();
+  			_currentDirectory = login.getCurrentDirectory();
+  			return true;
+  		}
+  	}
+  	_login = null;
+  	_loggedUser = null;
+  	_currentDirectory = null;
+  	log.warn("Invalid Token.");
   	return false;
   }
 
@@ -220,7 +232,7 @@ public class FileSystem extends FileSystem_Base {
    */
   private void cullLogins(){
   	for (Login login: this.getLoginsSet()){
-  		if(new DateTime().compareTo(login.getExpirationDate()) > 0)
+  		if(login.notExpired())
   			login.remove();
   	}
 
@@ -305,6 +317,7 @@ public class FileSystem extends FileSystem_Base {
      * TODO: Solve error throwing here. Exceptions shouldn't happen;
      * Should be handled elsewhere
      */
+    log.trace("Adding user " + username);
     try {
       Directory home = assertDirectory(_rootDirectory.getFileByName("home"));
       Directory userHome = createDirectory(username, home, user);
@@ -314,6 +327,7 @@ public class FileSystem extends FileSystem_Base {
     } catch(NotADirectoryException e) {
       System.out.println(e.getMessage());
     }
+
 
     log.trace("Added user " + username);
     addUsers(user);
@@ -691,6 +705,7 @@ public class FileSystem extends FileSystem_Base {
    */
   public Boolean isFileExportValid(File f) {
     DirectoryVisitor isDirectory = new DirectoryVisitor();
+
     if(f.getOwner().getUsername().equals("root")){
       Directory dir = f.accept(isDirectory);
       if(dir != null){
@@ -713,7 +728,9 @@ public class FileSystem extends FileSystem_Base {
         mydrive.addContent(u.xmlExport());
     }
     for (File f: getFilesSet()){
+
       if(isFileExportValid(f)) mydrive.addContent(f.accept(xml));
+
     }
     return doc;
   }
