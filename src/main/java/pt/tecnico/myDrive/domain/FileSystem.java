@@ -220,6 +220,7 @@ public class FileSystem extends FileSystem_Base {
   			return true;
   		}
   	}
+  	log.warn("Invalid Token.");
   	return false;
   }
 
