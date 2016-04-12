@@ -4,6 +4,7 @@ import org.jdom2.Element;
 import java.io.UnsupportedEncodingException;
 
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
+import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 
 public class User extends User_Base {
 
@@ -20,15 +21,36 @@ public class User extends User_Base {
     init(username, name, password, umask, homeDir);
   }
 
-  protected void init(String username, String name, String password, String umask, Directory homeDir) {
-    setUsername(username);
-    setName(name);
-    setPassword(password);
-    setUmask(umask);
-    setHomeDirectory(homeDir);
+  /**
+   * Overriding methods for class protection
+   */
+
+  @Override
+  public String getPassword(){
+    throw new MethodDeniedException();
   }
 
+  @Override
+  public void setPassword(String password){
+    throw new MethodDeniedException();
+  }
 
+  @Override
+  public void setUmask(String umask){
+    throw new MethodDeniedException();
+  }
+
+  protected void init(String username, String name, String password, String umask, Directory homeDir) {
+    super.setUsername(username);
+    super.setName(name);
+    super.setPassword(password);
+    super.setUmask(umask);
+    super.setHomeDirectory(homeDir);
+  }
+
+  public boolean verifyPassword(String password){
+    return password.equals(super.getPassword());
+  }
   /**
    * Basic remove implementation for User objects
    */
