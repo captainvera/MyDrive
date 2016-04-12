@@ -35,9 +35,10 @@ public class RootUser extends RootUser_Base {
     return password.equals(super.getPassword());
   }
   /**
-   * Basic remove implementation for User objects
+   * Root User shouldn't be removable 
    */
   public void remove() { 
+    throw MethodDeniedException();
   }
 
   /**
