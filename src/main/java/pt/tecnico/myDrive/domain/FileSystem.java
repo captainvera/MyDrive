@@ -95,18 +95,18 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void cleanup() {
-  	_loggedUser = getUserByUsername("root");
+    _loggedUser = getUserByUsername("root");
     for (Login login: getLoginsSet())
       login.remove();
     try{
-    	File file = getFileByPath("/");
+      File file = getFileByPath("/");
       removeFile(file);
       getFilesSet().clear();
-    }catch (InsufficientPermissionsException | FileUnknownException | NotADirectoryException e){
+    }catch (InsufficientPermissionsException | FileUnknownException | NotALinkException | NotADirectoryException e){
     	e.printStackTrace();
     }
     for (User u: getUsersSet()){
-    		u.remove();
+      u.remove();
     }
   }
 
@@ -171,85 +171,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   /**
-   * Logins a user into the filesystem, changing current directory to home directory
-   */
-  private long login(User user, String password) throws WrongPasswordException {
-    if (user.getPassword().equals(password)) {
-    	cullLogins();
-    	_loggedUser = user;
-    	_currentDirectory = _loggedUser.getHomeDirectory();
-    	Long tok = new BigInteger(64, new Random()).longValue();
-    	while(true){
-    		if(verifyTokenUnique(tok)){
-    			break;
-    		}
-    		tok = new BigInteger(64, new Random()).longValue();
-    	}
-    	_login = new Login(user, _currentDirectory, tok);
-    	addLogins(_login);
-    	return tok;
-    } else {
-      // if password was incorrect;
-      System.out.println("-- Wrong password. Login aborted");
-      throw new WrongPasswordException(user.getUsername());
-    }
-  }
-
-  public long login(String username, String password) throws UserUnknownException, WrongPasswordException {
-    log.trace("Logging in");
-    if (!userExists(username)) {
-      throw new UserUnknownException(username);
-    }
-    return login(getUserByUsername(username), password);
-  }
-
-  /**
-   * Verify Token is unique for creation.
-   */
-  public boolean verifyTokenUnique(long token){
-  	if(this.getLoginsSet().size() == 0)
-  		return true;
-  	for (Login login: this.getLoginsSet()){
-  		if(login.verifyToken(token)){
-  			return true;
-  		}
-  	}
-  	return false;
-  }
-
-  /**
-   * Verify Token.
-   */
-  public boolean verifyToken(long token){
-  	for (Login login: this.getLoginsSet()){
-  		if(login.verifyToken(token) && login.notExpired()){
-  			login.extendToken();
-  			_login.setCurrentDirectory(_currentDirectory);
-  			_login = login;
-  			_loggedUser = login.getUser();
-  			_currentDirectory = login.getCurrentDirectory();
-  			return true;
-  		}
-  	}
-  	_login = null;
-  	_loggedUser = null;
-  	_currentDirectory = null;
-  	log.warn("Invalid Token.");
-  	return false;
-  }
-
-  /**
-   * Culls invalid Logins.
-   */
-  private void cullLogins(){
-  	for (Login login: this.getLoginsSet()){
-  		if(!login.notExpired())
-  			login.remove();
-  	}
-
-  }
-
-  /**
    *
    * @param user
    * @return True if user is the root user
@@ -275,11 +196,11 @@ public class FileSystem extends FileSystem_Base {
    * Returns null if no login is found.
    */
   private Login getLoginByUser(User user){
-  	for(Login login: this.getLoginsSet()){
-  		if(login.getUser().equals(user))
-  			return login;
-  	}
-		return null;
+    for(Login login: this.getLoginsSet()){
+      if(login.getUser().equals(user))
+        return login;
+    }
+    return null;
   }
 
   /**
@@ -450,7 +371,7 @@ public class FileSystem extends FileSystem_Base {
    * Changes current working directory
    */
   public void changeDirectory(String dirName)
-    throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException {
+    throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException, NotALinkException {
     Directory dir = assertDirectory(_currentDirectory.getFileByName(dirName));
     checkExecutionPermissions(_loggedUser, dir);
     _currentDirectory = dir;
@@ -487,10 +408,18 @@ public class FileSystem extends FileSystem_Base {
   /**
    * @return result of executing file
    */
-  public String executeFile(String filename) throws FileUnknownException, InsufficientPermissionsException {
-    File file = _currentDirectory.getFileByName(filename);
-    checkExecutionPermissions(_loggedUser, file);
-    return file.execute();
+  public String executeFile(String path) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException, NotALinkException {
+    File file = getFileByPath(path);
+    if(assertLink(file) != null){
+		Link l = assertLink(file);
+		File linkedFile = getFileFromLink(l);
+		checkExecutionPermissions(_loggedUser, linkedFile);
+		return linkedFile.execute();
+	}
+	else{
+		checkExecutionPermissions(_loggedUser, file);
+		return file.execute();
+	}
   }
 
   /* ****************************************************************************
@@ -508,7 +437,7 @@ public class FileSystem extends FileSystem_Base {
    * @throws NotADirectoryException
    */
   public File getFileByPath(String path)
-    throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException {
+    throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException, NotALinkException {
     if (path.equals("/")) return _rootDirectory;
     Directory current;
     DirectoryVisitor dv = new DirectoryVisitor();
@@ -540,6 +469,12 @@ public class FileSystem extends FileSystem_Base {
     return current.getFileByName(target);
   }
 
+  public File getFileFromLink(Link l) throws InsufficientPermissionsException, NotALinkException, FileUnknownException, NotADirectoryException
+  {
+  	  //FIXME GETDATA MUST CHECK PERMISSIONS
+  	  String path = l.getData();
+  	  return getFileByPath(path);
+  }
   /**
    * @param path
    * @return A string containing a simple list of files
@@ -551,9 +486,10 @@ public class FileSystem extends FileSystem_Base {
    * @throws InsufficientPermissionsException
    * @throws InvocationTargetException
    */
+
   public String listFileByPathSimple(String path) throws
     IllegalAccessException, FileUnknownException, NotADirectoryException,
-    NoSuchMethodException, InvocationTargetException, InsufficientPermissionsException {
+    NoSuchMethodException, InvocationTargetException, InsufficientPermissionsException, NotALinkException {
       DirectoryVisitor dv = new DirectoryVisitor();
       Directory d = getFileByPath(path).accept(dv);
       return d.listFilesSimple();
@@ -573,7 +509,7 @@ public class FileSystem extends FileSystem_Base {
    */
   public String listFileByPathAll(String path) throws
     IllegalAccessException, FileUnknownException, NotADirectoryException,
-    NoSuchMethodException, InvocationTargetException, InsufficientPermissionsException {
+    NoSuchMethodException, InvocationTargetException, InsufficientPermissionsException, NotALinkException {
       DirectoryVisitor dv = new DirectoryVisitor();
       Directory d = getFileByPath(path).accept(dv);
       return d.listFilesAll();
@@ -588,7 +524,7 @@ public class FileSystem extends FileSystem_Base {
    * @throws NotADirectoryException
    */
   public void removeFileByPath(String path) throws
-    FileUnknownException, NotADirectoryException, InsufficientPermissionsException {
+    FileUnknownException, NotADirectoryException, NotALinkException, InsufficientPermissionsException {
       File file = getFileByPath(path);
       checkDeletionPermissions(_loggedUser, file);
       removeFile (file);
@@ -949,6 +885,108 @@ public class FileSystem extends FileSystem_Base {
 
 
   /* ****************************************************************************
+   * |                           Token Handling                                 |
+   * ****************************************************************************
+   */
+
+
+  /**
+   * @param token
+   * @return The login which holds token except if it doesn't exist, in that
+   * case, null is returned.
+   */
+  private Login getLoginByToken(long token) {
+    for (Login login : getLoginsSet()) {
+      if (login.compareToken(token))
+        return login;
+    }
+    return null;
+  }
+
+  /**
+   * @param token
+   * @return The user which holds token, except if it doesn't exist, in that
+   * case, null is returned.
+   *
+   */
+  private User getUserByToken(long token) {
+    Login login = getLoginByToken(token);
+    return login != null ? login.getUser() : null;
+  }
+
+
+  /**
+   * A token is unique if there's no login that holds it
+   * @param token
+   * @return
+   */
+  public boolean existsToken(long token) {
+    return getLoginByToken(token) != null;
+  }
+
+  /**
+   * Checks whether a token is valid or not.
+   * A token is valid if it has a login which holds it and hasn't expired
+   *
+   * @param token
+   * @return
+   */
+  public boolean isValidToken(long token) {
+    Login login = getLoginByToken(token);
+    return login != null && !login.hasExpired();
+  }
+
+
+  /**
+   * Checks the validity of a token
+   *
+   * @param token
+   * @return Returns true if the login which holds token hasn't expired, false
+   * otherwise
+   */
+  public boolean updateSession(long token){
+    if (!isValidToken(token)) {
+      endSession();
+      log.warn("Invalid Token.");
+      return false;
+    }
+
+    Login login = getLoginByToken(token);
+
+    endSession();
+    initSession(login);
+
+    return true;
+
+  }
+
+  private void endSession() {
+    _login.setCurrentDirectory(_currentDirectory);
+    _currentDirectory = null;
+    _login = null;
+    _loggedUser = null;
+  }
+
+  private void initSession(Login login) {
+    _login = login;
+    _loggedUser = login.getUser();
+    _currentDirectory = login.getCurrentDirectory();
+    login.extendToken();
+  }
+
+
+  /**
+   * Cleans up expired logins.
+   */
+  private void cullLogins(){
+    for (Login login: this.getLoginsSet()){
+      if(login.hasExpired())
+        login.remove();
+    }
+
+  }
+
+  /* ****************************************************************************
    * |                              Services                                    |
    * ****************************************************************************
    */
@@ -1002,5 +1040,40 @@ public class FileSystem extends FileSystem_Base {
         break;
     }
   }
+  /**
+   * Logins a user into the filesystem, changing current directory to home directory
+   */
+  private long login(User user, String password) throws WrongPasswordException {
+    if (user.getPassword().equals(password)) {
+      cullLogins();
+      _loggedUser = user;
+      _currentDirectory = _loggedUser.getHomeDirectory();
 
+      Long token = new BigInteger(64, new Random()).longValue();
+      // If the token is not unique we keep generating
+      while(existsToken(token)) {
+        token = new BigInteger(64, new Random()).longValue();
+      }
+
+      _login = new Login(user, _currentDirectory, token);
+      addLogins(_login);
+      return token;
+    } else { // if password was incorrect;
+      throw new WrongPasswordException(user.getUsername());
+    }
+  }
+
+  public long login(String username, String password) throws UserUnknownException, WrongPasswordException {
+    log.trace("Logging in");
+    if (!userExists(username)) {
+      throw new UserUnknownException(username);
+    }
+    return login(getUserByUsername(username), password);
+  }
+
+  public String readFile(long token, File f)
+    throws NotAPlainFileException {
+    PlainFile pf = assertPlainFile(f);
+    return pf.getData();
+  }
 }

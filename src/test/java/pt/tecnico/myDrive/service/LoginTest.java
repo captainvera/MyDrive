@@ -30,7 +30,7 @@ public class LoginTest extends AbstractServiceTest {
 		try{
 			FileSystem fs = FileSystem.getInstance();
 			fs.createUser("testuser","test","pwd1234");
-			
+
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -45,13 +45,13 @@ public class LoginTest extends AbstractServiceTest {
 
 			login1.execute();
 			login2.execute();
-			
+
 			long tok1 = login1.result();
 			long tok2 = login2.result();
 
 			BigInteger token1 = BigInteger.valueOf(tok1);
 			BigInteger token2 = BigInteger.valueOf(tok2);
-			
+
 			assertTrue("Login utilizador 1 bem sucedido.",  tok1 != 0);
 			assertTrue("Login utilizador 2 bem sucedido.", tok2 != 0);
 		} catch (Exception e) {
@@ -64,11 +64,11 @@ public class LoginTest extends AbstractServiceTest {
 		LoginService login = new LoginService("testuser123", "pwd1234");
 		login.execute();
 	}
-	
+
 	@Test(expected = WrongPasswordException.class)
 	public void wrongPassword() throws Exception{
 		LoginService login = new LoginService("testuser", "pwd9876");
 		login.execute();
 	}
-	
+
 }

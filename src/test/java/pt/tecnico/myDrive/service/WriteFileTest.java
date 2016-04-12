@@ -16,31 +16,30 @@ public class WriteFileTest extends AbstractServiceTest {
 	protected void populate() throws Exception{
 		FileSystem fs = FileSystem.getInstance();
 		PlainFile readme = fs.createPlainFileByPath("/home/README");
-
-
 	}
 
-	private PlainFile getPlainFile(String path, String filename){
-	}	
+	// private PlainFile getPlainFile(String path, String filename){
+  //   return new PlainFile();
+	// }	
 
     @Test
     public void success() {
     }
 
-    @Test(expected = IllegalRemovalException.class)
-    public void invalidFileRemoval() {
-    }
-
-    @Test(expected = InsufficientPermissionsException.class)
-    public void invalidFileAccessPermissions() {
-    }
-
-    @Test(expected = NotAPlainFileException.class)
-    public void notAPlainFile() {
-	}
-
-
-    @Test(expected = FileUnknownException.class)
-    public void fileNonExistant() {
-    }
+  //   @Test(expected = IllegalRemovalException.class)
+  //   public void invalidFileRemoval() {
+  //   }
+  //
+  //   @Test(expected = InsufficientPermissionsException.class)
+  //   public void invalidFileAccessPermissions() {
+  //   }
+  //
+  //   @Test(expected = NotAPlainFileException.class)
+  //   public void notAPlainFile() {
+	// }
+  //
+  //
+  //   @Test(expected = FileUnknownException.class)
+  //   public void fileNonExistant() {
+  //   }
 }
