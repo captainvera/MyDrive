@@ -889,7 +889,6 @@ public class FileSystem extends FileSystem_Base {
    * ****************************************************************************
    */
 
-
   /**
    * @param token
    * @return The login which holds token except if it doesn't exist, in that
@@ -944,20 +943,17 @@ public class FileSystem extends FileSystem_Base {
    * @return Returns true if the login which holds token hasn't expired, false
    * otherwise
    */
-  public boolean updateSession(long token){
+  public void updateSession(long token) throws InvalidTokenException {
     if (!isValidToken(token)) {
       endSession();
       log.warn("Invalid Token.");
-      return false;
+      throw new InvalidTokenException();
     }
 
     Login login = getLoginByToken(token);
 
     endSession();
     initSession(login);
-
-    return true;
-
   }
 
   private void endSession() {
@@ -1022,8 +1018,11 @@ public class FileSystem extends FileSystem_Base {
     return login(getUserByUsername(username), password);
   }
 
-  public String readFile(long token, File f)
-    throws NotAPlainFileException {
+  public String readFile(long token, String filename)
+    throws NotAPlainFileException, InvalidTokenException {
+    updateSession(token);
+    File file = getFileByPath(filename);
+    checkReadPermissions(_loggedUser, file)
     PlainFile pf = assertPlainFile(f);
     return pf.getData();
   }
