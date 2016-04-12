@@ -2,6 +2,8 @@ package pt.tecnico.myDrive.domain;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 
+import pt.tecnico.myDrive.exceptions.MethodDeniedException;
+
 public abstract class File extends File_Base {
 
 
@@ -68,7 +70,7 @@ public abstract class File extends File_Base {
   public String getPath() { return getParent().getPath() + "/" + getName(); }
 
   public String toString() {
-    return this.getName();
+  	return getUserPermission() + getOthersPermission() + " " + getName();
   }
 }
 
