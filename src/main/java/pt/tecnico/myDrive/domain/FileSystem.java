@@ -995,7 +995,7 @@ public class FileSystem extends FileSystem_Base {
    * Logins a user into the filesystem, changing current directory to home directory
    */
   private long login(User user, String password) throws WrongPasswordException {
-    if (user.getPassword().equals(password)) {
+    if (user.verifyPassword(password)) {
       cullLogins();
       _loggedUser = user;
       _currentDirectory = _loggedUser.getHomeDirectory();
