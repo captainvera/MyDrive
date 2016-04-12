@@ -1,5 +1,7 @@
 package pt.tecnico.myDrive.services;
 
+import pt.tecnico.myDrive.domain.FileSystem;
+
 public class CreateFileService extends myDriveService {
 	private long _token;
 	private String _name;
@@ -27,7 +29,7 @@ public class CreateFileService extends myDriveService {
 	@Override
 	protected void dispatch() throws Exception {
 		// TODO Auto-generated method stub
-		FileSystem fs = getFileSystem();
+		FileSystem fs = FileSystem.getInstance();
 		fs.createFile(_name, _type, _content, _token);
 	}
 
