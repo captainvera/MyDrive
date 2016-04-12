@@ -953,5 +953,54 @@ public class FileSystem extends FileSystem_Base {
    * ****************************************************************************
    */
 
+  public void createFile(String name, String type, String content, long token) throws {
+    if(fs.verifyToken(token)){
+      checkWritePermissions(_currentDirectory);
+      if(content == null) createFileWithoutContent(name, type);
+      else createFileWithContent(name, type, content);
+    }
+  }
+
+  public void createFileWithoutContent(String name, String type) throws {
+    switch(type.toLowerCase()){
+      case "directory":
+        createDirectory(name);
+        break;
+
+      case "plainfile":
+        createPlainFile(name);
+        break;
+
+      case "app":
+        createApp(name);
+        break;
+
+      case "link":
+        throw new CreateLinkWithContent();
+        break;
+    }
+  }
+
+  public void createFileWithContent(String name, String type, String content){
+    switch(type.toLowerCase()){
+      case "directory":
+        throw new CreateDirectoryWithContentException();
+        break;
+
+      case "plainfile":
+        PlainFile pf = createPlainFile(name);
+        pf.setData(content);
+        break;
+
+      case "app":
+        App a = createApp(name);
+        a.setData(content);
+        break;
+
+      case "link":
+        createLink(name, content);
+        break;
+    }
+  }
 
 }
