@@ -991,15 +991,15 @@ public class FileSystem extends FileSystem_Base {
    * ****************************************************************************
    */
 
-  public void createFile(String name, String type, String content, long token) throws {
-    if(fs.verifyToken(token)){
-      checkWritePermissions(_currentDirectory);
-      if(content == null) createFileWithoutContent(name, type);
-      else createFileWithContent(name, type, content);
-    }
+  public void createFile(String name, String type, String content, long token)
+  throws CreateLinkWithoutContent, CreateDirectoryWithContentException, InvalidTokenException, InsufficientPermissionsException{
+    updateSession(token);
+    if(content == null) createFileWithoutContent(name, type);
+    else createFileWithContent(name, type, content);
   }
 
-  public void createFileWithoutContent(String name, String type) throws {
+  public void createFileWithoutContent(String name, String type) 
+  throws CreateLinkWithoutContent, InsufficientPermissionsException{
     switch(type.toLowerCase()){
       case "directory":
         createDirectory(name);
@@ -1014,12 +1014,13 @@ public class FileSystem extends FileSystem_Base {
         break;
 
       case "link":
-        throw new CreateLinkWithContent();
+        throw new CreateLinkWithoutContent();
         break;
     }
   }
 
-  public void createFileWithContent(String name, String type, String content){
+  public void createFileWithContent(String name, String type, String content)
+  throws CreateDirectoryWithContentException, InsufficientPermissionsException{
     switch(type.toLowerCase()){
       case "directory":
         throw new CreateDirectoryWithContentException();
