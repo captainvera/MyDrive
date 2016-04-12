@@ -4,8 +4,8 @@ import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 
 public class RootUser extends RootUser_Base {
 
-  public RootUser(Directory dir) {
-    init(dir);
+  public RootUser(FileSystem fs, Directory dir) {
+    init(fs, dir);
   }
 
   @Override
@@ -23,12 +23,13 @@ public class RootUser extends RootUser_Base {
     throw new MethodDeniedException();
   }
 
-  protected void init(Directory homeDir) {
+  protected void init(FileSystem fs, Directory homeDir) {
     super.setUsername("root");
     super.setName("Super User");
     super.setPassword("***");
     super.setUmask("rwxdr-x-");
     super.setHomeDirectory(homeDir);
+    super.setFileSystem(fs);
   }
 
   public boolean verifyPassword(String password){

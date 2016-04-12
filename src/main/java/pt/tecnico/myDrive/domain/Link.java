@@ -17,9 +17,8 @@ public class Link extends Link_Base {
     super();
   }
 
-  public Link(Integer id, String name, Directory parent, User owner, String data) {
-    init(id, name, parent, owner);
-    setData(data);
+  public Link(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
+    init(fs, id, name, parent, owner, data);
   }
 
   /**
@@ -66,7 +65,7 @@ public class Link extends Link_Base {
   /*@Override
   public void setData(String data) throws CannotWriteToLinkException{
   	throw new CannotWriteToLinkException(this.getName());
-  } TODO */ 
+  } TODO */
   @Override
   public String toString(){
   	return getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData();

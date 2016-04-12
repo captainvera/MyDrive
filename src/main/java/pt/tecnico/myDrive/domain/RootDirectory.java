@@ -10,8 +10,8 @@ public class RootDirectory extends RootDirectory_Base {
     super();
   }
 
-  public RootDirectory(Integer id, String name, User owner) {
-    init(id, name, this, owner);
+  public RootDirectory(FileSystem fs, Integer id, String name, User owner) {
+    init(fs, id, name, this, owner);
   }
 
   /**

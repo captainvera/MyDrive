@@ -225,8 +225,7 @@ public class FileSystem extends FileSystem_Base {
    * Its home directory isn't created here to avoid conflicts in FileSystem init
    */
   public User createRootUser() {
-    User user = new User("root", "Super User", "***", "rwxdr-x-");
-    addUsers(user);
+    User user = new User(this, "root", "Super User", "***", "rwxdr-x-");
     return user;
   }
 
@@ -243,7 +242,7 @@ public class FileSystem extends FileSystem_Base {
     if (userExists(username))
       throw new UserExistsException(username);
 
-    User user = new User(username, name, password, "rwxd----");
+    User user = new User(this, username, name, password, "rwxd----");
 
     /**
      * TODO: Solve error throwing here. Exceptions shouldn't happen;
@@ -262,7 +261,6 @@ public class FileSystem extends FileSystem_Base {
 
 
     log.trace("Added user " + username);
-    addUsers(user);
 
     return user;
   }
@@ -278,32 +276,27 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public Directory createRootDirectory() {
-    RootDirectory rd = new RootDirectory(0, "/", _rootUser);
-    addFiles(rd);
+    RootDirectory rd = new RootDirectory(this, 0, "/", _rootUser);
     return rd;
   }
 
   private Directory createDirectory(String name, Directory parent, User owner) {
-    Directory dir = new Directory(incrementIdCounter(), name, parent, owner);
-    addFiles(dir);
+    Directory dir = new Directory(this, incrementIdCounter(), name, parent, owner);
     return dir;
   }
 
   private PlainFile createPlainFile(String name, Directory parent, User owner) {
-    PlainFile pf = new PlainFile(incrementIdCounter(), name, parent, owner);
-    addFiles(pf);
+    PlainFile pf = new PlainFile(this, incrementIdCounter(), name, parent, owner);
     return pf;
   }
 
   private App createApp(String name, Directory parent, User owner) {
-    App app = new App(incrementIdCounter(), name, parent, owner);
-    addFiles(app);
+    App app = new App(this, incrementIdCounter(), name, parent, owner);
     return app;
   }
 
   private Link createLink(String name, Directory parent, User owner, String data) {
-    Link link = new Link(incrementIdCounter(), name, parent, owner, data);
-    addFiles(link);
+    Link link = new Link(this,incrementIdCounter(), name, parent, owner, data);
     return link;
   }
 
@@ -1011,14 +1004,14 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public void createFile(String name, String type, String content, long token)
-  throws CreateLinkWithoutContentException, CreateDirectoryWithContentException, InvalidTokenException, InsufficientPermissionsException, InvalidFilenameException{
+  throws CreateLinkWithoutContentException, CreateDirectoryWithContentException, InvalidTokenException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
     updateSession(token);
     if(content == null) createFileWithoutContent(name, type);
     else createFileWithContent(name, type, content);
   }
 
   public void createFileWithoutContent(String name, String type)
-  throws CreateLinkWithoutContentException, InsufficientPermissionsException, InvalidFilenameException{
+  throws CreateLinkWithoutContentException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
     switch(type.toLowerCase()){
       case "directory":
         createDirectory(name);
@@ -1038,7 +1031,7 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void createFileWithContent(String name, String type, String content)
-  throws CreateDirectoryWithContentException, InsufficientPermissionsException, InvalidFilenameException{
+  throws CreateDirectoryWithContentException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
     switch(type.toLowerCase()){
       case "directory":
         throw new CreateDirectoryWithContentException();
@@ -1073,7 +1066,7 @@ public class FileSystem extends FileSystem_Base {
         token = new BigInteger(64, new Random()).longValue();
       }
 
-      _login = new Login(user, _currentDirectory, token);
+      _login = new Login(this, user, _currentDirectory, token);
       addLogins(_login);
       return token;
     } else { // if password was incorrect;
