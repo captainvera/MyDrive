@@ -191,7 +191,7 @@ public class FileSystem extends FileSystem_Base {
     }
     return login(getUserByUsername(username), password);
   }
-  
+
   /**
    * Verify Token is unique for creation.
    */
@@ -205,7 +205,7 @@ public class FileSystem extends FileSystem_Base {
   	}
   	return false;
   }
-  
+
   /**
    * Verify Token.
    */
@@ -232,7 +232,7 @@ public class FileSystem extends FileSystem_Base {
    */
   private void cullLogins(){
   	for (Login login: this.getLoginsSet()){
-  		if(login.notExpired())
+  		if(!login.notExpired())
   			login.remove();
   	}
 
