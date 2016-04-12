@@ -139,7 +139,6 @@ public class FileSystem extends FileSystem_Base {
       _rootDirectory = getRootDirectory();
       if (_rootDirectory == null) {
         throw new RootDirectoryNotFoundException();
-
       }
       _currentDirectory = _rootDirectory;
     }
@@ -773,7 +772,8 @@ public class FileSystem extends FileSystem_Base {
     char[] characters = filename.toCharArray();
 
     for (char c: characters) {
-      if (!Character.isLetter(c) && !Character.isDigit(c)) {
+      if (!Character.isLetter(c) && !Character.isDigit(c)
+          && c == 0 && c == '\\') {
         throw new InvalidFilenameException(filename);
       }
     }
