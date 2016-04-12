@@ -909,7 +909,7 @@ public class FileSystem extends FileSystem_Base {
     return dir;
   }
 
-  public Link assertLink(File f) throws NotADirectoryException {
+  public Link assertLink(File f) throws NotALinkException {
     LinkVisitor lv = new LinkVisitor();
     Link l = f.accept(lv);
     if (l == null) {
