@@ -540,6 +540,11 @@ public class FileSystem extends FileSystem_Base {
     return current.getFileByName(target);
   }
 
+  public File getFileFromLink(Link l) throws InsufficientPermissionsException, NotALinkException, FileUnknownException, NotADirectoryException
+  {
+  	  String path = l.getData();
+  	  return getFileByPath(path);
+  }
   /**
    * @param path
    * @return A string containing a simple list of files
@@ -551,6 +556,7 @@ public class FileSystem extends FileSystem_Base {
    * @throws InsufficientPermissionsException
    * @throws InvocationTargetException
    */
+	
   public String listFileByPathSimple(String path) throws
     IllegalAccessException, FileUnknownException, NotADirectoryException,
     NoSuchMethodException, InvocationTargetException, InsufficientPermissionsException, NotALinkException {
