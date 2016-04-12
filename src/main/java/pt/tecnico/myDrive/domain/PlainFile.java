@@ -16,16 +16,16 @@ public class PlainFile extends PlainFile_Base {
     super();
   }
 
-  public PlainFile(Integer id, String name, Directory parent, User owner) {
-    this(id, name, parent, owner, "");
+  public PlainFile(FileSystem fs, Integer id, String name, Directory parent, User owner) {
+    this(fs, id, name, parent, owner, "");
   }
 
-  public PlainFile(Integer id, String name, Directory parent, User owner, String data) {
-    init(id, name, parent, owner, data);
+  public PlainFile(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
+    init(fs, id, name, parent, owner, data);
   }
 
-  protected void init(Integer id, String name, Directory parent, User owner, String data) {
-    super.init(id, name, parent, owner);
+  protected void init(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
+    super.init(fs, id, name, parent, owner);
     setData(data);
   }
 

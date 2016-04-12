@@ -12,11 +12,12 @@ public abstract class File extends File_Base {
     super();
   }
 
-  public File(Integer id, String name, Directory parent, User owner) {
-    init(id, name, parent, owner);
+  public File(FileSystem fs, Integer id, String name, Directory parent, User owner) {
+    init(fs, id, name, parent, owner);
   }
 
-  protected void init(Integer id, String name, Directory parent, User owner) {
+  protected void init(FileSystem fs, Integer id, String name, Directory parent, User owner) {
+    setFileSystem(fs);
     setId(id);
     setName(name);
     setParent(parent);

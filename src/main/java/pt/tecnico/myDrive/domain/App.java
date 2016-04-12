@@ -16,8 +16,12 @@ public class App extends App_Base {
     super();
   }
 
-  public App(Integer id, String name, Directory parent, User owner) {
-    init(id, name, parent, owner);
+  public App(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
+    init(fs, id, name, parent, owner, data);
+  }
+
+  public App(FileSystem fs, Integer id, String name, Directory parent, User owner) {
+    this(fs, id, name, parent, owner, "");
   }
 
   /**

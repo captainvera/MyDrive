@@ -1,8 +1,7 @@
 package pt.tecnico.myDrive.exceptions;
 
 /**
- * This exception is thrown whenever an attempt is made to perform a creation
- * of a user with an username of invalid length.
+ * This exception is thrown whenever an attempt to use an invalid filename
  */
 public class InvalidFilenameException extends Exception {
 

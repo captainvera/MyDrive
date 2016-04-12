@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import java.util.Calendar;
 import java.util.Date;
 import pt.tecnico.myDrive.domain.User;
+import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,9 +21,10 @@ public class Login extends Login_Base {
 	/**
 	 * Login constructor, receives logged user, currentDirectory and expiration date.
 	 */
-	public Login(User user, Directory currentDirectory, Long token) {
+	public Login(FileSystem fs, User user, Directory currentDirectory, Long token) {
 		super();
 		setCurrentDirectory(currentDirectory);
+    super.setFileSystem(fs);
 		super.setUser(user);
 		super.setToken(token);
 		extendToken();
@@ -54,35 +56,32 @@ public class Login extends Login_Base {
 		return new DateTime().compareTo(super.getExpirationDate()) >= 0;
 	}
 	@Override
-	public Long getToken(){
-		log.warn("DO NOT USE Login.getToken() it only returns NULL");
-		return null;
+	public Long getToken() throws MethodDeniedException{
+		throw new MethodDeniedException();
 	}
 	@Override
-	public DateTime getExpirationDate(){
-		log.warn("DO NOT USE Login.getExpirationDate() it only returns NULL");
-		return null;
+	public DateTime getExpirationDate() throws MethodDeniedException{
+		throw new MethodDeniedException();
 	}
 	@Override
-	public void setExpirationDate(DateTime expirationDate) {
-		log.warn("DO NOT USE Login.setExpirationDate() it does nothing.");
+	public void setExpirationDate(DateTime expirationDate) throws MethodDeniedException{
+		throw new MethodDeniedException();
 	}
 	@Override
-	public void setToken(Long token) {
-		log.warn("DO NOT USE Login.setToken() it does nothing.");
+	public void setToken(Long token) throws MethodDeniedException{
+		throw new MethodDeniedException();
 	}
 	@Override
-	public FileSystem getFileSystem() {
-		log.warn("DO NOT USE Login.getFileSystem() it only returns NULL");
-		return null;
+	public FileSystem getFileSystem() throws MethodDeniedException{
+		throw new MethodDeniedException();
 	}
 	@Override
-	public void setFileSystem(FileSystem fileSystem) {
-		log.warn("DO NOT USE Login.setFileSystem() it does nothing.");
+	public void setFileSystem(FileSystem fileSystem) throws MethodDeniedException{
+		throw new MethodDeniedException();
 	}
 	@Override
-	public void setUser(User user) {
-		log.warn("DO NOT USE Login.setUser() it does nothing.");
+	public void setUser(User user) throws MethodDeniedException{
+		throw new MethodDeniedException();
 	}
 
 

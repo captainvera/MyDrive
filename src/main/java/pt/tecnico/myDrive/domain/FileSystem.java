@@ -224,8 +224,7 @@ public class FileSystem extends FileSystem_Base {
    * Its home directory isn't created here to avoid conflicts in FileSystem init
    */
   public User createRootUser() {
-    User user = new User("root", "Super User", "***", "rwxdr-x-");
-    addUsers(user);
+    User user = new User(this, "root", "Super User", "***", "rwxdr-x-");
     return user;
   }
 
@@ -242,7 +241,7 @@ public class FileSystem extends FileSystem_Base {
     if (userExists(username))
       throw new UserExistsException(username);
 
-    User user = new User(username, name, password, "rwxd----");
+    User user = new User(this, username, name, password, "rwxd----");
 
     /**
      * TODO: Solve error throwing here. Exceptions shouldn't happen;
@@ -261,7 +260,6 @@ public class FileSystem extends FileSystem_Base {
 
 
     log.trace("Added user " + username);
-    addUsers(user);
 
     return user;
   }
@@ -277,32 +275,27 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public Directory createRootDirectory() {
-    RootDirectory rd = new RootDirectory(0, "/", _rootUser);
-    addFiles(rd);
+    RootDirectory rd = new RootDirectory(this, 0, "/", _rootUser);
     return rd;
   }
 
   private Directory createDirectory(String name, Directory parent, User owner) {
-    Directory dir = new Directory(incrementIdCounter(), name, parent, owner);
-    addFiles(dir);
+    Directory dir = new Directory(this, incrementIdCounter(), name, parent, owner);
     return dir;
   }
 
   private PlainFile createPlainFile(String name, Directory parent, User owner) {
-    PlainFile pf = new PlainFile(incrementIdCounter(), name, parent, owner);
-    addFiles(pf);
+    PlainFile pf = new PlainFile(this, incrementIdCounter(), name, parent, owner);
     return pf;
   }
 
   private App createApp(String name, Directory parent, User owner) {
-    App app = new App(incrementIdCounter(), name, parent, owner);
-    addFiles(app);
+    App app = new App(this, incrementIdCounter(), name, parent, owner);
     return app;
   }
 
   private Link createLink(String name, Directory parent, User owner, String data) {
-    Link link = new Link(incrementIdCounter(), name, parent, owner, data);
-    addFiles(link);
+    Link link = new Link(this,incrementIdCounter(), name, parent, owner, data);
     return link;
   }
 
@@ -316,29 +309,33 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public Directory createDirectory(String name)
-    throws InvalidFilenameException, InsufficientPermissionsException {
+    throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
+    checkFileUnique(name, _currentDirectory);
     checkWritePermissions(_loggedUser, _currentDirectory);
     return createDirectory(name,_currentDirectory,_loggedUser);
   }
 
   public PlainFile createPlainFile(String name)
-    throws InvalidFilenameException, InsufficientPermissionsException {
+    throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
+    checkFileUnique(name, _currentDirectory);
     checkWritePermissions(_loggedUser, _currentDirectory);
     return createPlainFile(name,_currentDirectory,_loggedUser);
   }
 
   public App createApp(String name)
-    throws InvalidFilenameException, InsufficientPermissionsException {
+    throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
+    checkFileUnique(name, _currentDirectory);
     checkWritePermissions(_loggedUser, _currentDirectory);
     return createApp(name,_currentDirectory,_loggedUser);
   }
 
   public Link createLink(String name, String data)
-    throws InvalidFilenameException, InsufficientPermissionsException {
+    throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
+    checkFileUnique(name, _currentDirectory);
     checkWritePermissions(_loggedUser, _currentDirectory);
     return createLink(name,_currentDirectory,_loggedUser,data);
   }
@@ -371,10 +368,20 @@ public class FileSystem extends FileSystem_Base {
    */
   public void changeDirectory(String dirName)
     throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException, NotALinkException {
-    Directory dir = assertDirectory(_currentDirectory.getFileByName(dirName));
-    checkExecutionPermissions(_loggedUser, dir);
-    _currentDirectory = dir;
-  }
+    final Directory dir =
+    	(assertLink(_currentDirectory.getFileByName(dirName)) != null) ?  
+    	assertDirectory(getFileFromLink(assertLink(_currentDirectory.getFileByName(dirName)))) 
+    	:
+    	assertDirectory(_currentDirectory.getFileByName(dirName));;
+/*    if(assertLink(_currentDirectory.getFileByName(dirName)) != null){
+    	Directory dir = assertDirectory(getFileFromLink(assertLink(_currentDirectory.getFileByName(dirName))));
+    } else {
+		Directory dir = assertDirectory(_currentDirectory.getFileByName(dirName));
+	}	*/
+	checkExecutionPermissions(_loggedUser, dir);
+	_currentDirectory = dir;
+}
+  
 
   /**
    * ----------------------------------------------------
@@ -564,7 +571,7 @@ public class FileSystem extends FileSystem_Base {
    * @throws InsufficientPermissionsException
    */
   public PlainFile createPlainFileByPath(String path)
-    throws FileExistsException, InsufficientPermissionsException {
+    throws FileExistsException, InsufficientPermissionsException, FileExistsException {
     Directory current;
     String[] tokens = path.split("/");
     String target = tokens[tokens.length-1];
@@ -580,7 +587,7 @@ public class FileSystem extends FileSystem_Base {
     }
 
     Directory currentDir = createFileByPathHelper(current, tokensList);
-
+    checkFileUnique(target, currentDir);
     return createPlainFile(target, currentDir, _rootUser);
   }
 
@@ -609,7 +616,7 @@ public class FileSystem extends FileSystem_Base {
     }
 
     Directory currentDir = createFileByPathHelper(current, tokensList);
-
+    checkFileUnique(target, currentDir);
     try {
       DirectoryVisitor dv = new DirectoryVisitor();
       return currentDir.getFileByName(target).accept(dv);
@@ -795,6 +802,15 @@ public class FileSystem extends FileSystem_Base {
    */
   private void checkFilepathSize(String filepath) throws InvalidFilepathSizeException {
     if(filepath.length() >= 1024) throw new InvalidFilepathSizeException(1024);
+  }
+  
+  /**
+   * Verifies if filename is unique in Directory
+   * @param filename
+   * @throws InvalidFilenameException
+   */
+  private void checkFileUnique(String filename, Directory dir) throws FileExistsException {
+    if(dir.hasFile(filename)) throw new FileExistsException(filename);
   }
 
   /**
@@ -988,14 +1004,14 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public void createFile(String name, String type, String content, long token)
-  throws CreateLinkWithoutContentException, CreateDirectoryWithContentException, InvalidTokenException, InsufficientPermissionsException, InvalidFilenameException{
+  throws CreateLinkWithoutContentException, CreateDirectoryWithContentException, InvalidTokenException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
     updateSession(token);
     if(content == null) createFileWithoutContent(name, type);
     else createFileWithContent(name, type, content);
   }
 
   public void createFileWithoutContent(String name, String type)
-  throws CreateLinkWithoutContentException, InsufficientPermissionsException, InvalidFilenameException{
+  throws CreateLinkWithoutContentException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
     switch(type.toLowerCase()){
       case "directory":
         createDirectory(name);
@@ -1015,7 +1031,7 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void createFileWithContent(String name, String type, String content)
-  throws CreateDirectoryWithContentException, InsufficientPermissionsException, InvalidFilenameException{
+  throws CreateDirectoryWithContentException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
     switch(type.toLowerCase()){
       case "directory":
         throw new CreateDirectoryWithContentException();
@@ -1050,7 +1066,7 @@ public class FileSystem extends FileSystem_Base {
         token = new BigInteger(64, new Random()).longValue();
       }
 
-      _login = new Login(user, _currentDirectory, token);
+      _login = new Login(this, user, _currentDirectory, token);
       addLogins(_login);
       return token;
     } else { // if password was incorrect;
