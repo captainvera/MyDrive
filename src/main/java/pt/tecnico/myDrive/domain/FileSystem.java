@@ -1071,8 +1071,15 @@ public class FileSystem extends FileSystem_Base {
     InsufficientPermissionsException, NotADirectoryException, NotALinkException {
     updateSession(token);
     File file = getFileByPath(filename);
-    checkReadPermissions(_loggedUser, file);
-    PlainFile pf = assertPlainFile(file);
-    return pf.getData();
+    if(assertLink(file)!=null){
+    	File linkedFile = getFileFromLink(assertLink(file));
+		checkReadPermissions(_loggedUser, linkedFile);
+		PlainFile pf = assertPlainFile(linkedFile);
+		return pf.getData();
+	} else {
+		checkReadPermissions(_loggedUser, file);
+		PlainFile pf = assertPlainFile(file);
+		return pf.getData();
+	}
   }
 }
