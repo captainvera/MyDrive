@@ -63,10 +63,10 @@ public class Link extends Link_Base {
       throw new ImportDocumentException(String.valueOf(getId()));
     }
   }
-  @Override
-  public void setData(String data){
+  /*@Override
+  public void setData(String data) throws CannotWriteToLinkException{
   	throw new CannotWriteToLinkException(this.getName());
-  }
+  } TODO */ 
   @Override
   public String toString(){
   	return getName() + "->" + getData();

@@ -6,9 +6,7 @@ package pt.tecnico.myDrive.exceptions;
  */
 public class InvalidTokenException extends Exception {
 
-  public InsufficientPermissionsException() {
+  public InvalidTokenException() {
     super("Invalid token");
   }
 }
-
-
