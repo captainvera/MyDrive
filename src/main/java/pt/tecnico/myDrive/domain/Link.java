@@ -25,7 +25,7 @@ public class Link extends Link_Base {
    */
   @Override
   public int getSize(){
-    return 0;
+    return 1;
   }
 
   @Override
@@ -63,6 +63,6 @@ public class Link extends Link_Base {
   }
   @Override
   public String toString(){
-  	return getName() + "->" + getData();
+  	return getSize() + " " + getUmask() + " " + getName() + "->" + getData();
   }
 }
