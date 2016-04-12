@@ -16,6 +16,7 @@ class User {
   String umask;
 }
 
+class RootUser extends User;
 
 class File {
   String name;
@@ -68,7 +69,7 @@ relation FileSystemContainsLogins {
 }
 
 relation LoginHasUser {
-  Login playsRole login;
+  Login playsRole;
   User playsRole user {
     multiplicity 1;
   }
