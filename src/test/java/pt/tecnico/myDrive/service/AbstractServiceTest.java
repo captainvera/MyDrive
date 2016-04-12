@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import javax.transaction.NotSupportedException;
-import javax.transaction.SystemException;	
+import javax.transaction.SystemException;
 
 import pt.ist.fenixframework.FenixFramework;
 import pt.ist.fenixframework.core.WriteOnReadError;
@@ -48,8 +48,8 @@ public abstract class AbstractServiceTest {
 
   @AfterClass
   public static void finish(){
-    //Clean Filesystem and DB
-
+    // Orderly shutdown
+    FenixFramework.shutdown();
   }
 
   //Populate Filesystem with data specific to each test
