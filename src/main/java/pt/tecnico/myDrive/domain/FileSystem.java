@@ -380,8 +380,8 @@ public class FileSystem extends FileSystem_Base {
     return app;
   }
 
-  private Link createLink(String name, Directory parent, User owner) {
-    Link link = new Link(incrementIdCounter(), name, parent, owner);
+  private Link createLink(String name, Directory parent, User owner, String data) {
+    Link link = new Link(incrementIdCounter(), name, parent, owner, data);
     addFiles(link);
     return link;
   }
@@ -416,11 +416,11 @@ public class FileSystem extends FileSystem_Base {
     return createApp(name,_currentDirectory,_loggedUser);
   }
 
-  public Link createLink(String name)
+  public Link createLink(String name, String data)
     throws InvalidFilenameException, InsufficientPermissionsException {
     checkFilename(name);
     checkWritePermissions(_loggedUser, _currentDirectory);
-    return createLink(name,_currentDirectory,_loggedUser);
+    return createLink(name,_currentDirectory,_loggedUser,data);
   }
 
 
