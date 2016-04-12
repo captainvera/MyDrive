@@ -20,9 +20,10 @@ public class Login extends Login_Base {
 	/**
 	 * Login constructor, receives logged user, currentDirectory and expiration date.
 	 */
-	public Login(User user, Directory currentDirectory, Long token) {
+	public Login(FileSystem fs, User user, Directory currentDirectory, Long token) {
 		super();
 		setCurrentDirectory(currentDirectory);
+    super.setFileSystem(fs);
 		super.setUser(user);
 		super.setToken(token);
 		extendToken();

@@ -6,6 +6,8 @@ import java.io.UnsupportedEncodingException;
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 
+import pt.tecnico.myDrive.domain.FileSystem;
+
 public class User extends User_Base {
 
   /** Placeholder for FenixFramework */
@@ -13,12 +15,12 @@ public class User extends User_Base {
     super();
   }
 
-  public User(String username, String name, String password, String umask) {
-    this(username, name, password, umask, null);
+  public User(FileSystem fs, String username, String name, String password, String umask) {
+    this(fs, username, name, password, umask, null);
   }
 
-  public User(String username, String name, String password, String umask, Directory homeDir) {
-    init(username, name, password, umask, homeDir);
+  public User(FileSystem fs, String username, String name, String password, String umask, Directory homeDir) {
+    init(fs, username, name, password, umask, homeDir);
   }
 
   /**
@@ -40,7 +42,8 @@ public class User extends User_Base {
     throw new MethodDeniedException();
   }
 
-  protected void init(String username, String name, String password, String umask, Directory homeDir) {
+  protected void init(FileSystem fs, String username, String name, String password, String umask, Directory homeDir) {
+    super.setFileSystem(fs);
     super.setUsername(username);
     super.setName(name);
     super.setPassword(password);
@@ -54,11 +57,11 @@ public class User extends User_Base {
   /**
    * Basic remove implementation for User objects
    */
- public void remove() { 
+ public void remove() {
  	nullifyRelations();
  	deleteDomainObject();
  }
- 
+
  /**
   * Nullifies relations, that is, deletes/cancels any relation between this
   * object and eventual others.

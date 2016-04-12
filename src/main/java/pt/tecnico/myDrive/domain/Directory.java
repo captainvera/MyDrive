@@ -22,8 +22,8 @@ public class Directory extends Directory_Base {
     super();
   }
 
-  public Directory(Integer id, String name, Directory parent, User owner) {
-    init(id, name, parent, owner);
+  public Directory(FileSystem fs, Integer id, String name, Directory parent, User owner) {
+    init(fs, id, name, parent, owner);
   }
 
   /**
