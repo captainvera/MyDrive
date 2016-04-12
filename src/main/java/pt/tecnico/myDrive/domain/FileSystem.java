@@ -317,29 +317,33 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public Directory createDirectory(String name)
-    throws InvalidFilenameException, InsufficientPermissionsException {
+    throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
+    checkFileUnique(name, _currentDirectory);
     checkWritePermissions(_loggedUser, _currentDirectory);
     return createDirectory(name,_currentDirectory,_loggedUser);
   }
 
   public PlainFile createPlainFile(String name)
-    throws InvalidFilenameException, InsufficientPermissionsException {
+    throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
+    checkFileUnique(name, _currentDirectory);
     checkWritePermissions(_loggedUser, _currentDirectory);
     return createPlainFile(name,_currentDirectory,_loggedUser);
   }
 
   public App createApp(String name)
-    throws InvalidFilenameException, InsufficientPermissionsException {
+    throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
+    checkFileUnique(name, _currentDirectory);
     checkWritePermissions(_loggedUser, _currentDirectory);
     return createApp(name,_currentDirectory,_loggedUser);
   }
 
   public Link createLink(String name, String data)
-    throws InvalidFilenameException, InsufficientPermissionsException {
+    throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
+    checkFileUnique(name, _currentDirectory);
     checkWritePermissions(_loggedUser, _currentDirectory);
     return createLink(name,_currentDirectory,_loggedUser,data);
   }
@@ -575,7 +579,7 @@ public class FileSystem extends FileSystem_Base {
    * @throws InsufficientPermissionsException
    */
   public PlainFile createPlainFileByPath(String path)
-    throws FileExistsException, InsufficientPermissionsException {
+    throws FileExistsException, InsufficientPermissionsException, FileExistsException {
     Directory current;
     String[] tokens = path.split("/");
     String target = tokens[tokens.length-1];
@@ -591,7 +595,7 @@ public class FileSystem extends FileSystem_Base {
     }
 
     Directory currentDir = createFileByPathHelper(current, tokensList);
-
+    checkFileUnique(target, currentDir);
     return createPlainFile(target, currentDir, _rootUser);
   }
 
@@ -620,7 +624,7 @@ public class FileSystem extends FileSystem_Base {
     }
 
     Directory currentDir = createFileByPathHelper(current, tokensList);
-
+    checkFileUnique(target, currentDir);
     try {
       DirectoryVisitor dv = new DirectoryVisitor();
       return currentDir.getFileByName(target).accept(dv);
@@ -805,6 +809,15 @@ public class FileSystem extends FileSystem_Base {
    */
   private void checkFilepathSize(String filepath) throws InvalidFilepathSizeException {
     if(filepath.length() >= 1024) throw new InvalidFilepathSizeException(1024);
+  }
+  
+  /**
+   * Verifies if filename is unique in Directory
+   * @param filename
+   * @throws InvalidFilenameException
+   */
+  private void checkFileUnique(String filename, Directory dir) throws FileExistsException {
+    if(dir.hasFile(filename)) throw new FileExistsException(filename);
   }
 
   /**
