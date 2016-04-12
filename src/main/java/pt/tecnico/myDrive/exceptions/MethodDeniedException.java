@@ -6,8 +6,8 @@ package pt.tecnico.myDrive.exceptions;
  */
 public class MethodDeniedException extends RuntimeException {
 
-  public MethodDeniedException() {
-    super("You don't have permission to use this method!");
+  public MethodDeniedException(String method) {
+    super("You don't have permission to use " + method);
   }
 }
 
