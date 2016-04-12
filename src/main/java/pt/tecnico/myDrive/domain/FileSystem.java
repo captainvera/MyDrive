@@ -913,7 +913,7 @@ public class FileSystem extends FileSystem_Base {
     LinkVisitor lv = new LinkVisitor();
     Link l = f.accept(lv);
     if (l == null) {
-      throw new NotADirectoryException(f.getName());
+      throw new NotALinkException(f.getName());
     }
     return l;
   }
