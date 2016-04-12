@@ -987,6 +987,54 @@ public class FileSystem extends FileSystem_Base {
    * ****************************************************************************
    */
 
+  public void createFile(String name, String type, String content, long token)
+  throws CreateLinkWithoutContentException, CreateDirectoryWithContentException, InvalidTokenException, InsufficientPermissionsException, InvalidFilenameException{
+    updateSession(token);
+    if(content == null) createFileWithoutContent(name, type);
+    else createFileWithContent(name, type, content);
+  }
+
+  public void createFileWithoutContent(String name, String type)
+  throws CreateLinkWithoutContentException, InsufficientPermissionsException, InvalidFilenameException{
+    switch(type.toLowerCase()){
+      case "directory":
+        createDirectory(name);
+        break;
+
+      case "plainfile":
+        createPlainFile(name);
+        break;
+
+      case "app":
+        createApp(name);
+        break;
+
+      case "link":
+        throw new CreateLinkWithoutContentException();
+    }
+  }
+
+  public void createFileWithContent(String name, String type, String content)
+  throws CreateDirectoryWithContentException, InsufficientPermissionsException, InvalidFilenameException{
+    switch(type.toLowerCase()){
+      case "directory":
+        throw new CreateDirectoryWithContentException();
+
+      case "plainfile":
+        PlainFile pf = createPlainFile(name);
+        pf.setData(content);
+        break;
+
+      case "app":
+        App a = createApp(name);
+        a.setData(content);
+        break;
+
+      case "link":
+        createLink(name, content);
+        break;
+    }
+  }
   /**
    * Logins a user into the filesystem, changing current directory to home directory
    */
@@ -1019,11 +1067,12 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public String readFile(long token, String filename)
-    throws NotAPlainFileException, InvalidTokenException {
+    throws NotAPlainFileException, InvalidTokenException, FileUnknownException,
+    InsufficientPermissionsException, NotADirectoryException, NotALinkException {
     updateSession(token);
     File file = getFileByPath(filename);
-    checkReadPermissions(_loggedUser, file)
-    PlainFile pf = assertPlainFile(f);
+    checkReadPermissions(_loggedUser, file);
+    PlainFile pf = assertPlainFile(file);
     return pf.getData();
   }
 }

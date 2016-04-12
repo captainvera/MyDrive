@@ -24,10 +24,6 @@ public abstract class myDriveService {
     dispatch();
   }
 
-  protected boolean updateSession(long token){
-    return getFileSystem().updateSession(token);
-  }
-
   protected abstract void dispatch() throws Exception;
 
 }
