@@ -30,7 +30,7 @@ public class Login extends Login_Base {
 	/**
 	 * Basic remove implementation for Login objects
 	 */
-	public void remove() { 
+	public void remove() {
 		nullifyRelations();
 		deleteDomainObject();
 	}
@@ -47,11 +47,11 @@ public class Login extends Login_Base {
 	public void extendToken() {
 		super.setExpirationDate(new DateTime().plusHours(2));
 	}
-	public boolean verifyToken(long token) {
+	public boolean compareToken(long token) {
 		return token == super.getToken();
 	}
-	public boolean notExpired() {
-		return new DateTime().compareTo(super.getExpirationDate()) < 0;
+	public boolean hasExpired () {
+		return new DateTime().compareTo(super.getExpirationDate()) >= 0;
 	}
 	@Override
 	public Long getToken(){
@@ -84,6 +84,6 @@ public class Login extends Login_Base {
 	public void setUser(User user) {
 		log.warn("DO NOT USE Login.setUser() it does nothing.");
 	}
-	
+
 
 }

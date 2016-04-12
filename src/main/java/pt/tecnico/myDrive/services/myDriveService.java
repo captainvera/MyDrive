@@ -10,20 +10,24 @@ import pt.tecnico.myDrive.domain.FileSystem;
 import pt.ist.fenixframework.Atomic;
 
 public abstract class myDriveService {
-    protected static final Logger log = LogManager.getRootLogger();
+  protected static final Logger log = LogManager.getRootLogger();
 
-	public myDriveService() {
-	}
+  public myDriveService() {
+  }
 
-	static FileSystem getFileSystem(){
-		return FileSystem.getInstance();
-	}		
-	
-	@Atomic
-    public final void execute() throws Exception {
-        dispatch();
-	}
+  static FileSystem getFileSystem(){
+    return FileSystem.getInstance();
+  }
 
-    protected abstract void dispatch() throws Exception;
-    
+  @Atomic
+  public final void execute() throws Exception {
+    dispatch();
+  }
+
+  protected boolean updateSession(long token){
+    return getFileSystem().updateSession(token);
+  }
+
+  protected abstract void dispatch() throws Exception;
+
 }
