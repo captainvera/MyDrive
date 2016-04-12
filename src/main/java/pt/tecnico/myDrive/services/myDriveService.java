@@ -24,9 +24,6 @@ public abstract class myDriveService {
         dispatch();
 	}
 
-	protected boolean verifyToken(long token){
-		return getFileSystem().verifyToken(token);
-	}
     protected abstract void dispatch() throws Exception;
     
 }
