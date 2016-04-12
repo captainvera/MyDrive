@@ -885,11 +885,9 @@ public class FileSystem extends FileSystem_Base {
 
 
   /* ****************************************************************************
-   * |                              Services                                    |
+   * |                           Token Handling                                 |
    * ****************************************************************************
    */
-
-  //-------- Token manipulation
 
 
   /**
@@ -987,6 +985,11 @@ public class FileSystem extends FileSystem_Base {
     }
 
   }
+
+  /* ****************************************************************************
+   * |                              Services                                    |
+   * ****************************************************************************
+   */
 
   /**
    * Logins a user into the filesystem, changing current directory to home directory
