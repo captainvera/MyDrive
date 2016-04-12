@@ -487,10 +487,18 @@ public class FileSystem extends FileSystem_Base {
   /**
    * @return result of executing file
    */
-  public String executeFile(String filename) throws FileUnknownException, InsufficientPermissionsException, NotALinkException {
-    File file = _currentDirectory.getFileByName(filename);
-    checkExecutionPermissions(_loggedUser, file);
-    return file.execute();
+  public String executeFile(String path) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException, NotALinkException {
+    File file = getFileByPath(path);
+    if(assertLink(file) != null){
+		Link l = assertLink(file);
+		File linkedFile = getFileFromLink(l);
+		checkExecutionPermissions(_loggedUser, linkedFile);
+		return linkedFile.execute();
+	}
+	else{
+		checkExecutionPermissions(_loggedUser, file);
+		return file.execute();
+	}
   }
 
   /* ****************************************************************************
@@ -542,6 +550,7 @@ public class FileSystem extends FileSystem_Base {
 
   public File getFileFromLink(Link l) throws InsufficientPermissionsException, NotALinkException, FileUnknownException, NotADirectoryException
   {
+  	  //FIXME GETDATA MUST CHECK PERMISSIONS
   	  String path = l.getData();
   	  return getFileByPath(path);
   }
