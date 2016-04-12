@@ -1,5 +1,6 @@
 package pt.tecnico.myDrive.domain;
 
+// Domain specific imports
 import pt.tecnico.myDrive.domain.App;
 import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.domain.Link;
@@ -7,32 +8,42 @@ import pt.tecnico.myDrive.domain.User;
 import pt.tecnico.myDrive.domain.File;
 import pt.tecnico.myDrive.domain.PlainFile;
 
+// Domain Exceptions
+import pt.tecnico.myDrive.exceptions.*;
+
+// Domain visitors
+import pt.tecnico.myDrive.visitors.DirectoryVisitor;
+import pt.tecnico.myDrive.visitors.PlainFileVisitor;
+import pt.tecnico.myDrive.visitors.AppVisitor;
+import pt.tecnico.myDrive.visitors.LinkVisitor;
+import pt.tecnico.myDrive.visitors.XMLExporterVisitor;
+
+// Jdom2
 import org.jdom2.Element;
 import org.jdom2.Document;
 
+// IO
 import java.io.UnsupportedEncodingException;
 
-import pt.tecnico.myDrive.visitors.XMLExporterVisitor;
-import pt.tecnico.myDrive.visitors.DirectoryVisitor;
-
-import pt.tecnico.myDrive.exceptions.ImportDocumentException;
+// Fenix Framework
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.FenixFramework;
 
+// JodaTime
 import org.joda.time.DateTime;
 
-import pt.tecnico.myDrive.exceptions.NotADirectoryException;
-import pt.tecnico.myDrive.exceptions.*;
-
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigInteger;
-
+// Loggers
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import pt.tecnico.myDrive.visitors.DirectoryVisitor;
-import pt.tecnico.myDrive.visitors.LinkVisitor;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+
+// Util imports
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Random;
+
+import java.math.BigInteger;
 
 public class FileSystem extends FileSystem_Base {
 
@@ -909,6 +920,24 @@ public class FileSystem extends FileSystem_Base {
     return dir;
   }
 
+  public PlainFile assertPlainFile(File f) throws NotAPlainFileException {
+    PlainFileVisitor pfv = new PlainFileVisitor();
+    PlainFile pf = f.accept(pfv);
+    if (pf == null)
+      throw new NotAPlainFileException(f.getName());
+    else
+      return pf;
+  }
+
+  public App assertApp(File f) throws NotAAppException {
+    AppVisitor av = new AppVisitor();
+    App a = f.accept(av);
+    if (a == null)
+      throw new NotAAppException(f.getName());
+    else
+      return a;
+  }
+
   public Link assertLink(File f) throws NotALinkException {
     LinkVisitor lv = new LinkVisitor();
     Link l = f.accept(lv);
@@ -917,4 +946,12 @@ public class FileSystem extends FileSystem_Base {
     }
     return l;
   }
+
+
+  /* ****************************************************************************
+   * |                              Services                                    |
+   * ****************************************************************************
+   */
+
+
 }
