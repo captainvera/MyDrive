@@ -4,6 +4,7 @@ import org.jdom2.Element;
 import java.io.UnsupportedEncodingException;
 import org.jdom2.DataConversionException;
 
+import pt.tecnico.myDrive.exceptions.CannotWriteToLinkException;
 import pt.tecnico.myDrive.exceptions.UserUnknownException;
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
 
@@ -16,8 +17,9 @@ public class Link extends Link_Base {
     super();
   }
 
-  public Link(Integer id, String name, Directory parent, User owner) {
+  public Link(Integer id, String name, Directory parent, User owner, String data) {
     init(id, name, parent, owner);
+    setData(data);
   }
 
   /**
@@ -60,6 +62,10 @@ public class Link extends Link_Base {
     } catch(UnsupportedEncodingException | DataConversionException e){
       throw new ImportDocumentException(String.valueOf(getId()));
     }
+  }
+  @Override
+  public void setData(String data){
+  	throw new CannotWriteToLinkException(this.getName());
   }
   @Override
   public String toString(){
