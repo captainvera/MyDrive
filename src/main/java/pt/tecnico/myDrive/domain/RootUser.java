@@ -1,6 +1,6 @@
 package pt.tecnico.myDrive.domain;
 
-import pt.tecnico.myDrive.exception.MethodDeniedException;
+import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 
 public class RootUser extends RootUser_Base {
 
