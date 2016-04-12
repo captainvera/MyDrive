@@ -7,7 +7,7 @@ public class RootUser extends RootUser_Base {
   public RootUser(Directory dir) {
     init(dir);
   }
-  
+
   @Override
   public String getPassword(){
     throw new MethodDeniedException();
@@ -35,10 +35,10 @@ public class RootUser extends RootUser_Base {
     return password.equals(super.getPassword());
   }
   /**
-   * Root User shouldn't be removable 
+   * Root User shouldn't be removable
    */
-  public void remove() { 
-    throw MethodDeniedException();
+  public void remove() {
+    throw new MethodDeniedException();
   }
 
   /**

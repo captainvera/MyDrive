@@ -49,9 +49,6 @@ public class LoginTest extends AbstractServiceTest {
 			long tok1 = login1.result();
 			long tok2 = login2.result();
 
-			BigInteger token1 = BigInteger.valueOf(tok1);
-			BigInteger token2 = BigInteger.valueOf(tok2);
-
 			assertTrue("Login utilizador 1 bem sucedido.",  tok1 != 0);
 			assertTrue("Login utilizador 2 bem sucedido.", tok2 != 0);
 		} catch (Exception e) {
