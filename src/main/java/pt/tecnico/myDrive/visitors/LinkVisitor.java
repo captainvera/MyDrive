@@ -10,7 +10,7 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 import pt.tecnico.myDrive.exceptions.NotALinkException;
 
 /**
- * Simple directory visitor. Allows throws and exception if the element being visited is not a Link
+ * Simple link visitor. Allows throws and exception if the element being visited is not a Link
  */
 
 public class LinkVisitor implements GenericVisitor<Link> {
