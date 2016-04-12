@@ -57,31 +57,31 @@ public class Login extends Login_Base {
 	}
 	@Override
 	public Long getToken() throws MethodDeniedException{
-		throw new MethodDeniedException("Login.getToken()");
+		throw new MethodDeniedException();
 	}
 	@Override
 	public DateTime getExpirationDate() throws MethodDeniedException{
-		throw new MethodDeniedException("Login.getToken()");
+		throw new MethodDeniedException();
 	}
 	@Override
 	public void setExpirationDate(DateTime expirationDate) throws MethodDeniedException{
-		throw new MethodDeniedException("Login.getToken()");
+		throw new MethodDeniedException();
 	}
 	@Override
 	public void setToken(Long token) throws MethodDeniedException{
-		throw new MethodDeniedException("Login.getToken()");
+		throw new MethodDeniedException();
 	}
 	@Override
 	public FileSystem getFileSystem() throws MethodDeniedException{
-		throw new MethodDeniedException("Login.getToken()");
+		throw new MethodDeniedException();
 	}
 	@Override
 	public void setFileSystem(FileSystem fileSystem) throws MethodDeniedException{
-		throw new MethodDeniedException("Login.getToken()");
+		throw new MethodDeniedException();
 	}
 	@Override
 	public void setUser(User user) throws MethodDeniedException{
-		throw new MethodDeniedException("Login.getToken()");
+		throw new MethodDeniedException();
 	}
 
 
