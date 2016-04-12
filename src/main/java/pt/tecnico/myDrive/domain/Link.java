@@ -61,5 +61,8 @@ public class Link extends Link_Base {
       throw new ImportDocumentException(String.valueOf(getId()));
     }
   }
-
+  @Override
+  public String toString(){
+  	return getName() + "->" + getData();
+  }
 }
