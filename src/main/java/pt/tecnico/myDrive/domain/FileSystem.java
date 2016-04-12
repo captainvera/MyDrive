@@ -31,7 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import pt.tecnico.myDrive.visitors.DirectoryVisitor;
-
+import pt.tecnico.myDrive.visitors.LinkVisitor;
 import java.util.*;
 
 public class FileSystem extends FileSystem_Base {
@@ -909,4 +909,12 @@ public class FileSystem extends FileSystem_Base {
     return dir;
   }
 
+  public Link assertLink(File f) throws NotADirectoryException {
+    LinkVisitor lv = new LinkVisitor();
+    Link l = f.accept(lv);
+    if (l == null) {
+      throw new NotADirectoryException(f.getName());
+    }
+    return l;
+  }
 }
