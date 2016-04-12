@@ -372,10 +372,20 @@ public class FileSystem extends FileSystem_Base {
    */
   public void changeDirectory(String dirName)
     throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException, NotALinkException {
-    Directory dir = assertDirectory(_currentDirectory.getFileByName(dirName));
-    checkExecutionPermissions(_loggedUser, dir);
-    _currentDirectory = dir;
-  }
+    final Directory dir =
+    	(assertLink(_currentDirectory.getFileByName(dirName)) != null) ?  
+    	assertDirectory(getFileFromLink(assertLink(_currentDirectory.getFileByName(dirName)))) 
+    	:
+    	assertDirectory(_currentDirectory.getFileByName(dirName));;
+/*    if(assertLink(_currentDirectory.getFileByName(dirName)) != null){
+    	Directory dir = assertDirectory(getFileFromLink(assertLink(_currentDirectory.getFileByName(dirName))));
+    } else {
+		Directory dir = assertDirectory(_currentDirectory.getFileByName(dirName));
+	}	*/
+	checkExecutionPermissions(_loggedUser, dir);
+	_currentDirectory = dir;
+}
+  
 
   /**
    * ----------------------------------------------------
