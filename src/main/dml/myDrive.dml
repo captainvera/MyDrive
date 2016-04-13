@@ -57,9 +57,7 @@ relation FileSystemContainsUsers {
 }
 
 relation FileSystemHasRootUser {
-  FileSystem playsRole fileSystem{
-    multiplicity 1;
-  }
+  FileSystem playsRole;
   RootUser playsRole rootUser {
     multiplicity 1;
   }
@@ -73,10 +71,8 @@ relation FileSystemContainsFiles {
 }
 
 relation FileSystemHasRootDirectory {
-  FileSystem playsRole fileSystem{
-    multiplicity 1;
-  }
-  RootDirectory playsRole rootDir {
+  FileSystem playsRole; 
+  RootDirectory playsRole rootDirectory {
     multiplicity 1;
   }
 }
