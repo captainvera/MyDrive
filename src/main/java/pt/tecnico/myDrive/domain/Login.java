@@ -55,6 +55,9 @@ public class Login extends Login_Base {
 	public boolean hasExpired () {
 		return new DateTime().compareTo(super.getExpirationDate()) >= 0;
 	}
+	public void reduceExpirationDate(int hours, int minutes, int seconds){
+		super.setExpirationDate(super.getExpirationDate().minusHours(hours).minusMinutes(minutes).minusSeconds(seconds));
+	}
 	@Override
 	public Long getToken() throws MethodDeniedException{
 		throw new MethodDeniedException();
