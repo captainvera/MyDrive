@@ -34,7 +34,9 @@ class Directory extends File;
 
 class RootDirectory extends Directory;
 
-class Link extends PlainFile;
+class Link extends PlainFile{
+	boolean dirtyBit;
+}
 
 class App extends PlainFile;
 
