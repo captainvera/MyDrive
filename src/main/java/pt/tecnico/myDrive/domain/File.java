@@ -71,7 +71,23 @@ public abstract class File extends File_Base {
   public String getPath() { return getParent().getPath() + "/" + getName(); }
 
   public String toString() {
-  	return getUserPermission() + getOthersPermission() + " " + getName();
+    return getUserPermission() + getOthersPermission() + " " + getName();
   }
+
+
+  /**
+   * Two files are equal if they belong to the same file system, have the same
+   * id in the file system and the same path.
+   *
+   * @param file
+   * @return True if two files are equal
+   */
+  @Override
+  boolean equals(File file) {
+    getFileSystem() == file.getFileSystem() &&
+      getId() == file.getId() &&
+      getPath().equals(file.getPath());
+  }
+
 }
 
