@@ -1098,4 +1098,11 @@ public class FileSystem extends FileSystem_Base {
 		return pf.getData();
 	}
   }
+  
+  public void writeFile(long token, String path, String content)
+    throws NotAPlainFileException, InvalidTokenException, FileUnknownException,
+    InsufficientPermissionsException, NotALinkException {
+	updateSession(token);
+	
+  }
 }
