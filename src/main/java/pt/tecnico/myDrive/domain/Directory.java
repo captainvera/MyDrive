@@ -98,7 +98,6 @@ public class Directory extends Directory_Base {
             return f1.toString().compareTo(f2.toString());
         }        
     };
-    System.out.println("LALALALAALALALALALA CHINESE");
     return listFilesGenericSorted (this.getClass().getMethod("toString"), comp);
   }
 
