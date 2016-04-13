@@ -78,7 +78,7 @@ relation LoginHasUser {
 }
 
 relation LoginHasCurrentDirectory {
-  Login playsRole login;
+  Login playsRole;
   Directory playsRole currentDirectory {
     multiplicity 1;
   }

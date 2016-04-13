@@ -15,8 +15,20 @@ public class User extends User_Base {
     super();
   }
 
-  public User(FileSystem fs, String username, String name, String password, String umask) {
-    this(fs, username, name, password, umask, null);
+  public User(FileSystem fs, String username) {
+    // FIXME: Better solution?
+    try {
+      Directory home = fs.createDirectoryByPath("/home/" + username);
+      init(fs, username, username, username, "rwxd----", home);
+    } catch (Exception e) {
+      // Shouldn't happen!!
+      e.printStackTrace();
+    }
+  }
+
+  public User(FileSystem fs, String username, String name, String password) {
+    // FIXME: Move default umask to here
+    this(fs, username, name, password, "rwxd----", null);
   }
 
   public User(FileSystem fs, String username, String name, String password, String umask, Directory homeDir) {
@@ -57,19 +69,19 @@ public class User extends User_Base {
   /**
    * Basic remove implementation for User objects
    */
- public void remove() {
- 	nullifyRelations();
- 	deleteDomainObject();
- }
+  public void remove() {
+    nullifyRelations();
+    deleteDomainObject();
+  }
 
- /**
-  * Nullifies relations, that is, deletes/cancels any relation between this
-  * object and eventual others.
-  */
- protected void nullifyRelations() {
-   setHomeDirectory(null);
-   setFileSystem(null);
- }
+  /**
+   * Nullifies relations, that is, deletes/cancels any relation between this
+   * object and eventual others.
+   */
+  protected void nullifyRelations() {
+    setHomeDirectory(null);
+    setFileSystem(null);
+  }
 
   public Element xmlExport(){
     Element user = new Element("user");

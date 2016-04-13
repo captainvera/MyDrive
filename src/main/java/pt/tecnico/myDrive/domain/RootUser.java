@@ -1,11 +1,17 @@
 package pt.tecnico.myDrive.domain;
 
+// Loggers
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 
 public class RootUser extends RootUser_Base {
 
-  public RootUser(FileSystem fs, Directory dir) {
-    init(fs, dir);
+  private static final Logger log = LogManager.getRootLogger();
+
+  public RootUser(FileSystem fs) {
+    super.init(fs, "root", "Super User", "***", "rwxdr-x-", null);
   }
 
   @Override
@@ -23,23 +29,11 @@ public class RootUser extends RootUser_Base {
     throw new MethodDeniedException();
   }
 
-  protected void init(FileSystem fs, Directory homeDir) {
-    super.setUsername("root");
-    super.setName("Super User");
-    super.setPassword("***");
-    super.setUmask("rwxdr-x-");
-    super.setHomeDirectory(homeDir);
-    super.setFileSystem(fs);
-  }
-
-  public boolean verifyPassword(String password){
-    return password.equals(super.getPassword());
-  }
   /**
    * Root User shouldn't be removable
    */
   public void remove() {
-    throw new MethodDeniedException();
+    log.warn("Can't remove root user!");
   }
 
   /**
