@@ -82,9 +82,8 @@ public abstract class File extends File_Base {
    * @param file
    * @return True if two files are equal
    */
-  @Override
   boolean equals(File file) {
-    getFileSystem() == file.getFileSystem() &&
+    return getFileSystem() == file.getFileSystem() &&
       getId() == file.getId() &&
       getPath().equals(file.getPath());
   }
