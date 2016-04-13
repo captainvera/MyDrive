@@ -3,7 +3,13 @@ package pt.tecnico.myDrive.domain;
 import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.domain.User;
 
+// Loggers
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class RootDirectory extends RootDirectory_Base {
+
+  private static final Logger log = LogManager.getRootLogger();
 
   /** Placeholder for FenixFramework */
   public RootDirectory() {
@@ -30,6 +36,8 @@ public class RootDirectory extends RootDirectory_Base {
 
   @Override
   public void remove() {
+    log.warn("Can't remove root directory!");
+    log.warn("Removing all other files...");
     removeAllFiles();
   }
 

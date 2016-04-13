@@ -15,7 +15,7 @@ public abstract class myDriveService {
   public myDriveService() {
   }
 
-  static FileSystem getFileSystem(){
+  public static FileSystem getFileSystem(){
     return FileSystem.getInstance();
   }
 
