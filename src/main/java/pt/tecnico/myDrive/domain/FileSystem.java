@@ -346,13 +346,13 @@ public class FileSystem extends FileSystem_Base {
    * Does not throw exception if Root is not found
    * TODO: Should throw exception
    */
-  public Directory getRootDirectory() {
+  public RootDirectory getRootDirectory() {
     Directory dir;
     DirectoryVisitor dv = new DirectoryVisitor();
     for (File f: getFilesSet()) {
       dir = f.accept(dv);
       if (dir != null && dir.isTopLevelDirectory())
-        return dir;
+        return (RootDirectory) dir;
     }
 
     /**
