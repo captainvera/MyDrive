@@ -54,10 +54,28 @@ relation FileSystemContainsUsers {
   }
 }
 
+relation FileSystemHasRootUser {
+  FileSystem playsRole fileSystem{
+    multiplicity 1;
+  }
+  RootUser playsRole rootUser {
+    multiplicity 1;
+  }
+}
+
 relation FileSystemContainsFiles {
   FileSystem playsRole fileSystem;
   File playsRole files {
     multiplicity 1..*;
+  }
+}
+
+relation FileSystemHasRootDirectory {
+  FileSystem playsRole fileSystem{
+    multiplicity 1;
+  }
+  RootDirectory playsRole rootDir {
+    multiplicity 1;
   }
 }
 
