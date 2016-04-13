@@ -27,12 +27,12 @@ public class PlainFileVisitor implements GenericVisitor<PlainFile> {
 
   @Override
   public PlainFile visit(Link l) {
-    return null;
+    return l;
   }
 
   @Override
   public PlainFile visit(App a) {
-    return null;
+    return a;
   }
 
 }
