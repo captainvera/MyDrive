@@ -19,6 +19,7 @@ public class Link extends Link_Base {
 
   public Link(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
     init(fs, id, name, parent, owner, data);
+    setDirtyBit(true);
   }
 
   /**
@@ -31,7 +32,7 @@ public class Link extends Link_Base {
 
   @Override
   public String execute(){
-    return "Link functionality not implemented yet.";
+    return "OOPSIE DAISY";
   }
 
   @Override
@@ -62,10 +63,11 @@ public class Link extends Link_Base {
       throw new ImportDocumentException(String.valueOf(getId()));
     }
   }
-  /*@Override
-  public void setData(String data) throws CannotWriteToLinkException{
-  	throw new CannotWriteToLinkException(this.getName());
-  } TODO */
+  @Override
+  public void setData(String data){
+  	if(getDirtyBit() == true) System.out.println("Can't write a link");
+	else super.setData(data);
+  }
   @Override
   public String toString(){
   	return getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData();

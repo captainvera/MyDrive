@@ -19,7 +19,7 @@ import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.domain.PlainFile;
 import pt.tecnico.myDrive.domain.File;
 import pt.tecnico.myDrive.services.LoginService;
-
+import pt.tecnico.myDrive.domain.Link;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.DomainRoot;
 import pt.ist.fenixframework.FenixFramework;
@@ -111,7 +111,7 @@ public class myDriveApplication {
       log.debug("Listing /home");
       System.out.println(fs.listFileByPathSimple("/home"));
       log.debug("Removing /home/README");
-      fs.removeFileByPath("/home/README");
+      //fs.removeFileByPath("/home/README");
       log.debug("Listing /home");
       System.out.println(fs.listFileByPathSimple("/home"));
 
@@ -125,7 +125,21 @@ public class myDriveApplication {
       log.debug("Files pos-remove: ");
       for (File f : fs.getFilesSet())
         System.out.println(f);
-
+		//TODO EXECUTE APP	
+	  log.debug("creating link");
+	  Link l1 = fs.createLink("cenas","/home/README");
+	  Link l2 = fs.createLink("dirlink","/home");
+	  log.debug("listing");
+	  System.out.println(fs.listDirectory());
+	  //execute
+	  log.debug("executing readme...");
+     // System.out.println(fs.executeFile("l1"));
+	  log.debug("trying to write to link");
+	  l1.setData("blabla");
+	  System.out.println(l1.execute());
+	  log.debug("changing directory");
+      fs.changeDirectory("dirlink");
+	  System.out.println(fs.listDirectory());
     } catch(Exception e) {
       e.printStackTrace();
     }
