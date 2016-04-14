@@ -41,8 +41,20 @@ public class Link extends Link_Base {
   NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
     System.out.println("DEBUG link: " + getPath());
 
+    if(tokens.size() == 0)
+      return getFileSystem().getFileByPath(getData(), user, getParent());
+
     checkExecutionPermissions(user);
-    File file = getFileSystem().getFileByPath(getData(), user, getParent());
+    String remaining = "";
+    remaining += getData();
+    if(remaining.charAt(remaining.length()-1) == '/')
+      remaining = remaining.substring(0, remaining.length()-1);
+
+    for(String s : tokens )
+      remaining += '/' + s;
+
+    System.out.println("DEBUG!! " + remaining + " | ");
+    File file = getFileSystem().getFileByPath(remaining, user, getParent());
     file.checkReadPermissions(user);
     return file;
   }
