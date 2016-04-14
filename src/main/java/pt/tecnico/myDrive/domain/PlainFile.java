@@ -65,7 +65,11 @@ public class PlainFile extends PlainFile_Base {
   // TODO: Exceptions
   public void setData(String data, User user) {
     super.setData(data);
-    setLastModified(new DateTime());
+    touch();
+  }
+
+  public String getData(User user) {
+    return super.getData();
   }
 
   public void xmlImport(Element plainElement) throws ImportDocumentException {
