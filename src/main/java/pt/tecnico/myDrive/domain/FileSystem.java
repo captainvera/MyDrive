@@ -868,6 +868,10 @@ public class FileSystem extends FileSystem_Base {
 
   public void createFile(String name, String type, String content, long token) {
     updateSession(token);
+    if(_login.getCurrentDirectory().hasFile(name)) throw new FileExistsException(name);
+
+    checkFilename(name);
+
     if(content.equals("")) createFileWithoutContent(name, type, _login.getUser(), _login.getCurrentDirectory());
     else createFileWithContent(name, type, content, _login.getUser(), _login.getCurrentDirectory());
   }
@@ -879,7 +883,7 @@ public class FileSystem extends FileSystem_Base {
         break;
 
       case "plainfile":
-        createPlainFile(name,  user, directory);
+        createPlainFile(name,  directory, user);
         break;
 
       /*case "app":
@@ -897,7 +901,7 @@ public class FileSystem extends FileSystem_Base {
         throw new CreateDirectoryWithContentException();
 
       case "plainfile":
-        PlainFile pf = createPlainFile(name, user, directory);
+        PlainFile pf = createPlainFile(name, directory, user);
         pf.setData(content, user);
         break;
 
@@ -907,8 +911,7 @@ public class FileSystem extends FileSystem_Base {
         break;*/
 
       case "link":
-        Link l = createLink(name, content, user, directory);
-        l.setData(content, user);
+        createLink(name, directory, user, content);
         break;
     }
   }

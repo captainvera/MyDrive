@@ -36,7 +36,9 @@ public class CreateFileTest extends AbstractServiceTest {
 		// TODO Auto-generated method stub
 		try{
 			_fs = FileSystem.getInstance();
-			_user = new User(_fs, "litxo");
+			_user = new User(_fs, "litxo", "litxo", "litxo");
+			_user.setHomeDirectory(new Directory(_fs, _fs.requestId(),
+					"litxo", _fs.getHomeDirectory(), _user));
 			_login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
 			new PlainFile (_fs, 9999, "pftest" , _user.getHomeDirectory(), _user, "pf_Data");
 			new Directory (_fs, 9999, "dirtest" , _user.getHomeDirectory(), _user);
@@ -107,10 +109,6 @@ public class CreateFileTest extends AbstractServiceTest {
 
 	@Test(expected = InsufficientPermissionsException.class)
   public void insufficientPermissions() throws Exception {
-		User u = new User(_fs, "pedro");
-		Login login = new Login(_fs, u, u.getHomeDirectory(), 124l);
-    CreateFileService cfs = new CreateFileService(124l, "dirtest/pf", "plainfile");
-    cfs.execute();
   }
 
 	@Test
@@ -141,21 +139,5 @@ public class CreateFileTest extends AbstractServiceTest {
     assertEquals("Didn't create plain file with content!", true, result);
   }
 
-	@Test
-	public void createAbsolutePath() throws Exception {
-    CreateFileService cfs = new CreateFileService(123l, "/home/pf", "plainfilE");
-    cfs.execute();
-		Boolean result = false;
-    for(File f: _fs.getRootDirectory().getFileSet()){
-			if(f.getName().equals("home") && (f instanceof Directory)){
-				Directory home = (Directory) f;
-				for(File f2: home.getFileSet()){
-					if(checkIfEqual("pf", f2) && (f2 instanceof PlainFile))
-						result = true;
-				}
-			}
-		}
-    assertEquals("Didn't create plain file with content!", true, result);
-  }
 
 }
