@@ -15,20 +15,20 @@ public class User extends User_Base {
     super();
   }
 
-  public User(FileSystem fs, String username) {
-    // FIXME: Better solution?
-    try {
-      Directory home = fs.createDirectoryByPath("/home/" + username);
-      init(fs, username, username, username, "rwxd----", home);
-    } catch (Exception e) {
-      // Shouldn't happen!!
-      e.printStackTrace();
-    }
-  }
+//  public User(FileSystem fs, String username) {
+//    // FIXME: Better solution?
+//    try {
+//      Directory home = fs.createDirectoryByPath("/home/" + username, this);
+//      init(fs, username, username, username, "rwxd----", home);
+//    } catch (Exception e) {
+//      // Shouldn't happen!!
+//      e.printStackTrace();
+//    }
+//  }
 
   public User(FileSystem fs, String username, String name, String password) {
     // FIXME: Move default umask to here
-    this(fs, username, name, password, "rwxd----", null);
+    init(fs, username, name, password, "rwxd----");
   }
 
   public User(FileSystem fs, String username, String name, String password, String umask, Directory homeDir) {
@@ -54,6 +54,11 @@ public class User extends User_Base {
     throw new MethodDeniedException();
   }
 
+  @Override
+  public void setName(String umask) {
+    throw new MethodDeniedException();
+  }
+
   protected void init(FileSystem fs, String username, String name, String password, String umask, Directory homeDir) {
     super.setFileSystem(fs);
     super.setUsername(username);
@@ -62,7 +67,10 @@ public class User extends User_Base {
     super.setUmask(umask);
     super.setHomeDirectory(homeDir);
   }
-
+  
+  protected void init(FileSystem fs, String username, String name, String password, String umask) {
+    init(fs, username, name, password, umask, null);
+  }
   public boolean verifyPassword(String password){
     return password.equals(super.getPassword());
   }
