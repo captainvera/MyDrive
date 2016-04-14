@@ -10,6 +10,7 @@ import pt.tecnico.myDrive.exceptions.ImportDocumentException;
 import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
 
+import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
@@ -35,7 +36,11 @@ public class Link extends Link_Base {
   public int getSize(){
     return 1;
   }
-
+  @Override
+  public void setData(String content, User user){
+  	  if(getDirtyBit()) throw new MethodDeniedException();
+	  else super.setData(content,user);
+  }
   @Override
   public File getFile(ArrayList<String> tokens, User user) throws
   NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
