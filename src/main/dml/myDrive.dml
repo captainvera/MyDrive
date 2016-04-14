@@ -9,6 +9,11 @@ class Login {
   Long token;
 }
 
+class EnvironmentVariable {
+  String name;
+  String value;
+}
+
 class User {
   String username;
   String password;
@@ -80,6 +85,13 @@ relation FileSystemHasRootDirectory {
 relation FileSystemContainsLogins {
   FileSystem playsRole fileSystem;
   Login playsRole logins {
+    multiplicity 0..*;
+  }
+}
+
+relation LoginContainsEnvironmentVariables {
+  Login playsRole login;
+  EnvironmentVariable playsRole environmntVariable {
     multiplicity 0..*;
   }
 }
