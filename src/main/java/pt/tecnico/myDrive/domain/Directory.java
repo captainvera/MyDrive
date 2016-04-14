@@ -106,9 +106,9 @@ public class Directory extends Directory_Base {
       }
     };
     try {
-      return listFilesGenericSorted(this.getClass().getMethod("getName"), comp);
-    }catch(NoSuchMethodException e){
-      throw new RuntimeException("Unknown method on list file");
+      return listFilesGenericSorted(Class.forName("pt.tecnico.myDrive.domain.File").getMethod("getName"), comp);
+    } catch(NoSuchMethodException | ClassNotFoundException e){
+      throw new RuntimeException("Unknown method or class on list file");
     }
   }
 
@@ -124,9 +124,9 @@ public class Directory extends Directory_Base {
       }
     };
     try {
-      return listFilesGenericSorted (this.getClass().getMethod("toString"), comp);
-    }catch(NoSuchMethodException e){
-      throw new RuntimeException("Unknown method on list file");
+      return listFilesGenericSorted (Class.forName("pt.tecnico.myDrive.domain.File").getMethod("toString"), comp);
+    } catch(NoSuchMethodException | ClassNotFoundException e){
+      throw new RuntimeException("Unknown method or class on list file");
     }
   }
 
