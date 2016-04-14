@@ -966,7 +966,6 @@ public class FileSystem extends FileSystem_Base {
   public void createFile(String name, String type, String content, long token)
   throws CreateLinkWithoutContentException, CreateDirectoryWithContentException,
   InvalidTokenException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException {
-    checkFilename(name);
     updateSession(token);
     if(content == null) createFileWithoutContent(name, type, _login.getUser(), _login.getCurrentDirectory());
     else createFileWithContent(name, type, content, _login.getUser(), _login.getCurrentDirectory());
@@ -976,11 +975,11 @@ public class FileSystem extends FileSystem_Base {
   throws CreateLinkWithoutContentException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
     switch(type.toLowerCase()){
       case "directory":
-        createDirectoryByPath(name);
+        createDirectory(name, user, directory);
         break;
 
       case "plainfile":
-        createPlainFileByPath(name);
+        createPlainFile(name,  user, directory);
         break;
 
       /*case "app":
@@ -1000,8 +999,8 @@ public class FileSystem extends FileSystem_Base {
 
       case "plainfile":
 
-        PlainFile pf = createPlainFileByPath(name);
-        pf.setData(content);
+        PlainFile pf = createPlainFile(name, user, directory);
+        pf.setData(content, user);
         break;
 
       /*case "app":
@@ -1010,8 +1009,8 @@ public class FileSystem extends FileSystem_Base {
         break;*/
 
       case "link":
-        Link l = createLinkByPath(name);
-        l.setData(content);
+        Link l = createLink(name, content, user, directory);
+        l.setData(content, user);
         break;
     }
   }
@@ -1065,13 +1064,13 @@ public class FileSystem extends FileSystem_Base {
 		//file.checkWritePermissions(_login.getUser());
 		pf.writeToFile(content, _login.getUser());
   }
-  
+
   public void deleteFile(long token, String filename)
       throws InvalidTokenException, FileUnknownException,
       InsufficientPermissionsException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
   	updateSession(token);
   	removeFile(_login.getCurrentDirectory().getFileByName(filename));
-  	//TODO::FIXME check permissions on remove 
+  	//TODO::FIXME check permissions on remove
     }
 
   public String changeDirectory(long token, String dirpath) throws
