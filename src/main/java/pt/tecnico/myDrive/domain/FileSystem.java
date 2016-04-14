@@ -1045,6 +1045,14 @@ public class FileSystem extends FileSystem_Base {
 	updateSession(token);
 
   }
+  
+  public void deleteFile(long token, String filename)
+      throws InvalidTokenException, FileUnknownException,
+      InsufficientPermissionsException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+  	updateSession(token);
+  	removeFile(_login.getCurrentDirectory().getFileByName(filename));
+  	//TODO::FIXME check permissions on remove 
+    }
 
   public String changeDirectory(long token, String dirpath) throws
     FileUnknownException, NotADirectoryException, InsufficientPermissionsException, InvalidTokenException, NotALinkException {

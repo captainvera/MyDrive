@@ -1,18 +1,25 @@
 package pt.tecnico.myDrive.services;
 
+import pt.tecnico.myDrive.domain.FileSystem;
+
 public class DeleteFileService extends myDriveService{
 
+	private String _filename;
+	private long _token;
 	/**
-	 *
+	 * DeleteFileService Constructor.
 	 */
-	public DeleteFileService() {
+	public DeleteFileService(long token, String filename) {
 		super();
+		_filename = filename;
+		_token = token;
 	}
 
 	@Override
 	protected void dispatch() throws Exception {
-		// TODO Auto-generated method stub
-
+		FileSystem fs = getFileSystem();
+		fs.deleteFile(_token, _filename);
+		
 	}
 
 }
