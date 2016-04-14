@@ -8,6 +8,8 @@ import pt.tecnico.myDrive.domain.User;
 import pt.tecnico.myDrive.domain.File;
 import pt.tecnico.myDrive.domain.PlainFile;
 
+import pt.ist.fenixframework.DomainRoot;
+
 // Domain Exceptions
 import pt.tecnico.myDrive.exceptions.*;
 
@@ -49,8 +51,6 @@ public class FileSystem extends FileSystem_Base {
 
   private static final Logger log = LogManager.getRootLogger();
 
-  private  Directory _rootDirectory;
-  private User _rootUser;
 
   /**
    * FileSystem temporary state variables
@@ -62,7 +62,7 @@ public class FileSystem extends FileSystem_Base {
 
   private FileSystem() {
     log.trace("Constructing new FileSystem");
-    setRoot(FenixFramework.getDomainRoot());
+    super.setRoot(FenixFramework.getDomainRoot());
     try {
       init();
     } catch(RootDirectoryNotFoundException e) {
@@ -94,7 +94,7 @@ public class FileSystem extends FileSystem_Base {
 
   public void cleanup() {
     try{
-      File file = getFileByPath("/", _rootUser, _rootDirectory);
+      File file = getFileByPath("/", getRootUser(), getRootDirectory());
       removeFile(file);
       getFilesSet().clear();
     }catch (InsufficientPermissionsException | FileUnknownException | NotALinkException | NotADirectoryException e){
@@ -132,9 +132,7 @@ public class FileSystem extends FileSystem_Base {
       cleanInit();
     } else{
       log.trace("Initializing existing FileSystem");
-      _rootUser = getUserByUsername("root");
-      _rootDirectory = getRootDirectory();
-      if (_rootDirectory == null) {
+      if (getRootDirectory() == null) {
         throw new RootDirectoryNotFoundException();
       }
     }
@@ -148,19 +146,19 @@ public class FileSystem extends FileSystem_Base {
    */
   private void cleanInit() {
     log.trace("Initializing new FileSystem");
-    setIdCounter(0);
+    super.setIdCounter(0);
 
     log.trace("Creating root user");
-    _rootUser = createRootUser();
+    super.setRootUser(new RootUser(this));
 
     log.trace("Creating root directory");
-    _rootDirectory = createRootDirectory();
+    super.setRootDirectory(new RootDirectory(this, 0, "/", getRootUser()));
 
 
     log.trace("Creating home directory");
-    Directory homeDir = createDirectory("home",_rootDirectory,_rootUser);
+    Directory homeDir = createDirectory("home",getRootDirectory(),getRootUser());
 
-    _rootUser.setHomeDirectory(createDirectory("root", homeDir, _rootUser));
+    getRootUser().setHomeDirectory(createDirectory("root", homeDir, getRootUser()));
 
   }
 
@@ -170,7 +168,7 @@ public class FileSystem extends FileSystem_Base {
    * @return True if user is the root user
    */
   private boolean isRoot(User user) {
-    return user == _rootUser;
+    return user == getRootUser();
   }
 
   /**
@@ -185,7 +183,7 @@ public class FileSystem extends FileSystem_Base {
     }
     return null;
   }
-  
+
   /**
    * Searches Logins Set by User's username (since username is unique) to find a specific Login.
    * Returns null if no login is found.
@@ -209,21 +207,47 @@ public class FileSystem extends FileSystem_Base {
     return userExists(user.getName());
   }
 
+  @Override
+  public void setIdCounter(Integer id) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setRoot(DomainRoot dr) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void addUsers(User user) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void addFiles(File file){
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void addLogins(Login login){
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setRootUser(RootUser rootUser) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setRootDirectory(RootDirectory rootDirectory) {
+    throw new MethodDeniedException();
+  }
+
+
 
   /* ****************************************************************************
    * |                 FileSystem's Users creation methods                       |
    * ****************************************************************************
    */
-
-  /**
-   * Creates Root User
-   * Its home directory isn't created here to avoid conflicts in FileSystem init
-   */
-  public User createRootUser() {
-    User user = new RootUser(this);
-    return user;
-  }
-
   /**
    * Creates a new user, checking for username constraints
    * Also creates its home directory
@@ -245,7 +269,7 @@ public class FileSystem extends FileSystem_Base {
      */
     log.trace("Adding user " + username);
     try {
-      Directory home = assertDirectory(_rootDirectory.getFileByName("home"));
+      Directory home = assertDirectory(getRootDirectory().getFileByName("home"));
       Directory userHome = createDirectory(username, home, user);
       user.setHomeDirectory(userHome);
     } catch(FileUnknownException e) {
@@ -266,13 +290,8 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public int requestId() {
-    setIdCounter(getIdCounter()+1);
+    super.setIdCounter(getIdCounter()+1);
     return getIdCounter();
-  }
-
-  public Directory createRootDirectory() {
-    RootDirectory rd = new RootDirectory(this, 0, "/", _rootUser);
-    return rd;
   }
 
   private Directory createDirectory(String name, Directory parent, User owner) {
@@ -357,7 +376,7 @@ public class FileSystem extends FileSystem_Base {
 
     return null;
   }
-  
+
   public Directory getHomeDirectory() {
   	/**
   	 * TODO:XXX:FIXME DO PROPER CHECKING AND EXCEPTION HANDLING
@@ -368,7 +387,7 @@ public class FileSystem extends FileSystem_Base {
   		throw new RuntimeException("WRONG FILE STRUCTURE");
   	}
   }
-  
+
   /**
    * Changes current working directory
    */
@@ -450,7 +469,7 @@ public class FileSystem extends FileSystem_Base {
    */
   public File getFileByPath(String path, User user, Directory directory)
     throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException, NotALinkException {
-    if (path.equals("/")) return _rootDirectory;
+    if (path.equals("/")) return getRootDirectory();
     Directory current;
     DirectoryVisitor dv = new DirectoryVisitor();
 
@@ -461,7 +480,7 @@ public class FileSystem extends FileSystem_Base {
     tokensList.remove(tokensList.size()-1);
 
     if (path.charAt(0) == '/') {
-      current = _rootDirectory;
+      current = getRootDirectory();
       tokensList.remove(0);
     } else{
       current = directory;
@@ -558,7 +577,7 @@ public class FileSystem extends FileSystem_Base {
         current = temp.accept(dv);
       } catch(FileUnknownException e) {
         checkWritePermissions(user, current);
-        current = createDirectory(tok, current, _rootUser);
+        current = createDirectory(tok, current, getRootUser());
       }
       if (current==null) {
         System.out.println("Conflicting file names");
@@ -586,7 +605,7 @@ public class FileSystem extends FileSystem_Base {
     tokensList.remove(tokensList.size()-1);
 
     if (path.charAt(0) == '/') {
-      current = _rootDirectory;
+      current = getRootDirectory();
       tokensList.remove(0);
     }else{
       current = directory;
@@ -594,7 +613,7 @@ public class FileSystem extends FileSystem_Base {
 
     Directory currentDir = createFileByPathHelper(current, tokensList, user);
     checkFileUnique(target, currentDir);
-    return createPlainFile(target, currentDir, _rootUser);
+    return createPlainFile(target, currentDir, getRootUser());
   }
 
   /**
@@ -615,7 +634,7 @@ public class FileSystem extends FileSystem_Base {
     tokensList.remove(tokensList.size()-1);
 
     if (path.charAt(0) == '/') {
-      current = _rootDirectory;
+      current = getRootDirectory();
       tokensList.remove(0);
     }else{
       current = directory;
@@ -628,7 +647,7 @@ public class FileSystem extends FileSystem_Base {
       return currentDir.getFileByName(target).accept(dv);
     }
     catch (FileUnknownException e) {
-      return createDirectory(target, currentDir, _rootUser);
+      return createDirectory(target, currentDir, getRootUser());
     }
 
   }
@@ -718,7 +737,7 @@ public class FileSystem extends FileSystem_Base {
       String name = new String(dirElement.getChild("name").getText().getBytes("UTF-8"));
       String path = new String(dirElement.getChild("path").getText().getBytes("UTF-8"));
       path = path + "/" + name;
-      Directory dir = createDirectoryByPath(path, _rootUser, _rootDirectory);
+      Directory dir = createDirectoryByPath(path, getRootUser(), getRootDirectory());
 
       Element owner = dirElement.getChild("owner");
       User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8")));
@@ -733,7 +752,7 @@ public class FileSystem extends FileSystem_Base {
       String name = new String(plainElement.getChild("name").getText().getBytes("UTF-8"));
       String path = new String(plainElement.getChild("path").getText().getBytes("UTF-8"));
       path = path + "/" + name;
-      PlainFile plain = createPlainFileByPath(path, _rootUser, _rootDirectory);
+      PlainFile plain = createPlainFileByPath(path, getRootUser(), getRootDirectory());
 
       Element owner = plainElement.getChild("owner");
       User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8")));
@@ -1069,7 +1088,7 @@ public class FileSystem extends FileSystem_Base {
       }
 
       _login = new Login(this, user, user.getHomeDirectory(), token);
-      addLogins(_login);
+      super.addLogins(_login);
       return token;
     } else { // if password was incorrect;
       throw new WrongPasswordException(user.getUsername());

@@ -63,11 +63,6 @@ public class Link extends Link_Base {
       throw new ImportDocumentException(String.valueOf(getId()));
     }
   }
-  @Override
-  public void setData(String data){
-  	if(getDirtyBit() == true) System.out.println("Can't write a link");
-	else super.setData(data);
-  }
 
   @Override
   public String toString(){

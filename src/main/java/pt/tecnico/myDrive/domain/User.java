@@ -54,6 +54,11 @@ public class User extends User_Base {
     throw new MethodDeniedException();
   }
 
+  @Override
+  public void setName(String umask) {
+    throw new MethodDeniedException();
+  }
+
   protected void init(FileSystem fs, String username, String name, String password, String umask, Directory homeDir) {
     super.setFileSystem(fs);
     super.setUsername(username);

@@ -4,6 +4,8 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 
+import org.joda.time.DateTime;
+
 public abstract class File extends File_Base {
 
 
@@ -17,14 +19,15 @@ public abstract class File extends File_Base {
   }
 
   protected void init(FileSystem fs, Integer id, String name, Directory parent, User owner) {
-    setFileSystem(fs);
-    setId(id);
-    setName(name);
+    super.setFileSystem(fs);
+    super.setId(id);
+    super.setName(name);
     setParent(parent);
-    setOwner(owner);
+    super.setOwner(owner);
+    super.setLastModified(new DateTime());
     // File's initial permissions are the one's defined in the user's umask.
-    setUserPermission(owner.getUmask().substring(0,3));
-    setOthersPermission(owner.getUmask().substring(4,7));
+    super.setUserPermission(owner.getUmask().substring(0,3));
+    super.setOthersPermission(owner.getUmask().substring(4,7));
   }
 
   /**
@@ -40,9 +43,9 @@ public abstract class File extends File_Base {
    * object and eventual others.
    */
   protected void nullifyRelations() {
-    setOwner(null);
-    setParent(null);
-    setFileSystem(null);
+    super.setOwner(null);
+    super.setParent(null);
+    super.setFileSystem(null);
   }
 
   /**
@@ -86,6 +89,37 @@ public abstract class File extends File_Base {
     return getFileSystem() == file.getFileSystem() &&
       getId() == file.getId() &&
       getPath().equals(file.getPath());
+  }
+
+  @Override
+  public void setUserPermission(String perm) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setOthersPermission(String perm) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setLastModified(DateTime lastModified) {
+    throw new MethodDeniedException();
+  }
+
+  // TODO
+  /** @Override */
+  /** public void setParent(Directory parent) { */
+  /**   throw new MethodDeniedException(); */
+  /** } */
+
+  @Override
+  public void setOwner(User owner) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setId(Integer id) {
+    throw new MethodDeniedException();
   }
 
 }

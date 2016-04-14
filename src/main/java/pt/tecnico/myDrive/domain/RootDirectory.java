@@ -7,6 +7,8 @@ import pt.tecnico.myDrive.domain.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import pt.tecnico.myDrive.exceptions.MethodDeniedException;
+
 public class RootDirectory extends RootDirectory_Base {
 
   private static final Logger log = LogManager.getRootLogger();
@@ -26,9 +28,10 @@ public class RootDirectory extends RootDirectory_Base {
    * want that, this should do it.
    */
 
+  // TODO
   @Override
   public void setParent(Directory parent){
-    /* do nothing */
+    /** throw new MethodDeniedException(); */
   }
 
   @Override
