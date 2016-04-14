@@ -436,7 +436,7 @@ public class FileSystem extends FileSystem_Base {
      * TODO::XXX:FIX PERMISSIONS
      */
     // checkExecutionPermissions(user, file);
-    return file.execute();
+    return file.execute(user);
   }
 
   /* ****************************************************************************

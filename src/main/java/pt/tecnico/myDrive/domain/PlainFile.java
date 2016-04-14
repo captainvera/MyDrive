@@ -48,7 +48,7 @@ public class PlainFile extends PlainFile_Base {
   }
 
   @Override
-  public String execute(){
+  public String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
     return getData();
   }
 
