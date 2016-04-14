@@ -114,6 +114,10 @@ public abstract class File extends File_Base {
     throw new MethodDeniedException();
   }
 
+  protected final void touch(){
+    super.setLastModified(new DateTime());
+  }
+
   public File getFileObject(User user) {
       return this;
     }

@@ -293,23 +293,19 @@ public class FileSystem extends FileSystem_Base {
   }
 
   private Directory createDirectory(String name, Directory parent, User owner) {
-    Directory dir = new Directory(this, requestId(), name, parent, owner);
-    return dir;
+    return parent.createDirectory(name, owner);
   }
 
   private PlainFile createPlainFile(String name, Directory parent, User owner) {
-    PlainFile pf = new PlainFile(this, requestId(), name, parent, owner);
-    return pf;
+    return parent.createPlainFile(name, owner);
   }
 
   private App createApp(String name, Directory parent, User owner) {
-    App app = new App(this, requestId(), name, parent, owner);
-    return app;
+    return parent.createApp(name, owner);
   }
 
   private Link createLink(String name, Directory parent, User owner, String data) {
-    Link link = new Link(this, requestId(), name, parent, owner, data);
-    return link;
+    return parent.createLink(name, owner, data);
   }
 
   private void removeFile(File f) {
@@ -320,56 +316,6 @@ public class FileSystem extends FileSystem_Base {
    * |                     Public File creation methods                         |
    * ****************************************************************************
    */
-
-  public Directory createDirectory(String name, User user, Directory directory) {
-    checkFilename(name);
-    checkFileUnique(name, directory);
-    // Write permissions
-    return createDirectory(name,directory,user);
-  }
-
-  public PlainFile createPlainFile(String name, User user, Directory directory) {
-    checkFilename(name);
-    checkFileUnique(name, directory);
-    // Write permissions
-    return createPlainFile(name,directory,user);
-  }
-
-  public App createApp(String name, User user, Directory directory) {
-    checkFilename(name);
-    checkFileUnique(name, directory);
-    // Write permissions
-    return createApp(name,directory,user);
-  }
-
-  public Link createLink(String name, String data, User user, Directory directory) {
-    checkFilename(name);
-    checkFileUnique(name, directory);
-    // Write permissions
-    return createLink(name,directory,user,data);
-  }
-
-  /**
-   * Finds Root Directory
-   * Does not throw exception if Root is not found
-   * TODO: Should throw exception
-   */
-  public RootDirectory getRootDirectory() {
-    Directory dir;
-    DirectoryVisitor dv = new DirectoryVisitor();
-    for (File f: getFilesSet()) {
-      dir = f.accept(dv);
-      if (dir != null && dir.isTopLevelDirectory())
-        return (RootDirectory) dir;
-    }
-
-    /**
-     * No root directory found, means either corrupted or
-     * empty filesystem
-     */
-
-    return null;
-  }
 
   public Directory getHomeDirectory() {
     /**
@@ -390,8 +336,7 @@ public class FileSystem extends FileSystem_Base {
      * TODO::FIX:PERMISSIONS
      */
 
-    DirectoryVisitor dv = new DirectoryVisitor();
-    Directory d = getFileByPath(dirName, user, directory).accept(dv);
+    Directory d = assertDirectory(getFileByPath(dirName, user, directory));
 
     //d.checkUserPermissions(...)
     _login.setCurrentDirectory(d);
@@ -743,6 +688,7 @@ public class FileSystem extends FileSystem_Base {
    * @param filename
    */
   private void checkFilename(String filename) {
+
     char[] characters = filename.toCharArray();
 
     for (char c: characters) {
@@ -921,22 +867,22 @@ public class FileSystem extends FileSystem_Base {
 
   public void createFile(String name, String type, String content, long token) {
     updateSession(token);
-    if(content == null) createFileWithoutContent(name, type, _login.getUser(), _login.getCurrentDirectory());
+    if(content.equals("")) createFileWithoutContent(name, type, _login.getUser(), _login.getCurrentDirectory());
     else createFileWithContent(name, type, content, _login.getUser(), _login.getCurrentDirectory());
   }
 
   private void createFileWithoutContent(String name, String type, User user, Directory directory) {
     switch(type.toLowerCase()){
       case "directory":
-        createDirectory(name, user, directory);
+        createDirectory(name, directory, user);
         break;
 
       case "plainfile":
-        createPlainFile(name, user, directory);
+        createPlainFile(name, directory, user);
         break;
 
       case "app":
-        createApp(name, user, directory);
+        createApp(name, directory, user);
         break;
 
       case "link":
@@ -950,17 +896,17 @@ public class FileSystem extends FileSystem_Base {
         throw new CreateDirectoryWithContentException();
 
       case "plainfile":
-        PlainFile pf = createPlainFile(name, user, directory);
+        PlainFile pf = createPlainFile(name, directory, user);
         pf.setData(content);
         break;
 
       case "app":
-        App a = createApp(name, user, directory);
+        App a = createApp(name, directory, user);
         a.setData(content);
         break;
 
       case "link":
-        createLink(name, content, user, directory);
+        createLink(name, directory, user, content);
         break;
     }
   }
@@ -996,7 +942,7 @@ public class FileSystem extends FileSystem_Base {
     updateSession(token);
     File file = getFileByPath(filename, _login.getUser(), _login.getCurrentDirectory());
     PlainFile pf = assertPlainFile(file);
-    return pf.getData();
+    return pf.getData(_login.getUser());
   }
 
   public void writeFile(long token, String path, String content) {
@@ -1007,7 +953,7 @@ public class FileSystem extends FileSystem_Base {
     //FIXME check filename?
     PlainFile pf = assertPlainFile(file);
     //file.checkWritePermissions(_login.getUser());
-    pf.writeToFile(content, _login.getUser());
+    pf.setData(content, _login.getUser());
   }
 
   public void deleteFile(long token, String filename) {
