@@ -68,8 +68,9 @@ public class Link extends Link_Base {
   	if(getDirtyBit() == true) System.out.println("Can't write a link");
 	else super.setData(data);
   }
+
   @Override
   public String toString(){
-  	return getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData();
+  	return "l " + getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData();
   }
 }

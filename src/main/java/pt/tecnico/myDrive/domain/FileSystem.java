@@ -1101,5 +1101,8 @@ public class FileSystem extends FileSystem_Base {
     FileUnknownException, NotADirectoryException, InsufficientPermissionsException, InvalidTokenException, NotALinkException {
       updateSession(token);
       changeDirectory(dirpath);
+
+  public String listFile(long token, String path){
+    return " ";
   }
 }
