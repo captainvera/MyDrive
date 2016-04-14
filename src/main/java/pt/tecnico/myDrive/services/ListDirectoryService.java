@@ -19,7 +19,7 @@ public class ListDirectoryService extends myDriveService{
 	@Override
 	protected void dispatch() throws Exception {
     FileSystem fs = getFileSystem(); 
-    _data = fs.listDirectory(_token);
+    _data = fs.listCurrentDirectory(_token);
 	}
 
   public String result() {
