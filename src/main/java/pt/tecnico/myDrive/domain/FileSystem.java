@@ -317,56 +317,6 @@ public class FileSystem extends FileSystem_Base {
    * ****************************************************************************
    */
 
-  public Directory createDirectory(String name, User user, Directory directory) {
-    checkFilename(name);
-    checkFileUnique(name, directory);
-    // Write permissions
-    return createDirectory(name,directory,user);
-  }
-
-  public PlainFile createPlainFile(String name, User user, Directory directory) {
-    checkFilename(name);
-    checkFileUnique(name, directory);
-    // Write permissions
-    return createPlainFile(name,directory,user);
-  }
-
-  public App createApp(String name, User user, Directory directory) {
-    checkFilename(name);
-    checkFileUnique(name, directory);
-    // Write permissions
-    return createApp(name,directory,user);
-  }
-
-  public Link createLink(String name, String data, User user, Directory directory) {
-    checkFilename(name);
-    checkFileUnique(name, directory);
-    // Write permissions
-    return createLink(name,directory,user,data);
-  }
-
-  /**
-   * Finds Root Directory
-   * Does not throw exception if Root is not found
-   * TODO: Should throw exception
-   */
-  public RootDirectory getRootDirectory() {
-    Directory dir;
-    DirectoryVisitor dv = new DirectoryVisitor();
-    for (File f: getFilesSet()) {
-      dir = f.accept(dv);
-      if (dir != null && dir.isTopLevelDirectory())
-        return (RootDirectory) dir;
-    }
-
-    /**
-     * No root directory found, means either corrupted or
-     * empty filesystem
-     */
-
-    return null;
-  }
-
   public Directory getHomeDirectory() {
     /**
      * TODO:XXX:FIXME DO PROPER CHECKING AND EXCEPTION HANDLING
@@ -739,6 +689,7 @@ public class FileSystem extends FileSystem_Base {
    * @param filename
    */
   private void checkFilename(String filename) {
+
     char[] characters = filename.toCharArray();
 
     for (char c: characters) {
@@ -917,22 +868,22 @@ public class FileSystem extends FileSystem_Base {
 
   public void createFile(String name, String type, String content, long token) {
     updateSession(token);
-    if(content == null) createFileWithoutContent(name, type, _login.getUser(), _login.getCurrentDirectory());
+    if(content.equals("")) createFileWithoutContent(name, type, _login.getUser(), _login.getCurrentDirectory());
     else createFileWithContent(name, type, content, _login.getUser(), _login.getCurrentDirectory());
   }
 
   private void createFileWithoutContent(String name, String type, User user, Directory directory) {
     switch(type.toLowerCase()){
       case "directory":
-        createDirectory(name, user, directory);
+        createDirectory(name, directory, user);
         break;
 
       case "plainfile":
-        createPlainFile(name, user, directory);
+        createPlainFile(name, directory, user);
         break;
 
       case "app":
-        createApp(name, user, directory);
+        createApp(name, directory, user);
         break;
 
       case "link":
@@ -946,17 +897,17 @@ public class FileSystem extends FileSystem_Base {
         throw new CreateDirectoryWithContentException();
 
       case "plainfile":
-        PlainFile pf = createPlainFile(name, user, directory);
+        PlainFile pf = createPlainFile(name, directory, user);
         pf.setData(content);
         break;
 
       case "app":
-        App a = createApp(name, user, directory);
+        App a = createApp(name, directory, user);
         a.setData(content);
         break;
 
       case "link":
-        createLink(name, content, user, directory);
+        createLink(name, directory, user, content);
         break;
     }
   }
