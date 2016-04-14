@@ -37,8 +37,7 @@ public class Link extends Link_Base {
   }
 
   @Override
-  public File getFile(ArrayList<String> tokens, User user) throws
-  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+  public File getFile(ArrayList<String> tokens, User user) {
     System.out.println("DEBUG link: " + getPath());
 
     if(tokens.size() == 0)
@@ -94,8 +93,7 @@ public class Link extends Link_Base {
   }
 
   @Override
-  public File getFileObject(User user) throws
-  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+  public File getFileObject(User user) {
     return getFileSystem().getFileByPath(getData(), user, getParent());
   }
 

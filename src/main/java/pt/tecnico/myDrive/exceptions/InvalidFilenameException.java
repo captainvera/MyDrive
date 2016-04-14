@@ -3,7 +3,7 @@ package pt.tecnico.myDrive.exceptions;
 /**
  * This exception is thrown whenever an attempt to use an invalid filename
  */
-public class InvalidFilenameException extends Exception {
+public class InvalidFilenameException extends RuntimeException {
 
   /** The file's name. */
   private final String _filename;

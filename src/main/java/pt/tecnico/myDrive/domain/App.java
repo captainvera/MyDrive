@@ -39,8 +39,7 @@ public class App extends App_Base {
 
 
   @Override
-  public File getFile(ArrayList<String> tokens, User user) throws
-  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+  public File getFile(ArrayList<String> tokens, User user) {
     throw new NotADirectoryException(getName());
   }
 
@@ -59,7 +58,7 @@ public class App extends App_Base {
     super.remove();
   }
 
-  public void xmlImport(Element appElement) throws ImportDocumentException{
+  public void xmlImport(Element appElement) {
     try{
       setId(appElement.getAttribute("id").getIntValue());
 

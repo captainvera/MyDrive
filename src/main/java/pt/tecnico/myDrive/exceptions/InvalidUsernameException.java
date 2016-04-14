@@ -4,7 +4,7 @@ package pt.tecnico.myDrive.exceptions;
  * This exception is thrown whenever an attempt is made to perform a creation
  * of a user with an invalid username.
  */
-public class InvalidUsernameException extends Exception {
+public class InvalidUsernameException extends RuntimeException {
 
   /** The user's username. */
   private final String _username;

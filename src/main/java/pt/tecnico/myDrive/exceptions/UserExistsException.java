@@ -4,7 +4,7 @@ package pt.tecnico.myDrive.exceptions;
  * This exception is thrown whenever an attempt is made to perform an operation
  * that requires a non existent user, but the user already exists.
  */
-public class UserExistsException extends Exception {
+public class UserExistsException extends RuntimeException {
 
   /** The user's username. */
   private final String _username;
