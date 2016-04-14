@@ -7,8 +7,14 @@ import org.jdom2.DataConversionException;
 import pt.tecnico.myDrive.exceptions.CannotWriteToLinkException;
 import pt.tecnico.myDrive.exceptions.UserUnknownException;
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
+import pt.tecnico.myDrive.exceptions.NotADirectoryException;
+import pt.tecnico.myDrive.exceptions.FileUnknownException;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
+
+import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
+
+import java.util.ArrayList;
 
 public class Link extends Link_Base {
 
@@ -28,6 +34,29 @@ public class Link extends Link_Base {
   @Override
   public int getSize(){
     return 1;
+  }
+
+  @Override
+  public File getFile(ArrayList<String> tokens, User user) throws
+  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+    System.out.println("DEBUG link: " + getPath());
+
+    if(tokens.size() == 0)
+      return getFileSystem().getFileByPath(getData(), user, getParent());
+
+    checkExecutionPermissions(user);
+    String remaining = "";
+    remaining += getData();
+    if(remaining.charAt(remaining.length()-1) == '/')
+      remaining = remaining.substring(0, remaining.length()-1);
+
+    for(String s : tokens )
+      remaining += '/' + s;
+
+    System.out.println("DEBUG!! " + remaining + " | ");
+    File file = getFileSystem().getFileByPath(remaining, user, getParent());
+    file.checkReadPermissions(user);
+    return file;
   }
 
   @Override
@@ -65,7 +94,13 @@ public class Link extends Link_Base {
   }
 
   @Override
+  public File getFileObject(User user) throws
+  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+    return getFileSystem().getFileByPath(getData(), user, getParent());
+  }
+
+  @Override
   public String toString(){
-  	return "l " + getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData();
+    return "l " + getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData();
   }
 }
