@@ -293,4 +293,34 @@ public class Directory extends Directory_Base {
   public String toString(){
     return "d " + getUserPermission() + getOthersPermission() + " " + getName();
   }
+
+   /* ****************************************************************************
+   *  |                     Public File creation methods                         |
+   *  |          TODO::XXX: CHECK PERMISSIONS TODO::XXX                          |
+   *  ****************************************************************************
+   */
+
+  public Directory createDirectory(String name, User owner){
+    //TODO PERMISSIONS
+    return new Directory(getFileSystem(), getFileSystem().requestId(), name, this, owner); 
+  }
+
+  public PlainFile createPlainFile(String name, User owner){
+    //TODO PERMISSIONS
+    return new PlainFile(getFileSystem(), getFileSystem().requestId(), name, this, owner); 
+  }
+
+  public App createApp(String name, User owner){
+    //TODO PERMISSIONS
+    return new App(getFileSystem(), getFileSystem().requestId(), name, this, owner); 
+  }
+  
+  public Link createLink(String name, User owner, String data){
+    //TODO PERMISSIONS
+    return new Link(getFileSystem(), getFileSystem().requestId(), name, this, owner, data); 
+  }
+  
+  /*
+   * -----------------------------------------------------------------------------
+   */
 }
