@@ -174,7 +174,7 @@ public class WriteFileTest extends AbstractServiceTest {
   }
  
   //EXCEPTIONS
-  @Test(expected = CannotWriteToDirectoryException.class)
+  @Test(expected = NotAPlainFileException.class)
     public void link2linkFail() throws Exception {
       WriteFileService wfs = new WriteFileService(123l, "link2linkfail1", "content");
       wfs.execute();
@@ -208,18 +208,18 @@ public class WriteFileTest extends AbstractServiceTest {
 
   @Test(expected = InsufficientPermissionsException.class)
     public void writeOtherUserPlainFile() throws Exception {
-      WriteFileService wfs = new WriteFileService(1337l, "plainfile1","content");
+      WriteFileService wfs = new WriteFileService(1337l, "/home/litxo/dir1/plainfile1","content");
       wfs.execute();
     }
 
   @Test(expected = InsufficientPermissionsException.class)
     public void writeOtherUserApp() throws Exception {
-      WriteFileService wfs = new WriteFileService(1337l, "app","content");
+      WriteFileService wfs = new WriteFileService(1337l, "/home/litxo/app","content");
       wfs.execute();
     }
   @Test(expected = InsufficientPermissionsException.class)
     public void writeOtherUserLink() throws Exception {
-      WriteFileService wfs = new WriteFileService(1337l, "linksucc2","content");
+      WriteFileService wfs = new WriteFileService(1337l, "/home/litxo/linksucc2","content");
       wfs.execute();
     }
 
