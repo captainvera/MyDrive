@@ -31,7 +31,9 @@ public class ListDirectoryTest extends AbstractServiceTest {
   protected void populate() {
     try {
       _fs = FileSystem.getInstance();
-      _user = new User(_fs, "litxo");
+      _user = new User(_fs, "litxo", "litxo", "litxo");
+      _user.setHomeDirectory(new Directory(_fs, _fs.requestId(),
+					"litxo", _fs.getHomeDirectory(), _user));
       _login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
       _id = 9999;
 
