@@ -7,8 +7,12 @@ import org.jdom2.DataConversionException;
 import pt.tecnico.myDrive.exceptions.CannotWriteToLinkException;
 import pt.tecnico.myDrive.exceptions.UserUnknownException;
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
+import pt.tecnico.myDrive.exceptions.NotADirectoryException;
+import pt.tecnico.myDrive.exceptions.FileUnknownException;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
+
+import java.util.ArrayList;
 
 public class Link extends Link_Base {
 
@@ -28,6 +32,11 @@ public class Link extends Link_Base {
   @Override
   public int getSize(){
     return 1;
+  }
+
+  @Override
+  public File getFile(ArrayList<String> tokens, User user) throws NotADirectoryException, FileUnknownException {
+    throw new NotADirectoryException(getName());
   }
 
   @Override
@@ -62,11 +71,6 @@ public class Link extends Link_Base {
     } catch(UnsupportedEncodingException | DataConversionException e){
       throw new ImportDocumentException(String.valueOf(getId()));
     }
-  }
-  @Override
-  public void setData(String data){
-  	if(getDirtyBit() == true) System.out.println("Can't write a link");
-	else super.setData(data);
   }
 
   @Override

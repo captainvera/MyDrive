@@ -6,8 +6,12 @@ import org.jdom2.DataConversionException;
 
 import pt.tecnico.myDrive.exceptions.UserUnknownException;
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
+import pt.tecnico.myDrive.exceptions.NotADirectoryException;
+import pt.tecnico.myDrive.exceptions.FileUnknownException;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
+
+import java.util.ArrayList;
 
 public class App extends App_Base {
 
@@ -21,7 +25,7 @@ public class App extends App_Base {
   }
 
   public App(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
-    init(fs, id, name, parent, owner, data);
+    super.init(fs, id, name, parent, owner, data);
   }
 
   /**
@@ -29,7 +33,13 @@ public class App extends App_Base {
    */
   @Override
   public int getSize() {
-    return 0;
+    return super.getSize();
+  }
+
+
+  @Override
+  public File getFile(ArrayList<String> tokens, User user) throws NotADirectoryException, FileUnknownException {
+    throw new NotADirectoryException(getName());
   }
 
   @Override

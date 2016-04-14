@@ -3,6 +3,14 @@ package pt.tecnico.myDrive.domain;
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
+import pt.tecnico.myDrive.exceptions.NotADirectoryException;
+import pt.tecnico.myDrive.exceptions.FileUnknownException;
+
+import java.util.ArrayList;
+
+import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
+
+import org.joda.time.DateTime;
 
 public abstract class File extends File_Base {
 
@@ -17,14 +25,15 @@ public abstract class File extends File_Base {
   }
 
   protected void init(FileSystem fs, Integer id, String name, Directory parent, User owner) {
-    setFileSystem(fs);
-    setId(id);
-    setName(name);
+    super.setFileSystem(fs);
+    super.setId(id);
+    super.setName(name);
     setParent(parent);
-    setOwner(owner);
+    super.setOwner(owner);
+    super.setLastModified(new DateTime());
     // File's initial permissions are the one's defined in the user's umask.
-    setUserPermission(owner.getUmask().substring(0,3));
-    setOthersPermission(owner.getUmask().substring(4,7));
+    super.setUserPermission(owner.getUmask().substring(0,3));
+    super.setOthersPermission(owner.getUmask().substring(4,7));
   }
 
   /**
@@ -40,9 +49,9 @@ public abstract class File extends File_Base {
    * object and eventual others.
    */
   protected void nullifyRelations() {
-    setOwner(null);
-    setParent(null);
-    setFileSystem(null);
+    super.setOwner(null);
+    super.setParent(null);
+    super.setFileSystem(null);
   }
 
   /**
@@ -74,6 +83,7 @@ public abstract class File extends File_Base {
     return getUserPermission() + getOthersPermission() + " " + getName();
   }
 
+  public abstract File getFile(ArrayList<String> tokens, User user) throws NotADirectoryException, FileUnknownException; 
 
   /**
    * Two files are equal if they belong to the same file system, have the same
@@ -87,6 +97,80 @@ public abstract class File extends File_Base {
       getId() == file.getId() &&
       getPath().equals(file.getPath());
   }
+
+  @Override
+  public void setUserPermission(String perm) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setOthersPermission(String perm) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setLastModified(DateTime lastModified) {
+    throw new MethodDeniedException();
+  }
+
+  // TODO
+  /** @Override */
+  /** public void setParent(Directory parent) { */
+  /**   throw new MethodDeniedException(); */
+  /** } */
+
+  @Override
+  public void setOwner(User owner) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setId(Integer id) {
+    throw new MethodDeniedException();
+  }
+
+
+  /**
+   * Verifies if user has permission to perform some operation on file
+   *
+   * @param user
+   * @param file
+   * @param index
+   * @param c
+   * @throws InsufficientPermissionsException
+   */
+  protected void checkPermissions(User user, int index, char c)
+    throws InsufficientPermissionsException {
+    String permissions = getPermissions(user);
+    if(permissions.charAt(index) != c)
+      throw new InsufficientPermissionsException();
+  }
+
+  protected void checkReadPermissions(User user) throws InsufficientPermissionsException {
+    checkPermissions(user, 0, 'r');
+  }
+
+  protected void checkWritePermissions(User user) throws InsufficientPermissionsException {
+    checkPermissions(user, 1, 'w');
+  }
+
+  protected void checkExecutionPermissions(User user) throws InsufficientPermissionsException {
+    checkPermissions(user, 2, 'x');
+  }
+
+  protected void checkDeletionPermissions(User user) throws InsufficientPermissionsException {
+    checkPermissions(user, 3, 'd');
+  }
+
+  protected String getPermissions(User user) {
+    if (getFileSystem().getRootUser().equals(user))
+      return "rwxd";
+    else if (getOwner().equals(user))
+      return getUserPermission();
+    else
+      return getOthersPermission();
+  }
+
 
 }
 
