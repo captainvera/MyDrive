@@ -42,9 +42,15 @@ public class WriteFileTest extends AbstractServiceTest {
 	@Override
 	protected void populate() throws Exception{
       try{
+
 		_fs = FileSystem.getInstance();
 		_user = new User(_fs, "litxo");
+    _user.setHomeDirectory(new Directory(_fs, _fs.requestId(),
+					"litxo", _fs.getHomeDirectory(), _user));
+ 
 		_otherUser = new User(_fs, "esquentador");
+    _otherUser.setHomeDirectory(new Directory(_fs, _fs.requestId(), "esquentador", _fs.getHomeDirectory(), _otherUser));
+
 		_login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
 		_otherUserLogin = new Login(_fs,_otherUser, _otherUser.getHomeDirectory(),1337l);
 		_id = 9999;

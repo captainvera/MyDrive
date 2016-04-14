@@ -165,6 +165,15 @@ public class ReadFileTest extends AbstractServiceTest {
     assertEquals("Link to another link Data is incorrect!", "plainfile1_Data", result);
   }
 
+   @Test
+  public void link2linkPath () throws Exception {
+    ReadFileService rfs = new ReadFileService(123l, "linkfail1/plainfile2");
+    rfs.execute();
+    String result = rfs.result();
+
+    assertEquals("Link to another link Data is incorrect!", "plainfile2_Data", result);
+  }
+
   @Test(expected = NotAPlainFileException.class)
     public void link2linkFail() throws Exception {
       ReadFileService rfs = new ReadFileService(123l, "link2linkfail1");
