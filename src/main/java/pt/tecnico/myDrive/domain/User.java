@@ -28,7 +28,7 @@ public class User extends User_Base {
 
   public User(FileSystem fs, String username, String name, String password) {
     // FIXME: Move default umask to here
-    this(fs, username, name, password, "rwxd----", null);
+    init(fs, username, name, password, "rwxd----");
   }
 
   public User(FileSystem fs, String username, String name, String password, String umask, Directory homeDir) {
@@ -62,7 +62,10 @@ public class User extends User_Base {
     super.setUmask(umask);
     super.setHomeDirectory(homeDir);
   }
-
+  
+  protected void init(FileSystem fs, String username, String name, String password, String umask) {
+    init(fs, username, name, password, umask, null);
+  }
   public boolean verifyPassword(String password){
     return password.equals(super.getPassword());
   }
