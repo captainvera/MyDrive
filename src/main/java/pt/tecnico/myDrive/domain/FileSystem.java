@@ -634,9 +634,10 @@ public class FileSystem extends FileSystem_Base {
    * @throws FileExistsException
    * @throws InsufficientPermissionsException
    */
-  public void createAppByPath(String path)
+  public App createAppByPath(String path)
     throws FileExistsException, InsufficientPermissionsException {
     /* Copy code from create'File'ByPath */
+    return null;
   }
 
   /**
@@ -646,9 +647,10 @@ public class FileSystem extends FileSystem_Base {
    * @throws FileExistsException
    * @throws InsufficientPermissionsException
    */
-  public void createLinkByPath(String path)
+  public Link createLinkByPath(String path)
     throws FileExistsException, InsufficientPermissionsException {
     /* Copy code from create'File'ByPath */
+    return null;
   }
 
   /**
@@ -779,8 +781,8 @@ public class FileSystem extends FileSystem_Base {
     char[] characters = filename.toCharArray();
 
     for (char c: characters) {
-      if (!Character.isLetter(c) && !Character.isDigit(c)
-          && c == 0 && c == '\\') {
+      if ((!Character.isLetter(c) && !Character.isDigit(c))
+          || c == 0 || c == '\\') {
         throw new InvalidFilenameException(filename);
       }
     }
@@ -1002,7 +1004,9 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public void createFile(String name, String type, String content, long token)
-  throws CreateLinkWithoutContentException, CreateDirectoryWithContentException, InvalidTokenException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
+  throws CreateLinkWithoutContentException, CreateDirectoryWithContentException,
+  InvalidTokenException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException {
+    checkFilename(name);
     updateSession(token);
     if(content == null) createFileWithoutContent(name, type);
     else createFileWithContent(name, type, content);
@@ -1012,16 +1016,16 @@ public class FileSystem extends FileSystem_Base {
   throws CreateLinkWithoutContentException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
     switch(type.toLowerCase()){
       case "directory":
-        createDirectory(name);
+        createDirectoryByPath(name);
         break;
 
       case "plainfile":
-        createPlainFile(name);
+        createPlainFileByPath(name);
         break;
 
-      case "app":
+      /*case "app":
         createApp(name);
-        break;
+        break;*/
 
       case "link":
         throw new CreateLinkWithoutContentException();
@@ -1035,17 +1039,18 @@ public class FileSystem extends FileSystem_Base {
         throw new CreateDirectoryWithContentException();
 
       case "plainfile":
-        PlainFile pf = createPlainFile(name);
+        PlainFile pf = createPlainFileByPath(name);
         pf.setData(content);
         break;
 
-      case "app":
+      /*case "app":
         App a = createApp(name);
         a.setData(content);
-        break;
+        break;*/
 
       case "link":
-        createLink(name, content);
+        Link l = createLinkByPath(name);
+        l.setData(content);
         break;
     }
   }
