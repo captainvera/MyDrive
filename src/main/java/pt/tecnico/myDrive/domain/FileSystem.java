@@ -1044,13 +1044,10 @@ public class FileSystem extends FileSystem_Base {
     InsufficientPermissionsException,NotADirectoryException, NotAAppException,
     NotALinkException, CannotWriteToDirectoryException, FileUnknownException{
 		updateSession(token);
-		File file = getFileByPath(path);
+		File file = getFileByPath(path,_login.getUser(), _login.getCurrentDirectory());
 		//FIXME check filename?
-		if(assertDirectory(file) != null)	{
-			throw new CannotWriteToDirectoryException();
-		}
-		checkWritePermissions(_loggedUser, file);
 		PlainFile pf = assertPlainFile(file);
+		//file.checkWritePermissions(_login.getUser());
 		pf.setData(content);
   }
 
