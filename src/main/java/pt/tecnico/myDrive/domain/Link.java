@@ -60,8 +60,8 @@ public class Link extends Link_Base {
   }
 
   @Override
-  public String execute(){
-    return "OOPSIE DAISY";
+  public String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
+    return getFileObject(user).execute(user);
   }
 
   @Override
