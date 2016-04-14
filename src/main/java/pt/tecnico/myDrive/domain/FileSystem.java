@@ -463,13 +463,13 @@ public class FileSystem extends FileSystem_Base {
     String[] tokens = path.split("/");
 
     ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
-  
+
     Directory current = null;
 
     if (path.charAt(0) == '/') {
       current = getRootDirectory();
       tokensList.remove(0);
-      
+
       return getRootDirectory().getFile(tokensList, user);
     } else{
       return directory.getFile(tokensList, user);
@@ -1033,8 +1033,6 @@ public class FileSystem extends FileSystem_Base {
     InsufficientPermissionsException, NotADirectoryException, NotALinkException {
       updateSession(token);
       File file = getFileByPath(filename, _login.getUser(), _login.getCurrentDirectory());
-      // Check read permissions
-      /** checkReadPermissions(_login.getUser(), file); */
       PlainFile pf = assertPlainFile(file);
       return pf.getData();
     }
@@ -1050,11 +1048,20 @@ public class FileSystem extends FileSystem_Base {
 		//file.checkWritePermissions(_login.getUser());
 		pf.setData(content);
   }
+  
+  public void deleteFile(long token, String filename)
+      throws InvalidTokenException, FileUnknownException,
+      InsufficientPermissionsException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+  	updateSession(token);
+  	removeFile(_login.getCurrentDirectory().getFileByName(filename));
+  	//TODO::FIXME check permissions on remove 
+    }
 
-  public void changeDirectory(long token, String dirpath) throws
+  public String changeDirectory(long token, String dirpath) throws
     FileUnknownException, NotADirectoryException, InsufficientPermissionsException, InvalidTokenException, NotALinkException {
       updateSession(token);
       changeDirectory(dirpath, _login.getUser(), _login.getCurrentDirectory());
+      return _login.getCurrentDirectory().getPath();
   }
 
   public String listFile(long token, String path){

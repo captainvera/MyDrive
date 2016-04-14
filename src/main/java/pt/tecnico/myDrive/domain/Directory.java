@@ -13,6 +13,7 @@ import pt.tecnico.myDrive.exceptions.FileUnknownException;
 import pt.tecnico.myDrive.exceptions.IllegalRemovalException;
 import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
+import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 
 import java.util.*;
 
@@ -60,14 +61,20 @@ public class Directory extends Directory_Base {
   }
 
   @Override
-  public File getFile(ArrayList<String> tokens, User user) throws NotADirectoryException, FileUnknownException {
+  public File getFile(ArrayList<String> tokens, User user) throws
+  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
     // Terminal case
+    File file;
+    System.out.println("DEBUG DIR: " + getPath());
     if(tokens.size() > 1){
       String name = tokens.remove(0);
-      // check permissions
-      return getFileByName(name).getFile(tokens, user); 
+      file = getFileByName(name).getFile(tokens, user);
+      file.checkExecutionPermissions(user);
+      return file;
     }else if(tokens.size() == 1){
-      return getFileByName(tokens.get(0));
+      file = getFileByName(tokens.get(0)).getFileObject(user);
+      file.checkReadPermissions(user);
+      return file;
     }else{
       throw new RuntimeException("Shouldn't happen! (Wrongly formated token array in get File)");
     }
@@ -97,9 +104,9 @@ public class Directory extends Directory_Base {
   	Comparator<File> comp = new Comparator<File>()
     {
         public int compare(File f1, File f2)
-        { 
+        {
             return f1.toString().compareTo(f2.toString());
-        }        
+        }
     };
     try {
       return listFilesGenericSorted(this.getClass().getMethod("getName"), comp);
@@ -116,15 +123,15 @@ public class Directory extends Directory_Base {
   	Comparator<File> comp = new Comparator<File>()
     {
         public int compare(File f1, File f2)
-        { 
+        {
             return f1.toString().compareTo(f2.toString());
-        }        
+        }
     };
     try {
       return listFilesGenericSorted (this.getClass().getMethod("toString"), comp);
     }catch(NoSuchMethodException e){
       throw new RuntimeException("Unknown method on list file");
-    } 
+    }
   }
 
   /**
@@ -158,7 +165,7 @@ public class Directory extends Directory_Base {
       throw new RuntimeException("InvocationTargetException on list file");
     }
   }
-  
+
   /**
    * List files in a generic way and sorted according to a Comparator.
    * The files are first sorted using the Comparator and then listed.

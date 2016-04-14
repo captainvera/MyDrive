@@ -8,6 +8,7 @@ import pt.tecnico.myDrive.exceptions.UserUnknownException;
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
 import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
+import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 
@@ -38,7 +39,8 @@ public class App extends App_Base {
 
 
   @Override
-  public File getFile(ArrayList<String> tokens, User user) throws NotADirectoryException, FileUnknownException {
+  public File getFile(ArrayList<String> tokens, User user) throws
+  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
     throw new NotADirectoryException(getName());
   }
 
