@@ -9,6 +9,8 @@ import pt.tecnico.myDrive.exceptions.FileUnknownException;
 import pt.tecnico.myDrive.exceptions.IllegalRemovalException;
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 import pt.tecnico.myDrive.exceptions.NotAPlainFileException;
+import pt.tecnico.myDrive.exceptions.CannotWriteToDirectoryException;
+import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 //assert
 import static org.junit.Assert.*;
 //service
@@ -97,7 +99,7 @@ public class WriteFileTest extends AbstractServiceTest {
   public void writeApp() throws Exception {
     WriteFileService wfs = new WriteFileService(123l, "app", "content");
     wfs.execute();
-    assertEquals("App data is incorrect!", app.getData(), "content");
+    assertEquals("App data is incorrect!", app.getData() , "content" );
   }
 
   @Test
@@ -129,7 +131,7 @@ public class WriteFileTest extends AbstractServiceTest {
     WriteFileService wfs = new WriteFileService(123l, "linksucc2","content");
     wfs.execute();
 
-    assertEquals("Link in current directory data is incorrect!", plainfile2.getData(), "content");
+    assertEquals("Link in current directory data is incorrect!", "content", plainfile2.getData() );
   }
 
   @Test
@@ -166,7 +168,7 @@ public class WriteFileTest extends AbstractServiceTest {
   }
  
   //EXCEPTIONS
-  @Test(expected = NotAPlainFileException.class)
+  @Test(expected = CannotWriteToDirectoryException.class)
     public void link2linkFail() throws Exception {
       WriteFileService wfs = new WriteFileService(123l, "link2linkfail1", "content");
       wfs.execute();
