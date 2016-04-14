@@ -6,8 +6,11 @@ import org.jdom2.DataConversionException;
 
 import pt.tecnico.myDrive.exceptions.UserUnknownException;
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
+import pt.tecnico.myDrive.exceptions.NotADirectoryException;
+import pt.tecnico.myDrive.exceptions.FileUnknownException;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
+import java.util.ArrayList;
 
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 
@@ -36,6 +39,11 @@ public class PlainFile extends PlainFile_Base {
   @Override
   public int getSize(){
     return getData().length();
+  }
+
+  @Override
+  public File getFile(ArrayList<String> tokens, User user) throws NotADirectoryException, FileUnknownException {
+    throw new NotADirectoryException(getName());
   }
 
   @Override
