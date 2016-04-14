@@ -336,8 +336,7 @@ public class FileSystem extends FileSystem_Base {
      * TODO::FIX:PERMISSIONS
      */
 
-    DirectoryVisitor dv = new DirectoryVisitor();
-    Directory d = getFileByPath(dirName, user, directory).accept(dv);
+    Directory d = assertDirectory(getFileByPath(dirName, user, directory));
 
     //d.checkUserPermissions(...)
     _login.setCurrentDirectory(d);
