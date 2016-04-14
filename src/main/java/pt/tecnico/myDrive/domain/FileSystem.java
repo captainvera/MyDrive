@@ -1096,4 +1096,10 @@ public class FileSystem extends FileSystem_Base {
 	updateSession(token);
 
   }
+
+  public void changeDirectory(long token, String dirpath) throws
+    FileUnknownException, NotADirectoryException, InsufficientPermissionsException, InvalidTokenException, NotALinkException {
+      updateSession(token);
+      changeDirectory(dirpath);
+  }
 }
