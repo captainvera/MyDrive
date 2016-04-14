@@ -63,4 +63,9 @@ public class App extends App_Base {
       throw new ImportDocumentException(String.valueOf(getId()));
     }
   }
+
+  @Override
+  public String toString(){
+  	return "a " + getUserPermission() + getOthersPermission() + " " + getName();
+  }
 }
