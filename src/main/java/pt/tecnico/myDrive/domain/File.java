@@ -6,6 +6,7 @@ import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
 
+import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 import java.util.ArrayList;
 
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
@@ -83,7 +84,8 @@ public abstract class File extends File_Base {
     return getUserPermission() + getOthersPermission() + " " + getName();
   }
 
-  public abstract File getFile(ArrayList<String> tokens, User user) throws NotADirectoryException, FileUnknownException; 
+  public abstract File getFile(ArrayList<String> tokens, User user) throws
+    NotADirectoryException, FileUnknownException, InsufficientPermissionsException;
 
   /**
    * Two files are equal if they belong to the same file system, have the same
@@ -112,6 +114,11 @@ public abstract class File extends File_Base {
   public void setLastModified(DateTime lastModified) {
     throw new MethodDeniedException();
   }
+
+  public File getFileObject(User user) throws
+  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+      return this;
+    }
 
   // TODO
   /** @Override */

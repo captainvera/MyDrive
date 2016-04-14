@@ -13,6 +13,7 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 import java.util.ArrayList;
 
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
+import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 
 import org.joda.time.DateTime;
 
@@ -42,7 +43,8 @@ public class PlainFile extends PlainFile_Base {
   }
 
   @Override
-  public File getFile(ArrayList<String> tokens, User user) throws NotADirectoryException, FileUnknownException {
+  public File getFile(ArrayList<String> tokens, User user) throws
+  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
     throw new NotADirectoryException(getName());
   }
 
@@ -86,6 +88,6 @@ public class PlainFile extends PlainFile_Base {
 
   @Override
   public String toString(){
-  	return "- " + getUserPermission() + getOthersPermission() + " " + getName();
+    return "- " + getUserPermission() + getOthersPermission() + " " + getName();
   }
 }

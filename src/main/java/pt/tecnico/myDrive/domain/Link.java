@@ -12,6 +12,8 @@ import pt.tecnico.myDrive.exceptions.FileUnknownException;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 
+import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
+
 import java.util.ArrayList;
 
 public class Link extends Link_Base {
@@ -35,8 +37,14 @@ public class Link extends Link_Base {
   }
 
   @Override
-  public File getFile(ArrayList<String> tokens, User user) throws NotADirectoryException, FileUnknownException {
-    throw new NotADirectoryException(getName());
+  public File getFile(ArrayList<String> tokens, User user) throws
+  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+    System.out.println("DEBUG link: " + getPath());
+
+    checkExecutionPermissions(user);
+    File file = getFileSystem().getFileByPath(getData(), user, getParent());
+    file.checkReadPermissions(user);
+    return file;
   }
 
   @Override
@@ -74,7 +82,13 @@ public class Link extends Link_Base {
   }
 
   @Override
+  public File getFileObject(User user) throws
+  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+    return getFileSystem().getFileByPath(getData(), user, getParent());
+  }
+
+  @Override
   public String toString(){
-  	return "l " + getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData();
+    return "l " + getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData();
   }
 }
