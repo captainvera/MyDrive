@@ -426,8 +426,8 @@ public class FileSystem extends FileSystem_Base {
    * @return current working directory listing (files)
    */
   public String listDirectory(Directory directory)
-    throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-    return directory.listFilesSimple();
+    throws IllegalAccessException {
+    return directory.listFilesAll();
   }
 
   /**
