@@ -16,11 +16,13 @@ import pt.tecnico.myDrive.domain.Login;
 import pt.tecnico.myDrive.exceptions.NotAPlainFileException;
 import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
+import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 
 public class ListDirectoryTest extends AbstractServiceTest {
 
   private FileSystem _fs;
   private User _user;
+  private User _user2;
   private Login _login;
   private int _id;
 
@@ -34,6 +36,9 @@ public class ListDirectoryTest extends AbstractServiceTest {
       _user = new User(_fs, "litxo", "litxo", "litxo");
       _user.setHomeDirectory(new Directory(_fs, _fs.requestId(),
 					"litxo", _fs.getHomeDirectory(), _user));
+      _user2 = new User(_fs, "user2", "user2", "litxo");
+      _user2.setHomeDirectory(new Directory(_fs, _fs.requestId(),
+        	"user2", _fs.getHomeDirectory(), _user));
       _login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
       _id = 9999;
 
@@ -45,8 +50,9 @@ public class ListDirectoryTest extends AbstractServiceTest {
        * |- dirlink
        *     |- link1 -> ../dir1/dir2
        * |- dir1
+       *     |- dir4
        *     |- dir2
-       *          |- link1 -> dir3 
+       *          |- link1 -> dir3
        *          |- plainfile2
        *          |- dir3
        *              |- testfile
@@ -64,6 +70,8 @@ public class ListDirectoryTest extends AbstractServiceTest {
       Directory dir1 = new Directory (_fs, _id++, "dir1", _user.getHomeDirectory(), _user);
       Directory dir2 = new Directory (_fs, _id++, "dir2", dir1, _user);
       Directory dir3 = new Directory (_fs, _id++, "dir3", dir2, _user);
+      Directory dir4 = new Directory (_fs, _id++, "dir4", dir1, _user2);
+
       new Link (_fs, _id++, "link", dir2, _user, "dir3");
       new PlainFile (_fs, _id++, "plainfile2", dir2, _user, "plainfile2_Data");
       new PlainFile (_fs, _id++, "testfile", dir3, _user, "testfile_Data");
@@ -72,7 +80,7 @@ public class ListDirectoryTest extends AbstractServiceTest {
       e.printStackTrace();
     }
   }
-  
+
   /**
    * Listing directories with only 1 kind of file
    */
@@ -141,36 +149,32 @@ public class ListDirectoryTest extends AbstractServiceTest {
   }
 
   /**
-   * Not a Directory Exception 
+   * Not a Directory Exception
    */
 
   @Test(expected = NotADirectoryException.class)
   public void appNotADirectoryException() throws Exception {
     ListDirectoryService lds = new ListDirectoryService(123l, "dirapp/app");
     lds.execute();
-    String result = lds.result();
   }
 
   @Test(expected = NotADirectoryException.class)
   public void pfNotADirectoryException() throws Exception {
     ListDirectoryService lds = new ListDirectoryService(123l, "dirpf/pf");
     lds.execute();
-    String result = lds.result();
   }
-  
+
   @Test(expected = NotADirectoryException.class)
   public void appLinkNotADirectoryException() throws Exception {
     ListDirectoryService lds = new ListDirectoryService(123l, "dirlink/link");
     lds.execute();
-    String result = lds.result();
   }
 
 
   @Test(expected = NotADirectoryException.class)
-  public void pfLinkNotADirectoryException() throws Exception { 
+  public void pfLinkNotADirectoryException() throws Exception {
     ListDirectoryService lds = new ListDirectoryService(123l, "dirlink/link");
     lds.execute();
-    String result = lds.result();
   }
   /**
    * File Not Found Exception
@@ -180,10 +184,15 @@ public class ListDirectoryTest extends AbstractServiceTest {
   public void fileNotFoundException() throws Exception {
     ListDirectoryService lds = new ListDirectoryService(123l, "inexistentfile");
     lds.execute();
-    String result = lds.result();
   }
-  
+
   /**
-   * 
+   * insufficient Permissions Exception
    */
+
+   @Test(expected = InsufficientPermissionsException.class)
+   public void insufficientPermissionsException() throws Exception {
+     ListDirectoryService lds = new ListDirectoryService(123l, "dir1/dir4");
+     lds.execute();
+   }
 }
