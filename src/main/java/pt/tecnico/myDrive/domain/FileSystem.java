@@ -185,7 +185,7 @@ public class FileSystem extends FileSystem_Base {
     }
     return null;
   }
-  
+
   /**
    * Searches Logins Set by User's username (since username is unique) to find a specific Login.
    * Returns null if no login is found.
@@ -357,7 +357,7 @@ public class FileSystem extends FileSystem_Base {
 
     return null;
   }
-  
+
   public Directory getHomeDirectory() {
   	/**
   	 * TODO:XXX:FIXME DO PROPER CHECKING AND EXCEPTION HANDLING
@@ -368,7 +368,7 @@ public class FileSystem extends FileSystem_Base {
   		throw new RuntimeException("WRONG FILE STRUCTURE");
   	}
   }
-  
+
   /**
    * Changes current working directory
    */
@@ -1095,10 +1095,11 @@ public class FileSystem extends FileSystem_Base {
 
   }
 
-  public void changeDirectory(long token, String dirpath) throws
+  public String changeDirectory(long token, String dirpath) throws
     FileUnknownException, NotADirectoryException, InsufficientPermissionsException, InvalidTokenException, NotALinkException {
       updateSession(token);
       changeDirectory(dirpath, _login.getUser(), _login.getCurrentDirectory());
+      return _login.getCurrentDirectory().getPath();
   }
 
   public String listFile(long token, String path){
