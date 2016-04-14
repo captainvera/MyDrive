@@ -97,7 +97,7 @@ public class FileSystem extends FileSystem_Base {
       File file = getFileByPath("/", _rootUser, _rootDirectory);
       removeFile(file);
       getFilesSet().clear();
-    }catch (InsufficientPermissionsException | FileUnknownException | NotALinkException | NotADirectoryException e){
+    }catch (InsufficientPermissionsException | FileUnknownException | NotADirectoryException e){
       e.printStackTrace();
     }
     for (Login login: getLoginsSet())
@@ -374,16 +374,7 @@ public class FileSystem extends FileSystem_Base {
    */
   public void changeDirectory(String dirName, User user, Directory directory)
     throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException, NotALinkException {
-    final Directory dir =
-      (assertLink(directory.getFileByName(dirName)) != null) ?
-      assertDirectory(getFileFromLink(assertLink(directory.getFileByName(dirName)), user, directory))
-      :
-      assertDirectory(directory.getFileByName(dirName));;
-    /*    if(assertLink(_currentDirectory.getFileByName(dirName)) != null){
-          Directory dir = assertDirectory(getFileFromLink(assertLink(_currentDirectory.getFileByName(dirName))));
-          } else {
-          Directory dir = assertDirectory(_currentDirectory.getFileByName(dirName));
-          } */
+    final Directory dir = directory ;
     checkExecutionPermissions(user, dir);
     _login.setCurrentDirectory(dir);
   }
@@ -422,16 +413,8 @@ public class FileSystem extends FileSystem_Base {
    */
   public String executeFile(String path, User user, Directory directory) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException, NotALinkException {
     File file = getFileByPath(path, user, directory);
-    if(assertLink(file) != null){
-      Link l = assertLink(file);
-      File linkedFile = getFileFromLink(l, user, directory);
-      checkExecutionPermissions(user, linkedFile);
-      return linkedFile.execute();
-    }
-    else{
-      checkExecutionPermissions(user, file);
-      return file.execute();
-    }
+    checkExecutionPermissions(user, file);
+    return file.execute();
   }
 
   /* ****************************************************************************
@@ -449,44 +432,25 @@ public class FileSystem extends FileSystem_Base {
    * @throws NotADirectoryException
    */
   public File getFileByPath(String path, User user, Directory directory)
-    throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException, NotALinkException {
+    throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException {
     if (path.equals("/")) return _rootDirectory;
-    Directory current;
-    DirectoryVisitor dv = new DirectoryVisitor();
 
     String[] tokens = path.split("/");
-    String target = tokens[tokens.length-1];
 
     ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
-    tokensList.remove(tokensList.size()-1);
+  
+    Directory current = null;
 
     if (path.charAt(0) == '/') {
       current = _rootDirectory;
       tokensList.remove(0);
+      
+      return _rootDirectory.getFile(tokensList, user);
     } else{
-      current = directory;
+      return directory.getFile(tokensList, user);
     }
-
-    for (String tok : tokensList) {
-      current = current.getFileByName(tok).accept(dv);
-      checkReadPermissions(user, current);
-      checkExecutionPermissions(user, current);
-      if (current==null) {
-        /**
-         * TODO: Implement exception handling
-         */
-        return null;
-      }
-    }
-    return current.getFileByName(target);
   }
 
-  public File getFileFromLink(Link l, User user, Directory directory) throws InsufficientPermissionsException, NotALinkException, FileUnknownException, NotADirectoryException
-  {
-    //FIXME GETDATA MUST CHECK PERMISSIONS
-    String path = l.getData();
-    return getFileByPath(path, user, directory);
-  }
   /**
    * @param path
    * @return A string containing a simple list of files
@@ -500,8 +464,7 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public String listFileByPathSimple(String path, User user, Directory directory) throws
-    IllegalAccessException, FileUnknownException, NotADirectoryException,
-    NoSuchMethodException, InvocationTargetException, InsufficientPermissionsException, NotALinkException {
+    IllegalAccessException, FileUnknownException, NotADirectoryException, InsufficientPermissionsException {
       DirectoryVisitor dv = new DirectoryVisitor();
       Directory d = getFileByPath(path, user, directory).accept(dv);
       return d.listFilesSimple();
@@ -521,7 +484,7 @@ public class FileSystem extends FileSystem_Base {
    */
   public String listFileByPathAll(String path, User user, Directory directory) throws
     IllegalAccessException, FileUnknownException, NotADirectoryException,
-    NoSuchMethodException, InvocationTargetException, InsufficientPermissionsException, NotALinkException {
+    InsufficientPermissionsException {
       DirectoryVisitor dv = new DirectoryVisitor();
       Directory d = getFileByPath(path, user, directory).accept(dv);
       return d.listFilesAll();
@@ -536,7 +499,7 @@ public class FileSystem extends FileSystem_Base {
    * @throws NotADirectoryException
    */
   public void removeFileByPath(String path, User user, Directory directory) throws
-    FileUnknownException, NotADirectoryException, NotALinkException, InsufficientPermissionsException {
+    FileUnknownException, NotADirectoryException, InsufficientPermissionsException {
       File file = getFileByPath(path, user, directory);
       checkDeletionPermissions(user, file);
       removeFile (file);
