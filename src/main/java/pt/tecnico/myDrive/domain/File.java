@@ -3,6 +3,10 @@ package pt.tecnico.myDrive.domain;
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
+import pt.tecnico.myDrive.exceptions.NotADirectoryException;
+import pt.tecnico.myDrive.exceptions.FileUnknownException;
+
+import java.util.ArrayList;
 
 public abstract class File extends File_Base {
 
@@ -74,6 +78,7 @@ public abstract class File extends File_Base {
     return getUserPermission() + getOthersPermission() + " " + getName();
   }
 
+  public abstract File getFile(ArrayList<String> tokens, User user) throws NotADirectoryException, FileUnknownException; 
 
   /**
    * Two files are equal if they belong to the same file system, have the same
