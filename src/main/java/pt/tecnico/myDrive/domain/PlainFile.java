@@ -12,6 +12,10 @@ import pt.tecnico.myDrive.exceptions.FileUnknownException;
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 import java.util.ArrayList;
 
+import pt.tecnico.myDrive.exceptions.MethodDeniedException;
+
+import org.joda.time.DateTime;
+
 public class PlainFile extends PlainFile_Base {
 
   /** Placeholder for FenixFramework */
@@ -29,15 +33,12 @@ public class PlainFile extends PlainFile_Base {
 
   protected void init(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
     super.init(fs, id, name, parent, owner);
-    setData(data);
+    super.setData(data);
   }
 
-  /**
-   * TEMPORARY
-   */
   @Override
   public int getSize(){
-    return 0;
+    return getData().length();
   }
 
   @Override
@@ -56,8 +57,14 @@ public class PlainFile extends PlainFile_Base {
   }
 
   @Override
-  public void remove() {
-    super.remove();
+  public void setData(String data) {
+    throw new MethodDeniedException();
+  }
+
+  // TODO: Exceptions
+  public void setData(String data, User user) {
+    super.setData(data);
+    setLastModified(new DateTime());
   }
 
   public void xmlImport(Element plainElement) throws ImportDocumentException, UserUnknownException{

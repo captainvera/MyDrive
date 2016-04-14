@@ -25,7 +25,7 @@ public class App extends App_Base {
   }
 
   public App(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
-    init(fs, id, name, parent, owner, data);
+    super.init(fs, id, name, parent, owner, data);
   }
 
   /**
@@ -33,7 +33,7 @@ public class App extends App_Base {
    */
   @Override
   public int getSize() {
-    return 0;
+    return super.getSize();
   }
 
 
