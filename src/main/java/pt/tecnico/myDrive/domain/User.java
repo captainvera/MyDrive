@@ -18,7 +18,7 @@ public class User extends User_Base {
   public User(FileSystem fs, String username) {
     // FIXME: Better solution?
     try {
-      Directory home = fs.createDirectoryByPath("/home/" + username);
+      Directory home = fs.createDirectoryByPath("/home/" + username, this);
       init(fs, username, username, username, "rwxd----", home);
     } catch (Exception e) {
       // Shouldn't happen!!
