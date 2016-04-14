@@ -327,7 +327,7 @@ public class FileSystem extends FileSystem_Base {
     throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
     checkFileUnique(name, directory);
-    checkWritePermissions(user, directory);
+    // Write permissions
     return createDirectory(name,directory,user);
   }
 
@@ -335,7 +335,7 @@ public class FileSystem extends FileSystem_Base {
     throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
     checkFileUnique(name, directory);
-    checkWritePermissions(user, directory);
+    // Write permissions
     return createPlainFile(name,directory,user);
   }
 
@@ -343,7 +343,7 @@ public class FileSystem extends FileSystem_Base {
     throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
     checkFileUnique(name, directory);
-    checkWritePermissions(user, directory);
+    // Write permissions
     return createApp(name,directory,user);
   }
 
@@ -351,7 +351,7 @@ public class FileSystem extends FileSystem_Base {
     throws InvalidFilenameException, InsufficientPermissionsException, FileExistsException {
     checkFilename(name);
     checkFileUnique(name, directory);
-    checkWritePermissions(user, directory);
+    // Write permissions
     return createLink(name,directory,user,data);
   }
 
@@ -403,7 +403,8 @@ public class FileSystem extends FileSystem_Base {
           } else {
           Directory dir = assertDirectory(_currentDirectory.getFileByName(dirName));
           } */
-    checkExecutionPermissions(user, dir);
+    // Execution permissions
+    /** checkExecutionPermissions(user, dir); */
     _login.setCurrentDirectory(dir);
   }
 
@@ -444,11 +445,13 @@ public class FileSystem extends FileSystem_Base {
     if(assertLink(file) != null){
       Link l = assertLink(file);
       File linkedFile = getFileFromLink(l, user, directory);
-      checkExecutionPermissions(user, linkedFile);
+      // Execution permissions
+      /** checkExecutionPermissions(user, linkedFile); */
       return linkedFile.execute();
     }
     else{
-      checkExecutionPermissions(user, file);
+      // Execution permissions
+      /** checkExecutionPermissions(user, file); */
       return file.execute();
     }
   }
@@ -488,8 +491,10 @@ public class FileSystem extends FileSystem_Base {
 
     for (String tok : tokensList) {
       current = current.getFileByName(tok).accept(dv);
-      checkReadPermissions(user, current);
-      checkExecutionPermissions(user, current);
+      // Read permissions
+      // Executions permissions
+      /** checkReadPermissions(user, current); */
+      /** checkExecutionPermissions(user, current); */
       if (current==null) {
         /**
          * TODO: Implement exception handling
@@ -557,7 +562,8 @@ public class FileSystem extends FileSystem_Base {
   public void removeFileByPath(String path, User user, Directory directory) throws
     FileUnknownException, NotADirectoryException, NotALinkException, InsufficientPermissionsException {
       File file = getFileByPath(path, user, directory);
-      checkDeletionPermissions(user, file);
+      // Deletion permissions
+      /** checkDeletionPermissions(user, file); */
       removeFile (file);
     }
 
@@ -572,11 +578,13 @@ public class FileSystem extends FileSystem_Base {
     for (String tok : tokensList) {
       try {
         temp = current.getFileByName(tok);
-        checkReadPermissions(user, current);
-        checkExecutionPermissions(user, current);
+        // Permissions
+        /** checkReadPermissions(user, current); */
+        /** checkExecutionPermissions(user, current); */
         current = temp.accept(dv);
       } catch(FileUnknownException e) {
-        checkWritePermissions(user, current);
+        // Permissions
+        /** checkWritePermissions(user, current); */
         current = createDirectory(tok, current, getRootUser());
       }
       if (current==null) {
@@ -838,47 +846,6 @@ public class FileSystem extends FileSystem_Base {
     if(dir.hasFile(filename)) throw new FileExistsException(filename);
   }
 
-  /**
-   * Verifies if user has permission to perform some operation on file
-   *
-   * @param user
-   * @param file
-   * @param index
-   * @param c
-   * @throws InsufficientPermissionsException
-   */
-  private void checkPermissions(User user, File file, int index, char c)
-    throws InsufficientPermissionsException {
-    String permissions = getPermissions(user, file);
-    if(permissions.charAt(index) != c)
-      throw new InsufficientPermissionsException();
-  }
-
-  private void checkReadPermissions(User user, File file) throws InsufficientPermissionsException {
-    checkPermissions(user, file, 0, 'r');
-  }
-
-  private void checkWritePermissions(User user, File file) throws InsufficientPermissionsException {
-    checkPermissions(user, file, 1, 'w');
-  }
-
-  private void checkExecutionPermissions(User user, File file) throws InsufficientPermissionsException {
-    checkPermissions(user, file, 2, 'x');
-  }
-
-  private void checkDeletionPermissions(User user, File file) throws InsufficientPermissionsException {
-    checkPermissions(user, file, 3, 'd');
-  }
-
-  private String getPermissions(User user, File file) {
-    if (isRoot(user))
-      return "rwxd";
-    else if (file.getOwner() == user)
-      return file.getUserPermission();
-    else
-      return file.getOthersPermission();
-  }
-
   /* ****************************************************************************
    * |                           Asserting methods                              |
    * ****************************************************************************
@@ -1102,7 +1069,8 @@ public class FileSystem extends FileSystem_Base {
     InsufficientPermissionsException, NotADirectoryException, NotALinkException {
       updateSession(token);
       File file = getFileByPath(filename, _login.getUser(), _login.getCurrentDirectory());
-      checkReadPermissions(_login.getUser(), file);
+      // Check read permissions
+      /** checkReadPermissions(_login.getUser(), file); */
       PlainFile pf = assertPlainFile(file);
       return pf.getData();
     }

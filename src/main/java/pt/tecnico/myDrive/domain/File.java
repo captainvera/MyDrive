@@ -4,6 +4,8 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 
+import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
+
 import org.joda.time.DateTime;
 
 public abstract class File extends File_Base {
@@ -121,6 +123,49 @@ public abstract class File extends File_Base {
   public void setId(Integer id) {
     throw new MethodDeniedException();
   }
+
+
+  /**
+   * Verifies if user has permission to perform some operation on file
+   *
+   * @param user
+   * @param file
+   * @param index
+   * @param c
+   * @throws InsufficientPermissionsException
+   */
+  protected void checkPermissions(User user, int index, char c)
+    throws InsufficientPermissionsException {
+    String permissions = getPermissions(user);
+    if(permissions.charAt(index) != c)
+      throw new InsufficientPermissionsException();
+  }
+
+  protected void checkReadPermissions(User user) throws InsufficientPermissionsException {
+    checkPermissions(user, 0, 'r');
+  }
+
+  protected void checkWritePermissions(User user) throws InsufficientPermissionsException {
+    checkPermissions(user, 1, 'w');
+  }
+
+  protected void checkExecutionPermissions(User user) throws InsufficientPermissionsException {
+    checkPermissions(user, 2, 'x');
+  }
+
+  protected void checkDeletionPermissions(User user) throws InsufficientPermissionsException {
+    checkPermissions(user, 3, 'd');
+  }
+
+  protected String getPermissions(User user) {
+    if (getFileSystem().getRootUser().equals(user))
+      return "rwxd";
+    else if (getOwner().equals(user))
+      return getUserPermission();
+    else
+      return getOthersPermission();
+  }
+
 
 }
 
