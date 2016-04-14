@@ -427,7 +427,7 @@ public class FileSystem extends FileSystem_Base {
    */
   public String listDirectory(Directory directory)
     throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-    return directory.listFilesAll();
+    return directory.listFilesSimple();
   }
 
   /**
@@ -1060,8 +1060,9 @@ public class FileSystem extends FileSystem_Base {
       changeDirectory(dirpath, _login.getUser(), _login.getCurrentDirectory());
       return _login.getCurrentDirectory().getPath();
   }
-
-  public String listFile(long token, String path){
-    return " ";
+  
+  public String listDirectory(long token) throws InvalidTokenException, IllegalAccessException, NoSuchMethodException, InvocationTargetException{
+  	updateSession(token);
+    return listDirectory(_login.getCurrentDirectory());
   }
 }
