@@ -378,14 +378,14 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public Directory getHomeDirectory() {
-  	/**
-  	 * TODO:XXX:FIXME DO PROPER CHECKING AND EXCEPTION HANDLING
-  	 */
-  	try {
-    	return (Directory) getRootDirectory().getFileByName("home");
-  	}catch(FileUnknownException e){
-  		throw new RuntimeException("WRONG FILE STRUCTURE");
-  	}
+    /**
+     * TODO:XXX:FIXME DO PROPER CHECKING AND EXCEPTION HANDLING
+     */
+    try {
+      return (Directory) getRootDirectory().getFileByName("home");
+    }catch(FileUnknownException e){
+      throw new RuntimeException("WRONG FILE STRUCTURE");
+    }
   }
 
   /**
@@ -465,24 +465,25 @@ public class FileSystem extends FileSystem_Base {
     throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException {
     if (path.equals("/")) return getRootDirectory();
 
-    if(path.charAt(path.length()-1) == '/'){
+    ArrayList<String> tokensList = processPath(path);
+
+    // Absolute or relative?
+    if (path.charAt(0) == '/') {
+      tokensList.remove(0);
+      return getRootDirectory().getFile(tokensList, user);
+    } else {
+      return directory.getFile(tokensList, user);
+    }
+  }
+
+  public ArrayList<String> processPath(String path) {
+    if(path.charAt(path.length()-1) == '/') {
       path = path.substring(0, path.length()-1);
     }
 
-    String[] tokens = path.split("/");
+    String [] tokens = path.split("/");
 
-    ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
-
-    Directory current = null;
-
-    if (path.charAt(0) == '/') {
-      current = getRootDirectory();
-      tokensList.remove(0);
-
-      return getRootDirectory().getFile(tokensList, user);
-    } else{
-      return directory.getFile(tokensList, user);
-    }
+    return new ArrayList<String>(Arrays.asList(tokens));
   }
 
   /**
@@ -788,7 +789,7 @@ public class FileSystem extends FileSystem_Base {
       if (!Character.isLetter(c) && !Character.isDigit(c)
           && c == 0 && c == '\\') {
         throw new InvalidFilenameException(filename);
-      }
+          }
     }
   }
 
@@ -962,14 +963,14 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public void createFile(String name, String type, String content, long token)
-  throws CreateLinkWithoutContentException, CreateDirectoryWithContentException, InvalidTokenException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
+    throws CreateLinkWithoutContentException, CreateDirectoryWithContentException, InvalidTokenException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
     updateSession(token);
     if(content == null) createFileWithoutContent(name, type, _login.getUser(), _login.getCurrentDirectory());
     else createFileWithContent(name, type, content, _login.getUser(), _login.getCurrentDirectory());
   }
 
   private void createFileWithoutContent(String name, String type, User user, Directory directory)
-  throws CreateLinkWithoutContentException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
+    throws CreateLinkWithoutContentException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
     switch(type.toLowerCase()){
       case "directory":
         createDirectory(name, user, directory);
@@ -989,7 +990,7 @@ public class FileSystem extends FileSystem_Base {
   }
 
   private void createFileWithContent(String name, String type, String content, User user, Directory directory)
-  throws CreateDirectoryWithContentException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
+    throws CreateDirectoryWithContentException, InsufficientPermissionsException, InvalidFilenameException, FileExistsException{
     switch(type.toLowerCase()){
       case "directory":
         throw new CreateDirectoryWithContentException();
@@ -1048,36 +1049,36 @@ public class FileSystem extends FileSystem_Base {
 
   public void writeFile(long token, String path, String content)
     throws NotAPlainFileException, InvalidTokenException, FileUnknownException,
-    InsufficientPermissionsException,NotADirectoryException, NotAAppException,
-    CannotWriteToDirectoryException, FileUnknownException{
-		updateSession(token);
+                    InsufficientPermissionsException,NotADirectoryException, NotAAppException,
+                    CannotWriteToDirectoryException, FileUnknownException{
+             updateSession(token);
 
-		File file = getFileByPath(path,_login.getUser(), _login.getCurrentDirectory());
+             File file = getFileByPath(path,_login.getUser(), _login.getCurrentDirectory());
 
-		//FIXME check filename?
-		PlainFile pf = assertPlainFile(file);
-		//file.checkWritePermissions(_login.getUser());
-		pf.writeToFile(content, _login.getUser());
+             //FIXME check filename?
+             PlainFile pf = assertPlainFile(file);
+             //file.checkWritePermissions(_login.getUser());
+             pf.writeToFile(content, _login.getUser());
   }
-  
+
   public void deleteFile(long token, String filename)
-      throws InvalidTokenException, FileUnknownException,
-      InsufficientPermissionsException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-  	updateSession(token);
-  	removeFile(_login.getCurrentDirectory().getFileByName(filename));
-  	//TODO::FIXME check permissions on remove 
-    }
+    throws InvalidTokenException, FileUnknownException,
+                    InsufficientPermissionsException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+             updateSession(token);
+             removeFile(_login.getCurrentDirectory().getFileByName(filename));
+             //TODO::FIXME check permissions on remove
+  }
 
   public String changeDirectory(long token, String dirpath) throws
     FileUnknownException, NotADirectoryException, InsufficientPermissionsException, InvalidTokenException {
       updateSession(token);
       changeDirectory(dirpath, _login.getUser(), _login.getCurrentDirectory());
       return _login.getCurrentDirectory().getPath();
-  }
+    }
 
   public String listCurrentDirectory(long token) throws
     FileUnknownException, NotADirectoryException, InsufficientPermissionsException, InvalidTokenException, IllegalAccessException {
-    updateSession(token);
-    return listDirectory(_login.getCurrentDirectory(), _login.getUser());
-  }
+      updateSession(token);
+      return listDirectory(_login.getCurrentDirectory(), _login.getUser());
+    }
 }
