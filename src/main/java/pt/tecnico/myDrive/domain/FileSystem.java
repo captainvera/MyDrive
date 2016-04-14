@@ -910,7 +910,7 @@ public class FileSystem extends FileSystem_Base {
    * @return The login which holds token except if it doesn't exist, in that
    * case, null is returned.
    */
-  private Login getLoginByToken(long token) {
+  public Login getLoginByToken(long token) {
     for (Login login : getLoginsSet()) {
       if (login.compareToken(token))
         return login;
@@ -924,7 +924,7 @@ public class FileSystem extends FileSystem_Base {
    * case, null is returned.
    *
    */
-  private User getUserByToken(long token) {
+  public User getUserByToken(long token) {
     Login login = getLoginByToken(token);
     return login != null ? login.getUser() : null;
   }
@@ -959,7 +959,7 @@ public class FileSystem extends FileSystem_Base {
    * @return Returns true if the login which holds token hasn't expired, false
    * otherwise
    */
-  public void updateSession(long token) throws InvalidTokenException {
+  private void updateSession(long token) throws InvalidTokenException {
     if (!isValidToken(token)) {
       endSession();
       log.warn("Invalid Token.");
