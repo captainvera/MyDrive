@@ -4,7 +4,7 @@ package pt.tecnico.myDrive.exceptions;
  * This exception is thrown whenever an attempt is made to use an unknown
  * username.
  */
-public class UserUnknownException extends Exception {
+public class UserUnknownException extends RuntimeException {
 
   /** The unknown username. */
   private final String _username;

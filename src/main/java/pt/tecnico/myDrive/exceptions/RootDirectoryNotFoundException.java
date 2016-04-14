@@ -3,7 +3,7 @@ package pt.tecnico.myDrive.exceptions;
 /**
  * This exception is thrown whenever an invalid attempt is made to a file.
  */
-public class RootDirectoryNotFoundException extends Exception {
+public class RootDirectoryNotFoundException extends RuntimeException {
   /**
    * @param filename the file's name.
    */

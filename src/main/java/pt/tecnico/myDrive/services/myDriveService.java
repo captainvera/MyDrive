@@ -4,8 +4,6 @@ package pt.tecnico.myDrive.services;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-//import pt.tecnico.myDrive.domain.User;
-//import pt.tecnico.myDrive.exceptions.UserUnknownException;
 import pt.tecnico.myDrive.domain.FileSystem;
 import pt.ist.fenixframework.Atomic;
 

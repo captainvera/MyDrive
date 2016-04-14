@@ -58,7 +58,7 @@ public abstract class File extends File_Base {
   /**
    * Executes the file with diferent behaviour depending on the file type
    */
-  public abstract String execute();
+  public abstract String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException;
 
   /**
    * The calculation of the size of the file will vary depending on subclass implementation
@@ -84,8 +84,7 @@ public abstract class File extends File_Base {
     return getUserPermission() + getOthersPermission() + " " + getName();
   }
 
-  public abstract File getFile(ArrayList<String> tokens, User user) throws
-    NotADirectoryException, FileUnknownException, InsufficientPermissionsException;
+  public abstract File getFile(ArrayList<String> tokens, User user);
 
   /**
    * Two files are equal if they belong to the same file system, have the same
@@ -115,8 +114,11 @@ public abstract class File extends File_Base {
     throw new MethodDeniedException();
   }
 
-  public File getFileObject(User user) throws
-  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+  protected final void touch(){
+    super.setLastModified(new DateTime());
+  }
+
+  public File getFileObject(User user) {
       return this;
     }
 
@@ -141,31 +143,28 @@ public abstract class File extends File_Base {
    * Verifies if user has permission to perform some operation on file
    *
    * @param user
-   * @param file
    * @param index
    * @param c
-   * @throws InsufficientPermissionsException
    */
-  protected void checkPermissions(User user, int index, char c)
-    throws InsufficientPermissionsException {
+    protected void checkPermissions(User user, int index, char c) {
     String permissions = getPermissions(user);
     if(permissions.charAt(index) != c)
       throw new InsufficientPermissionsException();
   }
 
-  protected void checkReadPermissions(User user) throws InsufficientPermissionsException {
+  protected void checkReadPermissions(User user) {
     checkPermissions(user, 0, 'r');
   }
 
-  protected void checkWritePermissions(User user) throws InsufficientPermissionsException {
+  protected void checkWritePermissions(User user) {
     checkPermissions(user, 1, 'w');
   }
 
-  protected void checkExecutionPermissions(User user) throws InsufficientPermissionsException {
+  protected void checkExecutionPermissions(User user) {
     checkPermissions(user, 2, 'x');
   }
 
-  protected void checkDeletionPermissions(User user) throws InsufficientPermissionsException {
+  protected void checkDeletionPermissions(User user) {
     checkPermissions(user, 3, 'd');
   }
 

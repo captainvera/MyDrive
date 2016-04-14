@@ -43,13 +43,12 @@ public class PlainFile extends PlainFile_Base {
   }
 
   @Override
-  public File getFile(ArrayList<String> tokens, User user) throws
-  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+  public File getFile(ArrayList<String> tokens, User user) {
     throw new NotADirectoryException(getName());
   }
 
   @Override
-  public String execute(){
+  public String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
     return getData();
   }
 
@@ -66,10 +65,14 @@ public class PlainFile extends PlainFile_Base {
   // TODO: Exceptions
   public void setData(String data, User user) {
     super.setData(data);
-    setLastModified(new DateTime());
+    touch();
   }
 
-  public void xmlImport(Element plainElement) throws ImportDocumentException, UserUnknownException{
+  public String getData(User user) {
+    return super.getData();
+  }
+
+  public void xmlImport(Element plainElement) throws ImportDocumentException {
     try{
       setId(plainElement.getAttribute("id").getIntValue());
 

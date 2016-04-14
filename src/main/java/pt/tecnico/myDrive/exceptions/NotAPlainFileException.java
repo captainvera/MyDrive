@@ -3,7 +3,7 @@ package pt.tecnico.myDrive.exceptions;
 /**
  * This exception is thrown whenever an invalid attempt is made to a file.
  */
-public class NotAPlainFileException extends Exception {
+public class NotAPlainFileException extends RuntimeException {
 
   /** The file's name. */
   private final String _filename;

@@ -10,6 +10,7 @@ import pt.tecnico.myDrive.exceptions.ImportDocumentException;
 import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
 
+import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
@@ -35,10 +36,13 @@ public class Link extends Link_Base {
   public int getSize(){
     return 1;
   }
-
   @Override
-  public File getFile(ArrayList<String> tokens, User user) throws
-  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+  public void setData(String content, User user){
+  	  if(getDirtyBit()) throw new MethodDeniedException();
+	  else super.setData(content,user);
+  }
+  @Override
+  public File getFile(ArrayList<String> tokens, User user) {
     System.out.println("DEBUG link: " + getPath());
 
     if(tokens.size() == 0)
@@ -60,8 +64,8 @@ public class Link extends Link_Base {
   }
 
   @Override
-  public String execute(){
-    return "OOPSIE DAISY";
+  public String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
+    return getFileObject(user).execute(user);
   }
 
   @Override
@@ -94,8 +98,7 @@ public class Link extends Link_Base {
   }
 
   @Override
-  public File getFileObject(User user) throws
-  NotADirectoryException, FileUnknownException, InsufficientPermissionsException {
+  public File getFileObject(User user) {
     return getFileSystem().getFileByPath(getData(), user, getParent());
   }
 

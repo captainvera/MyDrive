@@ -3,7 +3,7 @@ package pt.tecnico.myDrive.exceptions;
  * This exception is thrown whenever the XML document to import has errors
  */
 
-public class ImportDocumentException extends Exception {
+public class ImportDocumentException extends RuntimeException {
 
   /** The existing XML document's name */
   private final String _filename;

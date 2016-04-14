@@ -4,7 +4,7 @@ package pt.tecnico.myDrive.exceptions;
  * This exception is thrown whenever an attempt is made to perform an operation
  * that requires an existing file, but the file does not exist.
  */
-public class FileUnknownException extends Exception {
+public class FileUnknownException extends RuntimeException {
 
   /** The unknown file's name. */
   private final String _filename;

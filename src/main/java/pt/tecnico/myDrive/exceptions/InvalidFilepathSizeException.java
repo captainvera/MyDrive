@@ -4,7 +4,7 @@ package pt.tecnico.myDrive.exceptions;
  * This exception is thrown whenever an attempt is made to use a filepath with
  * invalid length.
  */
-public class InvalidFilepathSizeException extends Exception {
+public class InvalidFilepathSizeException extends RuntimeException {
 
   /** The maximum valid filepath size. */
   private final int _maxSize;

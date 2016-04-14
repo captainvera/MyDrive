@@ -59,31 +59,31 @@ public class Login extends Login_Base {
 		super.setExpirationDate(super.getExpirationDate().minusHours(hours).minusMinutes(minutes).minusSeconds(seconds));
 	}
 	@Override
-	public Long getToken() throws MethodDeniedException{
+	public Long getToken() {
 		throw new MethodDeniedException();
 	}
 	@Override
-	public DateTime getExpirationDate() throws MethodDeniedException{
+	public DateTime getExpirationDate() {
 		throw new MethodDeniedException();
 	}
 	@Override
-	public void setExpirationDate(DateTime expirationDate) throws MethodDeniedException{
+	public void setExpirationDate(DateTime expirationDate) {
 		throw new MethodDeniedException();
 	}
 	@Override
-	public void setToken(Long token) throws MethodDeniedException{
+	public void setToken(Long token) {
 		throw new MethodDeniedException();
 	}
 	@Override
-	public FileSystem getFileSystem() throws MethodDeniedException{
+	public FileSystem getFileSystem() {
 		throw new MethodDeniedException();
 	}
 	@Override
-	public void setFileSystem(FileSystem fileSystem) throws MethodDeniedException{
+	public void setFileSystem(FileSystem fileSystem) {
 		throw new MethodDeniedException();
 	}
 	@Override
-	public void setUser(User user) throws MethodDeniedException{
+	public void setUser(User user) {
 		throw new MethodDeniedException();
 	}
 

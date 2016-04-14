@@ -3,7 +3,7 @@ package pt.tecnico.myDrive.exceptions;
 /**
  * This exception is thrown whenever an invalid attempt is made to an app.
  */
-public class NotAAppException extends Exception {
+public class NotAAppException extends RuntimeException {
 
   /** The app's name. */
   private final String _filename;

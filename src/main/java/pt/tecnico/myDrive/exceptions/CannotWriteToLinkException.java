@@ -1,9 +1,9 @@
 package pt.tecnico.myDrive.exceptions;
 
 /**
- * This exception is thrown whenever an user tries to write a Link file. 
+ * This exception is thrown whenever an user tries to write a Link file.
  */
-public class CannotWriteToLinkException extends Exception {
+public class CannotWriteToLinkException extends RuntimeException {
 
   /** The existing file's name. */
   private final String _filename;

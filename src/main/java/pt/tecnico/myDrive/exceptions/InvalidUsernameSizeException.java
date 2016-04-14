@@ -4,7 +4,7 @@ package pt.tecnico.myDrive.exceptions;
  * This exception is thrown whenever an attempt is made to create an user with
  * an username with invalid length.
  */
-public class InvalidUsernameSizeException extends Exception {
+public class InvalidUsernameSizeException extends RuntimeException {
 
   /** The minimum valid username size. */
   private final int _minSize;

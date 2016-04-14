@@ -4,7 +4,7 @@ package pt.tecnico.myDrive.exceptions;
  * This exception is thrown whenever an attempt is made to perform an operation
  * that requires the absence of a file, but the file already exists.
  */
-public class FileExistsException extends Exception {
+public class FileExistsException extends RuntimeException {
 
   /** The existing file's name. */
   private final String _filename;

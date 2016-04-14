@@ -1,9 +1,9 @@
 package pt.tecnico.myDrive.exceptions;
 
 /**
- * This exception is thrown whenever the logged user attempts to write to a directory 
+ * This exception is thrown whenever the logged user attempts to write to a directory
  */
-public class CannotWriteToDirectoryException extends Exception {
+public class CannotWriteToDirectoryException extends RuntimeException {
 
 
   public CannotWriteToDirectoryException() {
