@@ -76,4 +76,8 @@ public class PlainFile extends PlainFile_Base {
     }
   }
 
+  @Override
+  public String toString(){
+  	return "- " + getUserPermission() + getOthersPermission() + " " + getName();
+  }
 }

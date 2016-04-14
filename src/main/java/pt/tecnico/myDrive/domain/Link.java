@@ -66,6 +66,6 @@ public class Link extends Link_Base {
 
   @Override
   public String toString(){
-  	return getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData();
+  	return "l " + getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData();
   }
 }

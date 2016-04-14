@@ -9,6 +9,7 @@ import java.math.BigInteger;
 
 import pt.tecnico.myDrive.service.AbstractServiceTest;
 import pt.ist.fenixframework.FenixFramework;
+import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.domain.FileSystem;
 import pt.tecnico.myDrive.domain.Login;
 import pt.tecnico.myDrive.domain.User;
@@ -35,6 +36,8 @@ public class LoginTest extends AbstractServiceTest {
 		try{
 			_fs = FileSystem.getInstance();
 			_user = new User(_fs, "testuser1","test1","pwd1234");
+			_user.setHomeDirectory(new Directory(_fs, _fs.requestId(),
+																"testuser1", _fs.getHomeDirectory(), _user));
 			new User(_fs, "testuser","test","pwd1234");
 		}catch (Exception e){
 			e.printStackTrace();
