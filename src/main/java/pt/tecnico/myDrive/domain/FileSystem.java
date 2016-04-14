@@ -293,23 +293,19 @@ public class FileSystem extends FileSystem_Base {
   }
 
   private Directory createDirectory(String name, Directory parent, User owner) {
-    Directory dir = new Directory(this, requestId(), name, parent, owner);
-    return dir;
+    return parent.createDirectory(name, owner);
   }
 
   private PlainFile createPlainFile(String name, Directory parent, User owner) {
-    PlainFile pf = new PlainFile(this, requestId(), name, parent, owner);
-    return pf;
+    return parent.createPlainFile(name, owner);
   }
 
   private App createApp(String name, Directory parent, User owner) {
-    App app = new App(this, requestId(), name, parent, owner);
-    return app;
+    return parent.createApp(name, owner);
   }
 
   private Link createLink(String name, Directory parent, User owner, String data) {
-    Link link = new Link(this, requestId(), name, parent, owner, data);
-    return link;
+    return parent.createLink(name, owner, data);
   }
 
   private void removeFile(File f) {
@@ -996,7 +992,7 @@ public class FileSystem extends FileSystem_Base {
     updateSession(token);
     File file = getFileByPath(filename, _login.getUser(), _login.getCurrentDirectory());
     PlainFile pf = assertPlainFile(file);
-    return pf.getData();
+    return pf.getData(_login.getUser());
   }
 
   public void writeFile(long token, String path, String content) {
@@ -1007,7 +1003,7 @@ public class FileSystem extends FileSystem_Base {
     //FIXME check filename?
     PlainFile pf = assertPlainFile(file);
     //file.checkWritePermissions(_login.getUser());
-    pf.writeToFile(content, _login.getUser());
+    pf.setData(content, _login.getUser());
   }
 
   public void deleteFile(long token, String filename) {
