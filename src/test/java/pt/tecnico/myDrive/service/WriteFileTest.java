@@ -15,7 +15,7 @@ public class WriteFileTest extends AbstractServiceTest {
 	@Override
 	protected void populate() throws Exception{
 		FileSystem fs = FileSystem.getInstance();
-		PlainFile readme = fs.createPlainFileByPath("/home/README");
+//		PlainFile readme = fs.createPlainFileByPath("/home/README");
 	}
 
 	// private PlainFile getPlainFile(String path, String filename){
