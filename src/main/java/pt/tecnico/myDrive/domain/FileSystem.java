@@ -1092,8 +1092,27 @@ public class FileSystem extends FileSystem_Base {
 
   public void writeFile(long token, String path, String content)
     throws NotAPlainFileException, InvalidTokenException, FileUnknownException,
-    InsufficientPermissionsException, NotALinkException {
-	updateSession(token);
-
+    InsufficientPermissionsException,NotADirectoryException, NotAAppException,
+    NotALinkException, CannotWriteToDirectoryException, FileUnknownException{
+		updateSession(token);
+		File file = getFileByPath(path);
+		if(assertDirectory(file) != null)	{
+			throw new CannotWriteToDirectoryException();
+		}
+		checkWritePermissions(_loggedUser, file);
+			
+		if(assertLink(file) != null)	{
+			Link l = assertLink(file);
+			//FIXME fetch file from link
+			l.setData(content);
+		}
+		if(assertPlainFile(file) != null)	{
+			PlainFile pf = assertPlainFile(file);
+			pf.setData(content);
+		}
+		if(assertApp(file) != null)	{
+			App app = assertApp(file);
+			app.setData(content);
+		}
   }
 }
