@@ -8,6 +8,8 @@ import pt.tecnico.myDrive.domain.User;
 import pt.tecnico.myDrive.domain.File;
 import pt.tecnico.myDrive.domain.PlainFile;
 
+import pt.ist.fenixframework.DomainRoot;
+
 // Domain Exceptions
 import pt.tecnico.myDrive.exceptions.*;
 
@@ -64,7 +66,7 @@ public class FileSystem extends FileSystem_Base {
 
   private FileSystem() {
     log.trace("Constructing new FileSystem");
-    setRoot(FenixFramework.getDomainRoot());
+    super.setRoot(FenixFramework.getDomainRoot());
     try {
       init();
     } catch(RootDirectoryNotFoundException e) {
@@ -152,7 +154,7 @@ public class FileSystem extends FileSystem_Base {
    */
   private void cleanInit() {
     log.trace("Initializing new FileSystem");
-    setIdCounter(0);
+    super.setIdCounter(0);
 
     log.trace("Creating root user");
     _rootUser = createRootUser();
@@ -213,6 +215,42 @@ public class FileSystem extends FileSystem_Base {
     return userExists(user.getName());
   }
 
+  @Override
+  public void setIdCounter(Integer id) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setRoot(DomainRoot dr) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void addUsers(User user) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void addFiles(File file){
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void addLogins(Login login){
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setRootUser(RootUser rootUser) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setRootDirectory(RootDirectory rootDirectory) {
+    throw new MethodDeniedException();
+  }
+
+
 
   /* ****************************************************************************
    * |                 FileSystem's Users creation methods                       |
@@ -270,7 +308,7 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public int incrementIdCounter() {
-    setIdCounter(getIdCounter()+1);
+    super.setIdCounter(getIdCounter()+1);
     return getIdCounter();
   }
 
@@ -1065,7 +1103,7 @@ public class FileSystem extends FileSystem_Base {
       }
 
       _login = new Login(this, user, _currentDirectory, token);
-      addLogins(_login);
+      super.addLogins(_login);
       return token;
     } else { // if password was incorrect;
       throw new WrongPasswordException(user.getUsername());
