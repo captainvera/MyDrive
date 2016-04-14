@@ -185,6 +185,7 @@ public class FileSystem extends FileSystem_Base {
     }
     return null;
   }
+  
   /**
    * Searches Logins Set by User's username (since username is unique) to find a specific Login.
    * Returns null if no login is found.
@@ -264,7 +265,7 @@ public class FileSystem extends FileSystem_Base {
    * ****************************************************************************
    */
 
-  public int incrementIdCounter() {
+  public int requestId() {
     setIdCounter(getIdCounter()+1);
     return getIdCounter();
   }
@@ -275,22 +276,22 @@ public class FileSystem extends FileSystem_Base {
   }
 
   private Directory createDirectory(String name, Directory parent, User owner) {
-    Directory dir = new Directory(this, incrementIdCounter(), name, parent, owner);
+    Directory dir = new Directory(this, requestId(), name, parent, owner);
     return dir;
   }
 
   private PlainFile createPlainFile(String name, Directory parent, User owner) {
-    PlainFile pf = new PlainFile(this, incrementIdCounter(), name, parent, owner);
+    PlainFile pf = new PlainFile(this, requestId(), name, parent, owner);
     return pf;
   }
 
   private App createApp(String name, Directory parent, User owner) {
-    App app = new App(this, incrementIdCounter(), name, parent, owner);
+    App app = new App(this, requestId(), name, parent, owner);
     return app;
   }
 
   private Link createLink(String name, Directory parent, User owner, String data) {
-    Link link = new Link(this,incrementIdCounter(), name, parent, owner, data);
+    Link link = new Link(this, requestId(), name, parent, owner, data);
     return link;
   }
 
@@ -335,7 +336,6 @@ public class FileSystem extends FileSystem_Base {
     return createLink(name,directory,user,data);
   }
 
-
   /**
    * Finds Root Directory
    * Does not throw exception if Root is not found
@@ -357,7 +357,18 @@ public class FileSystem extends FileSystem_Base {
 
     return null;
   }
-
+  
+  public Directory getHomeDirectory() {
+  	/**
+  	 * TODO:XXX:FIXME DO PROPER CHECKING AND EXCEPTION HANDLING
+  	 */
+  	try {
+    	return (Directory) getRootDirectory().getFileByName("home");
+  	}catch(FileUnknownException e){
+  		throw new RuntimeException("WRONG FILE STRUCTURE");
+  	}
+  }
+  
   /**
    * Changes current working directory
    */
