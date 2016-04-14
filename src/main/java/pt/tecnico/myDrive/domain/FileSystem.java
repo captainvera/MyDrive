@@ -463,13 +463,13 @@ public class FileSystem extends FileSystem_Base {
     String[] tokens = path.split("/");
 
     ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
-  
+
     Directory current = null;
 
     if (path.charAt(0) == '/') {
       current = getRootDirectory();
       tokensList.remove(0);
-      
+
       return getRootDirectory().getFile(tokensList, user);
     } else{
       return directory.getFile(tokensList, user);
@@ -1033,17 +1033,20 @@ public class FileSystem extends FileSystem_Base {
     InsufficientPermissionsException, NotADirectoryException, NotALinkException {
       updateSession(token);
       File file = getFileByPath(filename, _login.getUser(), _login.getCurrentDirectory());
-      // Check read permissions
-      /** checkReadPermissions(_login.getUser(), file); */
       PlainFile pf = assertPlainFile(file);
       return pf.getData();
     }
 
   public void writeFile(long token, String path, String content)
     throws NotAPlainFileException, InvalidTokenException, FileUnknownException,
-    InsufficientPermissionsException, NotALinkException {
-	updateSession(token);
-
+    InsufficientPermissionsException,NotADirectoryException, NotAAppException,
+    NotALinkException, CannotWriteToDirectoryException, FileUnknownException{
+		updateSession(token);
+		File file = getFileByPath(path,_login.getUser(), _login.getCurrentDirectory());
+		//FIXME check filename?
+		PlainFile pf = assertPlainFile(file);
+		//file.checkWritePermissions(_login.getUser());
+		pf.setData(content);
   }
   
   public void deleteFile(long token, String filename)

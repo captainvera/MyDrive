@@ -117,7 +117,7 @@ public class ReadFileTest extends AbstractServiceTest {
     rfs.execute();
     String result = rfs.result();
 
-    assertEquals("Link in current directory data is incorrect!", "plainfile1_data", result);
+    assertEquals("Link in current directory Data is incorrect!", "plainfile1_Data", result);
   }
 
   @Test
@@ -126,7 +126,7 @@ public class ReadFileTest extends AbstractServiceTest {
     rfs.execute();
     String result = rfs.result();
 
-    assertEquals("Link in current directory data is incorrect!", "plainfile2_data", result);
+    assertEquals("Link in current directory Data is incorrect!", "plainfile2_Data", result);
   }
 
   @Test
@@ -135,7 +135,7 @@ public class ReadFileTest extends AbstractServiceTest {
     rfs.execute();
     String result = rfs.result();
 
-    assertEquals("Link by relative path data is incorrect!", "plainfile1_data", result);
+    assertEquals("Link by relative path Data is incorrect!", "plainfile1_Data", result);
   }
 
   @Test
@@ -144,7 +144,7 @@ public class ReadFileTest extends AbstractServiceTest {
     rfs.execute();
     String result = rfs.result();
 
-    assertEquals("Link by relative path data is incorrect!", "plainfile2_data", result);
+    assertEquals("Link by relative path Data is incorrect!", "plainfile2_Data", result);
   }
 
   @Test
@@ -153,7 +153,7 @@ public class ReadFileTest extends AbstractServiceTest {
     rfs.execute();
     String result = rfs.result();
 
-    assertEquals("Link by absolute path data is incorrect!", "plainfile1_data", result);
+    assertEquals("Link by absolute path Data is incorrect!", "plainfile1_Data", result);
   }
 
   @Test
@@ -162,7 +162,7 @@ public class ReadFileTest extends AbstractServiceTest {
     rfs.execute();
     String result = rfs.result();
 
-    assertEquals("Link to another link data is incorrect!", "plainfile1_data", result);
+    assertEquals("Link to another link Data is incorrect!", "plainfile1_Data", result);
   }
 
   @Test(expected = NotAPlainFileException.class)
