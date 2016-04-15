@@ -49,6 +49,7 @@ public class myDriveApplication {
 
   @Atomic
   public static void setupDrive(){
+    //FIXME TODO
 //    /**
 //     * Basic setup to test desired functionality
 //     */
@@ -72,7 +73,7 @@ public class myDriveApplication {
 //     * */
 //    try {
 //      log.debug("Showing Current Directory Path");
-//      System.out.println(fs.listPath());     
+//      System.out.println(fs.listPath());
 //
 //      log.debug("Changing directory to /home");
 //      fs.changeDirectory("..");
@@ -119,7 +120,7 @@ public class myDriveApplication {
 //      log.debug("Files pos-remove: ");
 //      for (File f : fs.getFilesSet())
 //        System.out.println(f);
-//		//TODO EXECUTE APP	
+//		//TODO EXECUTE APP
 //	  log.debug("creating link");
 //	  Link l1 = fs.createLink("cenas","/home/README");
 //	  Link l2 = fs.createLink("dirlink","/home");
@@ -143,25 +144,27 @@ public class myDriveApplication {
 
   @Atomic
   public static void xmlPrint() {
-    log.trace("xmlPrint: " + FenixFramework.getDomainRoot());
-    Document doc = FileSystem.getInstance().xmlExport();
-    XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
-    try { xmlOutput.output(doc, new PrintStream(System.out));
-    } catch (IOException e) { System.out.println(e); }
+    // FIXME TODO
+    /** log.trace("xmlPrint: " + FenixFramework.getDomainRoot()); */
+    /** Document doc = FileSystem.getInstance().xmlExport(); */
+    /** XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat()); */
+    /** try { xmlOutput.output(doc, new PrintStream(System.out)); */
+    /** } catch (IOException e) { System.out.println(e); } */
   }
 
 
   @Atomic
   public static void xmlScan(java.io.File file){
-    log.trace("xmlScan: " + FenixFramework.getDomainRoot());
-    FileSystem fs = FileSystem.getInstance();
-    SAXBuilder builder = new SAXBuilder();
-    try {
-      Document document = (Document)builder.build(file);
-      fs.xmlImport(document.getRootElement());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    // FIXME TODO
+    /** log.trace("xmlScan: " + FenixFramework.getDomainRoot()); */
+    /** FileSystem fs = FileSystem.getInstance(); */
+    /** SAXBuilder builder = new SAXBuilder(); */
+    /** try { */
+    /**   Document document = (Document)builder.build(file); */
+    /**   fs.xmlImport(document.getRootElement()); */
+    /** } catch (Exception e) { */
+    /**   e.printStackTrace(); */
+    /** } */
   }
 
 }

@@ -21,8 +21,8 @@ public abstract class File extends File_Base {
     super();
   }
 
-  public File(FileSystem fs, Integer id, String name, Directory parent, User owner) {
-    init(fs, id, name, parent, owner);
+  public File(FileSystem fs, String name, Directory parent, User owner) {
+    init(fs, fs.requestId(), name, parent, owner);
   }
 
   protected void init(FileSystem fs, Integer id, String name, Directory parent, User owner) {
@@ -33,16 +33,21 @@ public abstract class File extends File_Base {
     super.setOwner(owner);
     super.setLastModified(new DateTime());
     // File's initial permissions are the one's defined in the user's umask.
-    super.setUserPermission(owner.getUmask().substring(0,3));
-    super.setOthersPermission(owner.getUmask().substring(4,7));
+    super.setUserPermission(owner.getUmask().substring(0,4));
+    super.setOthersPermission(owner.getUmask().substring(4,8));
   }
 
   /**
    * Basic remove implementation for File objects
    */
-  public void remove(){
+  protected void remove() {
     nullifyRelations();
     deleteDomainObject();
+  }
+
+  public void remove(User user) {
+    checkDeletionPermissions(user);
+    remove();
   }
 
   /**
@@ -127,6 +132,7 @@ public abstract class File extends File_Base {
   /** public void setParent(Directory parent) { */
   /**   throw new MethodDeniedException(); */
   /** } */
+
 
   @Override
   public void setOwner(User owner) {

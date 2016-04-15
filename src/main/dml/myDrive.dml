@@ -76,7 +76,7 @@ relation FileSystemContainsFiles {
 }
 
 relation FileSystemHasRootDirectory {
-  FileSystem playsRole; 
+  FileSystem playsRole;
   RootDirectory playsRole rootDirectory {
     multiplicity 1;
   }
@@ -91,7 +91,7 @@ relation FileSystemContainsLogins {
 
 relation LoginContainsEnvironmentVariables {
   Login playsRole login;
-  EnvironmentVariable playsRole environmntVariable {
+  EnvironmentVariable playsRole envVar {
     multiplicity 0..*;
   }
 }

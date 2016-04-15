@@ -44,6 +44,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Set;
 
 import java.math.BigInteger;
 
@@ -94,15 +95,15 @@ public class FileSystem extends FileSystem_Base {
 
   public void cleanup() {
     try{
-      File file = getFileByPath("/", getRootUser(), getRootDirectory());
-      removeFile(file);
-      getFilesSet().clear();
+      File file = getFileByPath("/", getRootUser(), super.getRootDirectory());
+      removeFile(file, getRootUser());
+      super.getFilesSet().clear();
     }catch (InsufficientPermissionsException | FileUnknownException | NotADirectoryException e){
       e.printStackTrace();
     }
-    for (Login login: getLoginsSet())
+    for (Login login: super.getLoginsSet())
       login.remove();
-    for (User u: getUsersSet()){
+    for (User u: super.getUsersSet()){
       u.remove();
     }
   }
@@ -128,11 +129,11 @@ public class FileSystem extends FileSystem_Base {
      * root directory
      */
 
-    if (this.getFilesSet().size() == 0) {
+    if (super.getFilesSet().size() == 0) {
       cleanInit();
     } else{
       log.trace("Initializing existing FileSystem");
-      if (getRootDirectory() == null) {
+      if (super.getRootDirectory() == null) {
         throw new RootDirectoryNotFoundException();
       }
     }
@@ -152,11 +153,11 @@ public class FileSystem extends FileSystem_Base {
     super.setRootUser(new RootUser(this));
 
     log.trace("Creating root directory");
-    super.setRootDirectory(new RootDirectory(this, 0, "/", getRootUser()));
+    super.setRootDirectory(new RootDirectory(this, "/", getRootUser()));
 
 
     log.trace("Creating home directory");
-    Directory homeDir = createDirectory("home",getRootDirectory(),getRootUser());
+    Directory homeDir = createDirectory("home",super.getRootDirectory(),getRootUser());
 
     getRootUser().setHomeDirectory(createDirectory("root", homeDir, getRootUser()));
 
@@ -176,7 +177,7 @@ public class FileSystem extends FileSystem_Base {
    * Returns null if no user is found. Does not throw exception here
    */
   public User getUserByUsername(String username) {
-    for (User user: this.getUsersSet()) {
+    for (User user: super.getUsersSet()) {
       if (user.getUsername().equalsIgnoreCase(username)) {
         return user;
       }
@@ -189,7 +190,7 @@ public class FileSystem extends FileSystem_Base {
    * Returns null if no login is found.
    */
   private Login getLoginByUser(User user){
-    for(Login login: this.getLoginsSet()){
+    for(Login login: super.getLoginsSet()){
       if(login.getUser().equals(user))
         return login;
     }
@@ -209,6 +210,11 @@ public class FileSystem extends FileSystem_Base {
 
   @Override
   public void setIdCounter(Integer id) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public Integer getIdCounter() {
     throw new MethodDeniedException();
   }
 
@@ -233,7 +239,42 @@ public class FileSystem extends FileSystem_Base {
   }
 
   @Override
+  public void removeUsers(User user) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void removeFiles(File file) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void removeLogins(Login login) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public Set<Login> getLoginsSet() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public Set<File> getFilesSet() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public Set<User> getUsersSet() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
   public void setRootUser(RootUser rootUser) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public RootDirectory getRootDirectory() {
     throw new MethodDeniedException();
   }
 
@@ -241,7 +282,6 @@ public class FileSystem extends FileSystem_Base {
   public void setRootDirectory(RootDirectory rootDirectory) {
     throw new MethodDeniedException();
   }
-
 
 
   /* ****************************************************************************
@@ -267,7 +307,7 @@ public class FileSystem extends FileSystem_Base {
      */
     log.trace("Adding user " + username);
     try {
-      Directory home = assertDirectory(getRootDirectory().getFileByName("home"));
+      Directory home = assertDirectory(super.getRootDirectory().getFileByName("home"));
       Directory userHome = createDirectory(username, home, user);
       user.setHomeDirectory(userHome);
     } catch(FileUnknownException e) {
@@ -288,8 +328,8 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public int requestId() {
-    super.setIdCounter(getIdCounter()+1);
-    return getIdCounter();
+    super.setIdCounter(super.getIdCounter()+1);
+    return super.getIdCounter();
   }
 
   private Directory createDirectory(String name, Directory parent, User owner) {
@@ -308,8 +348,12 @@ public class FileSystem extends FileSystem_Base {
     return parent.createLink(name, owner, data);
   }
 
-  private void removeFile(File f) {
-    f.remove();
+  private void removeFile(File file, User user) {
+    file.remove(user);
+  }
+
+  private void removeFile(String filename, User user, Directory currentDirectory) {
+    currentDirectory.remove(filename, user);
   }
 
   /* ****************************************************************************
@@ -322,7 +366,7 @@ public class FileSystem extends FileSystem_Base {
      * TODO:XXX:FIXME DO PROPER CHECKING AND EXCEPTION HANDLING
      */
     try {
-      return (Directory) getRootDirectory().getFileByName("home");
+      return (Directory) super.getRootDirectory().getFileByName("home");
     }catch(FileUnknownException e){
       throw new RuntimeException("WRONG FILE STRUCTURE");
     }
@@ -332,16 +376,8 @@ public class FileSystem extends FileSystem_Base {
    * Changes current working directory
    */
   public void changeDirectory(String dirName, User user, Directory directory) {
-    /**
-     * TODO::FIX:PERMISSIONS
-     */
-
     Directory d = assertDirectory(getFileByPath(dirName, user, directory));
-
-    //d.checkUserPermissions(...)
-    _login.setCurrentDirectory(d);
-
-    //checkExecutionPermissions(user, dir);
+    _login.setCurrentDirectory(d, user);
   }
 
 
@@ -398,14 +434,14 @@ public class FileSystem extends FileSystem_Base {
    * @return The file at the end of the path.
    */
   public File getFileByPath(String path, User user, Directory directory) {
-    if (path.equals("/")) return getRootDirectory();
+    if (path.equals("/")) return super.getRootDirectory();
 
     ArrayList<String> tokensList = processPath(path);
 
     // Absolute or relative?
     if (path.charAt(0) == '/') {
       tokensList.remove(0);
-      return getRootDirectory().getFile(tokensList, user);
+      return super.getRootDirectory().getFile(tokensList, user);
     } else {
       return directory.getFile(tokensList, user);
     }
@@ -448,128 +484,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   /**
-   * remove a file by its path.
-   *
-   * @param path
-   * @param user
-   * @param directory
-   */
-  public void removeFileByPath(String path, User user, Directory directory) {
-    File file = getFileByPath(path, user, directory);
-    // Deletion permissions
-    /** checkDeletionPermissions(user, file); */
-    removeFile (file);
-  }
-
-  /**
-   * Helper function to call when the directories in the path need to be processed/created
-   */
-  private Directory createFileByPathHelper(Directory current, ArrayList<String> tokensList, User user) {
-    File temp ;
-    DirectoryVisitor dv = new DirectoryVisitor();
-
-    for (String tok : tokensList) {
-      try {
-        temp = current.getFileByName(tok);
-        // Permissions
-        /** checkReadPermissions(user, current); */
-        /** checkExecutionPermissions(user, current); */
-        current = temp.accept(dv);
-      } catch(FileUnknownException e) {
-        // Permissions
-        /** checkWritePermissions(user, current); */
-        current = createDirectory(tok, current, getRootUser());
-      }
-      if (current==null) {
-        System.out.println("Conflicting file names");
-        return null;
-      }
-    }
-    return current;
-  }
-
-  /**
-   * Create a PlainFile by its path.
-   *
-   * @param path
-   * @param user
-   * @param directory
-   * @return The file created at the end of the path.
-   */
-  public PlainFile createPlainFileByPath(String path, User user, Directory directory) {
-    Directory current;
-    String[] tokens = path.split("/");
-    String target = tokens[tokens.length-1];
-
-    ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
-    tokensList.remove(tokensList.size()-1);
-
-    if (path.charAt(0) == '/') {
-      current = getRootDirectory();
-      tokensList.remove(0);
-    }else{
-      current = directory;
-    }
-
-    Directory currentDir = createFileByPathHelper(current, tokensList, user);
-    checkFileUnique(target, currentDir);
-    return createPlainFile(target, currentDir, getRootUser());
-  }
-
-  /**
-   * Create a Directory by its path.
-   *
-   * @param path
-   * @param user
-   * @param directory
-   * @return The file created at the end of the path.
-   */
-  public Directory createDirectoryByPath(String path, User user, Directory directory) {
-    Directory current;
-    String[] tokens = path.split("/");
-    String target = tokens[tokens.length-1];
-
-    ArrayList<String> tokensList = new ArrayList<String>(Arrays.asList(tokens));
-    tokensList.remove(tokensList.size()-1);
-
-    if (path.charAt(0) == '/') {
-      current = getRootDirectory();
-      tokensList.remove(0);
-    }else{
-      current = directory;
-    }
-
-    Directory currentDir = createFileByPathHelper(current, tokensList, user);
-    checkFileUnique(target, currentDir);
-    try {
-      DirectoryVisitor dv = new DirectoryVisitor();
-      return currentDir.getFileByName(target).accept(dv);
-    }
-    catch (FileUnknownException e) {
-      return createDirectory(target, currentDir, getRootUser());
-    }
-
-  }
-
-  /**
-   * Create an App by its path.
-   *
-   * @param path
-   */
-  public void createAppByPath(String path) {
-    /* Copy code from create'File'ByPath */
-  }
-
-  /**
-   * Create a Link by its path.
-   *
-   * @param path
-   */
-  public void createLinkByPath(String path) {
-    /* Copy code from create'File'ByPath */
-  }
-
-  /**
    * Verifies if a file is valid to export
    *
    * @param File
@@ -590,78 +504,84 @@ public class FileSystem extends FileSystem_Base {
    * Creates a document, with the data in the FileSystem, in XML
    */
   public Document xmlExport() {
-    XMLExporterVisitor xml = new XMLExporterVisitor();
-    Element mydrive = new Element("myDrive");
-    Document doc = new Document(mydrive);
+    // FIXME TODO
+    /** XMLExporterVisitor xml = new XMLExporterVisitor(); */
+    /** Element mydrive = new Element("myDrive"); */
+    /** Document doc = new Document(mydrive); */
 
-    for (User u: getUsersSet()){
-      if(!u.getUsername().equals("root"))
-        mydrive.addContent(u.xmlExport());
-    }
-    for (File f: getFilesSet()){
+    /** for (User u: getUsersSet()){ */
+    /**   if(!u.getUsername().equals("root")) */
+    /**     mydrive.addContent(u.xmlExport()); */
+    /** } */
+    /** for (File f: getFilesSet()){ */
 
-      if(isFileExportValid(f)) mydrive.addContent(f.accept(xml));
+    /**   if(isFileExportValid(f)) mydrive.addContent(f.accept(xml)); */
 
-    }
-    return doc;
+    /** } */
+    /** return doc; */
+    return null; //todo remove that <<<<<<<<
   }
 
   public void xmlImportUser(Element userElement) throws UnsupportedEncodingException {
-    String username = new String(userElement.getAttribute("username").getValue().getBytes("UTF-8"));
+    // FIXME TODO
+    /** String username = new String(userElement.getAttribute("username").getValue().getBytes("UTF-8")); */
 
-    Element nameElement = userElement.getChild("name");
-    String name;
-    if (nameElement != null) name = new String(nameElement.getText().getBytes("UTF-8"));
-    else name = username;
+    /** Element nameElement = userElement.getChild("name"); */
+    /** String name; */
+    /** if (nameElement != null) name = new String(nameElement.getText().getBytes("UTF-8")); */
+    /** else name = username; */
 
-    Element pwdElement = userElement.getChild("password");
-    String pwd;
-    if (pwdElement != null) pwd = new String(pwdElement.getText().getBytes("UTF-8"));
-    else pwd = username;
+    /** Element pwdElement = userElement.getChild("password"); */
+    /** String pwd; */
+    /** if (pwdElement != null) pwd = new String(pwdElement.getText().getBytes("UTF-8")); */
+    /** else pwd = username; */
 
-    createUser(username,name,pwd);
+    /** createUser(username,name,pwd); */
   }
 
   public void xmlImportDir(Element dirElement) throws UnsupportedEncodingException {
-    String name = new String(dirElement.getChild("name").getText().getBytes("UTF-8"));
-    String path = new String(dirElement.getChild("path").getText().getBytes("UTF-8"));
-    path = path + "/" + name;
-    Directory dir = createDirectoryByPath(path, getRootUser(), getRootDirectory());
+    // FIXME TODO
+    /** String name = new String(dirElement.getChild("name").getText().getBytes("UTF-8")); */
+    /** String path = new String(dirElement.getChild("path").getText().getBytes("UTF-8")); */
+    /** path = path + "/" + name; */
+    /** Directory dir = createDirectoryByPath(path, getRootUser(), getRootDirectory()); */
 
-    Element owner = dirElement.getChild("owner");
-    User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8")));
-    dir.setOwner(u);
+    /** Element owner = dirElement.getChild("owner"); */
+    /** User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8"))); */
+    /** dir.setOwner(u); */
 
-    dir.xmlImport(dirElement);
+    /** dir.xmlImport(dirElement); */
   }
 
   public void xmlImportPlain(Element plainElement) throws UnsupportedEncodingException {
-    String name = new String(plainElement.getChild("name").getText().getBytes("UTF-8"));
-    String path = new String(plainElement.getChild("path").getText().getBytes("UTF-8"));
-    path = path + "/" + name;
-    PlainFile plain = createPlainFileByPath(path, getRootUser(), getRootDirectory());
+    // FIXME TODO
+    /** String name = new String(plainElement.getChild("name").getText().getBytes("UTF-8")); */
+    /** String path = new String(plainElement.getChild("path").getText().getBytes("UTF-8")); */
+    /** path = path + "/" + name; */
+    /** PlainFile plain = createPlainFileByPath(path, getRootUser(), getRootDirectory()); */
 
-    Element owner = plainElement.getChild("owner");
-    User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8")));
-    plain.setOwner(u);
+    /** Element owner = plainElement.getChild("owner"); */
+    /** User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8"))); */
+    /** plain.setOwner(u); */
 
-    plain.xmlImport(plainElement);
-  }
+    /** plain.xmlImport(plainElement); */
+  /** } */
 
-  public void xmlImport(Element firstElement) {
-    try {
-      for (Element userElement: firstElement.getChildren("user"))
-        xmlImportUser(userElement);
+  /** public void xmlImport(Element firstElement) { */
+    // FIXME TODO
+    /** try { */
+    /**   for (Element userElement: firstElement.getChildren("user")) */
+    /**     xmlImportUser(userElement); */
 
-      for (Element dirElement: firstElement.getChildren("dir"))
-        xmlImportDir(dirElement);
+    /**   for (Element dirElement: firstElement.getChildren("dir")) */
+    /**     xmlImportDir(dirElement); */
 
-      for (Element plainElement: firstElement.getChildren("plain"))
-        xmlImportPlain(plainElement);
+    /**   for (Element plainElement: firstElement.getChildren("plain")) */
+    /**     xmlImportPlain(plainElement); */
 
-    } catch (UnsupportedEncodingException |  FileExistsException | UserUnknownException | ImportDocumentException | UserExistsException | InvalidUsernameException e) {
-      System.out.println("Error in import filesystem");
-    }
+    /** } catch (UnsupportedEncodingException |  FileExistsException | UserUnknownException | ImportDocumentException | UserExistsException | InvalidUsernameException e) { */
+    /**   System.out.println("Error in import filesystem"); */
+    /** } */
   }
 
   /* ****************************************************************************
@@ -715,13 +635,6 @@ public class FileSystem extends FileSystem_Base {
     if(filepath.length() >= 1024) throw new InvalidFilepathSizeException(1024);
   }
 
-  /**
-   * Verifies if filename is unique in Directory
-   * @param filename
-   */
-  private void checkFileUnique(String filename, Directory dir) {
-    if(dir.hasFile(filename)) throw new FileExistsException(filename);
-  }
 
   /* ****************************************************************************
    * |                           Asserting methods                              |
@@ -780,7 +693,7 @@ public class FileSystem extends FileSystem_Base {
    * case, null is returned.
    */
   public Login getLoginByToken(long token) {
-    for (Login login : getLoginsSet()) {
+    for (Login login : super.getLoginsSet()) {
       if (login.compareToken(token))
         return login;
     }
@@ -853,7 +766,7 @@ public class FileSystem extends FileSystem_Base {
    * Cleans up expired logins.
    */
   private void cullLogins(){
-    for (Login login: this.getLoginsSet()){
+    for (Login login: super.getLoginsSet()){
       if(login.hasExpired())
         login.remove();
     }
@@ -950,16 +863,13 @@ public class FileSystem extends FileSystem_Base {
 
     File file = getFileByPath(path,_login.getUser(), _login.getCurrentDirectory());
 
-    //FIXME check filename?
     PlainFile pf = assertPlainFile(file);
-    //file.checkWritePermissions(_login.getUser());
     pf.setData(content, _login.getUser());
   }
 
   public void deleteFile(long token, String filename) {
     updateSession(token);
-    removeFile(_login.getCurrentDirectory().getFileByName(filename));
-    //TODO::FIXME check permissions on remove
+    removeFile(filename, _login.getUser(), _login.getCurrentDirectory());
   }
 
   public String changeDirectory(long token, String dirpath) {

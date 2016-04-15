@@ -27,7 +27,6 @@ public class ChangeDirectoryTest extends AbstractServiceTest {
   private User _user1;
 	private User _user2;
   private Login _login1;
-	private int _id;
 	private Directory dir1;
 	private Directory dir2;
 
@@ -40,13 +39,10 @@ public class ChangeDirectoryTest extends AbstractServiceTest {
 		try{
 			_fs = FileSystem.getInstance();
 			_user1 = new User(_fs, "user1", "user1", "litxo");
-      _user1.setHomeDirectory(new Directory(_fs, _fs.requestId(),
-					"user1", _fs.getHomeDirectory(), _user1));
+      _user1.setHomeDirectory(new Directory(_fs, "user1", _fs.getHomeDirectory(), _user1));
 			_user2 = new User(_fs, "user2", "user2", "litxo");
-      _user2.setHomeDirectory(new Directory(_fs, _fs.requestId(),
-					"user2", _fs.getHomeDirectory(), _user2));
+      _user2.setHomeDirectory(new Directory(_fs, "user2", _fs.getHomeDirectory(), _user2));
 			_login1 = new Login(_fs, _user1, _user1.getHomeDirectory(), 123l);
-			_id = 9999;
 
 			/* We'll have something like this
 			 * |- app
@@ -64,23 +60,23 @@ public class ChangeDirectoryTest extends AbstractServiceTest {
 			 *          |- plainfile2
 			 * */
 
-			dir1 = new Directory (_fs, _id++, "dir1", _user1.getHomeDirectory(), _user1);
-			dir2 = new Directory (_fs, _id++, "dir2", dir1, _user2);
+			dir1 = new Directory (_fs, "dir1", _user1.getHomeDirectory(), _user1);
+			dir2 = new Directory (_fs, "dir2", dir1, _user2);
 
-			new App       (_fs, _id++, "app", _user1.getHomeDirectory(), _user1, "app_Data");
-			new PlainFile (_fs, _id++, "pf" , _user1.getHomeDirectory(), _user1, "pf_Data");
+			new App       (_fs, "app", _user1.getHomeDirectory(), _user1, "app_Data");
+			new PlainFile (_fs, "pf" , _user1.getHomeDirectory(), _user1, "pf_Data");
 
-			new Link      (_fs, _id++, "linkAbsolute", _user1.getHomeDirectory(), _user1, "/home/user1/dir1");
-			new Link      (_fs, _id++, "linkRelative", _user1.getHomeDirectory(), _user1, "dir1");
-			new Link      (_fs, _id++, "linkToNotADirectory", _user1.getHomeDirectory(), _user1, "dir1/plainfile1");
-			new Link      (_fs, _id++, "linkToInsufficientPermissions", _user1.getHomeDirectory(), _user1, "dir1/dir2");
-			new Link      (_fs, _id++, "linkToFileUnknown", _user1.getHomeDirectory(), _user1, "dir1/erro");
+			new Link      (_fs, "linkAbsolute", _user1.getHomeDirectory(), _user1, "/home/user1/dir1");
+			new Link      (_fs, "linkRelative", _user1.getHomeDirectory(), _user1, "dir1");
+			new Link      (_fs, "linkToNotADirectory", _user1.getHomeDirectory(), _user1, "dir1/plainfile1");
+			new Link      (_fs, "linkToInsufficientPermissions", _user1.getHomeDirectory(), _user1, "dir1/dir2");
+			new Link      (_fs, "linkToFileUnknown", _user1.getHomeDirectory(), _user1, "dir1/erro");
 
-			new Link      (_fs, _id++, "linkToLink", dir1, _user1, "/home/user1/linkAbsolute");
-			new Link      (_fs, _id++, "linkToLinkBad", dir1, _user1, "/home/user1/linkToFileUnknown");
+			new Link      (_fs, "linkToLink", dir1, _user1, "/home/user1/linkAbsolute");
+			new Link      (_fs, "linkToLinkBad", dir1, _user1, "/home/user1/linkToFileUnknown");
 
-			new PlainFile (_fs, _id++, "plainfile1", dir1, _user1, "plainfile1_Data");
-			new PlainFile (_fs, _id++, "plainfile2", dir2, _user2, "plainfile2_Data");
+			new PlainFile (_fs, "plainfile1", dir1, _user1, "plainfile1_Data");
+			new PlainFile (_fs, "plainfile2", dir2, _user2, "plainfile2_Data");
 
 		}catch (Exception e){
 			e.printStackTrace();
