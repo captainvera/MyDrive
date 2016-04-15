@@ -20,13 +20,13 @@ import java.util.ArrayList;
 public class Link extends Link_Base {
 
   /** Placeholder for FenixFramework */
-  public Link() {
+  protected Link() {
     super();
   }
 
-  public Link(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
-    init(fs, id, name, parent, owner, data);
-    setDirtyBit(true);
+  public Link(FileSystem fs, String name, Directory parent, User owner, String data) {
+    init(fs, fs.requestId(), name, parent, owner, data);
+    super.setDirtyBit(true);
   }
 
   /**
@@ -36,9 +36,20 @@ public class Link extends Link_Base {
   public int getSize(){
     return 1;
   }
+
+  @Override
+  public void setDirtyBit(boolean state) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public boolean getDirtyBit() {
+    throw new MethodDeniedException();
+  }
+
   @Override
   public void setData(String content, User user){
-  	  if(getDirtyBit()) throw new MethodDeniedException();
+  	  if(super.getDirtyBit()) throw new MethodDeniedException();
 	  else super.setData(content,user);
   }
   @Override
@@ -46,11 +57,11 @@ public class Link extends Link_Base {
     System.out.println("DEBUG link: " + getPath());
 
     if(tokens.size() == 0)
-      return getFileSystem().getFileByPath(getData(), user, getParent());
+      return getFileSystem().getFileByPath(getData(user), user, getParent());
 
     checkExecutionPermissions(user);
     String remaining = "";
-    remaining += getData();
+    remaining += getData(user);
     if(remaining.charAt(remaining.length()-1) == '/')
       remaining = remaining.substring(0, remaining.length()-1);
 
@@ -99,11 +110,11 @@ public class Link extends Link_Base {
 
   @Override
   public File getFileObject(User user) {
-    return getFileSystem().getFileByPath(getData(), user, getParent());
+    return getFileSystem().getFileByPath(getData(user), user, getParent());
   }
 
   @Override
   public String toString(){
-    return "l " + getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData();
+    return "l " + getUserPermission() + getOthersPermission() + " " + getName() + "->" + getData(getOwner());
   }
 }

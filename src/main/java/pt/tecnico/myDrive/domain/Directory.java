@@ -13,6 +13,9 @@ import pt.tecnico.myDrive.exceptions.FileUnknownException;
 import pt.tecnico.myDrive.exceptions.IllegalRemovalException;
 import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
+import pt.tecnico.myDrive.exceptions.FileExistsException;
+import pt.tecnico.myDrive.exceptions.MethodDeniedException;
+
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 
 import java.util.*;
@@ -28,8 +31,8 @@ public class Directory extends Directory_Base {
     super();
   }
 
-  public Directory(FileSystem fs, Integer id, String name, Directory parent, User owner) {
-    init(fs, id, name, parent, owner);
+  public Directory(FileSystem fs, String name, Directory parent, User owner) {
+    init(fs, fs.requestId(), name, parent, owner);
   }
 
   /**
@@ -52,7 +55,7 @@ public class Directory extends Directory_Base {
     else if(filename.equals(".."))
       return getParent();
     else
-      for (File file : getFileSet()) {
+      for (File file : super.getFileSet()) {
         if (filename.equals(file.getName()))
           return file;
       }
@@ -153,7 +156,7 @@ public class Directory extends Directory_Base {
       String self = ((String) method.invoke(this)).replaceAll(getName(), ".") + "\n";
       String parent = ((String) method.invoke(getParent())).replaceAll(getParent().getName(), "..") + "\n";
       String list = self + parent;
-      for (File file: getFileSet())
+      for (File file: super.getFileSet())
         list += method.invoke(file) + "\n";
       return list;
     } catch(InvocationTargetException e) {
@@ -189,7 +192,7 @@ public class Directory extends Directory_Base {
       String parent = ((String) method.invoke(getParent())).replaceAll(getParent().getName(), "..") + "\n";
       String list = self + parent;
       TreeSet<File> tree = new TreeSet<File>(comparator);
-      for (File file: getFileSet())
+      for (File file: super.getFileSet())
         tree.add(file);
       for(File file: tree)
         list += method.invoke(file) + "\n";
@@ -207,13 +210,13 @@ public class Directory extends Directory_Base {
    * @return The size of a directory.
    */
   @Override
-  public int getSize() { return 2 + getFileSet().size(); }
+  public int getSize() { return 2 + super.getFileSet().size(); }
 
   /**
    * @return True if file is in directory, false otherwise.
    */
-  public boolean hasFile(String filename) {
-    for (File file : getFileSet())
+  private boolean hasFile(String filename) {
+    for (File file : super.getFileSet())
       if (filename.equals(file.getName()))
         return true;
     return false;
@@ -223,12 +226,33 @@ public class Directory extends Directory_Base {
    * Removes all files in a directory
    */
   protected void removeAllFiles() {
-    for (File file : getFileSet())
+    for (File file : super.getFileSet())
       file.remove();
   }
 
+  public void remove(String filename, User user) {
+    checkIllegalRemoval(filename);
+    File file = getFileByName(filename);
+    file.remove(user);
+  }
+
   @Override
-  public void remove() {
+  public Set<File> getFileSet() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void addFile(File file) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void removeFile(File file) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  protected void remove() {
     removeAllFiles();
     nullifyRelations();
     deleteDomainObject();
@@ -263,13 +287,6 @@ public class Directory extends Directory_Base {
       throw new IllegalRemovalException();
   }
 
-  public void removeByName(String filename) {
-    checkIllegalRemoval(filename);
-    File f = getFileByName(filename);
-    removeFile(f);
-    f.remove();
-  }
-
   @Override
   public <T> T accept(GenericVisitor<T> v){
     return v.visit(this);
@@ -296,31 +313,46 @@ public class Directory extends Directory_Base {
 
    /* ****************************************************************************
    *  |                     Public File creation methods                         |
-   *  |          TODO::XXX: CHECK PERMISSIONS TODO::XXX                          |
    *  ****************************************************************************
    */
 
   public Directory createDirectory(String name, User owner){
-    //TODO PERMISSIONS
-    return new Directory(getFileSystem(), getFileSystem().requestId(), name, this, owner); 
+    checkWritePermissions(owner);
+    checkFileUnique(name);
+    return new Directory(getFileSystem(), name, this, owner);
   }
 
   public PlainFile createPlainFile(String name, User owner){
-    //TODO PERMISSIONS
-    return new PlainFile(getFileSystem(), getFileSystem().requestId(), name, this, owner); 
+    checkWritePermissions(owner);
+    checkFileUnique(name);
+    return new PlainFile(getFileSystem(), name, this, owner);
+  }
+
+  public PlainFile createPlainFile(String name, User owner, String data){
+    checkWritePermissions(owner);
+    checkFileUnique(name);
+    PlainFile pf = new PlainFile (getFileSystem(), name, this, owner);
+    pf.setData(data, owner);
+    return pf;
   }
 
   public App createApp(String name, User owner){
-    //TODO PERMISSIONS
-    return new App(getFileSystem(), getFileSystem().requestId(), name, this, owner); 
+    checkWritePermissions(owner);
+    checkFileUnique(name);
+    return new App(getFileSystem(), name, this, owner);
   }
-  
+
   public Link createLink(String name, User owner, String data){
-    //TODO PERMISSIONS
-    return new Link(getFileSystem(), getFileSystem().requestId(), name, this, owner, data); 
+    checkWritePermissions(owner);
+    checkFileUnique(name);
+    return new Link(getFileSystem(), name, this, owner, data);
   }
-  
-  /*
-   * -----------------------------------------------------------------------------
+
+  /**
+   * Verifies if name is unique in Directory
+   * @param name
    */
+  private void checkFileUnique(String name) {
+    if(hasFile(name)) throw new FileExistsException(name);
+  }
 }

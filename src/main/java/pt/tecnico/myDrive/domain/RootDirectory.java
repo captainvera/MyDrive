@@ -18,8 +18,8 @@ public class RootDirectory extends RootDirectory_Base {
     super();
   }
 
-  public RootDirectory(FileSystem fs, Integer id, String name, User owner) {
-    init(fs, id, name, this, owner);
+  public RootDirectory(FileSystem fs, String name, User owner) {
+    init(fs, fs.requestId(), name, this, owner);
   }
 
   /**

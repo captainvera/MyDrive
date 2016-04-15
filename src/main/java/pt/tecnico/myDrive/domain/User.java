@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
+import pt.tecnico.myDrive.exceptions.InvalidUsernameSizeException;
+import pt.tecnico.myDrive.exceptions.InvalidUsernameException;
 
 import pt.tecnico.myDrive.domain.FileSystem;
 
@@ -17,7 +19,6 @@ public class User extends User_Base {
 
   public User(FileSystem fs, String username) {
   	init(fs, username, username, username, "rwxd----");
-    
   }
 
   public User(FileSystem fs, String username, String name, String password) {
@@ -53,7 +54,32 @@ public class User extends User_Base {
     throw new MethodDeniedException();
   }
 
+  private void checkUsername(String username) {
+    char[] characters = username.toCharArray();
+
+    for (char c: characters) {
+      if (!Character.isLetter(c) && !Character.isDigit(c)) {
+        throw new InvalidUsernameException(username);
+      }
+    }
+  }
+
+  /**
+   * Verifies if username has atleast 3 characters
+   * @param username
+   */
+  private void checkUsernameSize(String username) {
+    if(username.length() <= 3) throw new InvalidUsernameSizeException(3);
+  }
+
+
   protected void init(FileSystem fs, String username, String name, String password, String umask, Directory homeDir) {
+    /**
+     * TODO: should be moved if there is a better place for it
+     */
+    checkUsername(username);
+    checkUsernameSize(username);
+    
     super.setFileSystem(fs);
     super.setUsername(username);
     super.setName(name);

@@ -27,7 +27,7 @@ public class LoginTest extends AbstractServiceTest {
 
 	private FileSystem _fs;
   private User _user;
-  
+
 	/* (non-Javadoc)
 	 * @see pt.tecnico.myDrive.service.AbstractServiceTest#populate()
 	 */
@@ -36,8 +36,7 @@ public class LoginTest extends AbstractServiceTest {
 		try{
 			_fs = FileSystem.getInstance();
 			_user = new User(_fs, "testuser1","test1","pwd1234");
-			_user.setHomeDirectory(new Directory(_fs, _fs.requestId(),
-																"testuser1", _fs.getHomeDirectory(), _user));
+			_user.setHomeDirectory(new Directory(_fs, "testuser1", _fs.getHomeDirectory(), _user));
 			new User(_fs, "testuser","test","pwd1234");
 		}catch (Exception e){
 			e.printStackTrace();
@@ -56,10 +55,10 @@ public class LoginTest extends AbstractServiceTest {
 
 			long tok1 = loginservice1.result();
 			long tok2 = loginservice2.result();
-			
+
 			User user1 = _fs.getUserByToken(tok1);
 			User user2 = _fs.getUserByToken(tok2);
-			
+
 			assertTrue("Login user1 successful.", user1 == _user);
 			assertTrue("Login user2 successful.", user2.getUsername() == "root");
 		} catch (Exception e) {
@@ -67,7 +66,7 @@ public class LoginTest extends AbstractServiceTest {
 		}
 	}
 
-	
+
 	@Test(expected = UserUnknownException.class)
   public void userUnknown() throws Exception{
 		LoginService login = new LoginService("testuser123", "pwd1234");
@@ -79,15 +78,15 @@ public class LoginTest extends AbstractServiceTest {
 		LoginService login = new LoginService("testuser", "pwd9876");
 		login.execute();
 	}
-	
+
 	@Test
 	public void invalidToken() throws Exception{
 		LoginService loginservice1 = new LoginService(_user.getUsername(), "pwd1234");
 		loginservice1.execute();
-		
+
 		long tok = loginservice1.result();
 		Login log = _fs.getLoginByToken(tok);
-		
+
 		log.reduceExpirationDate(2, 0, 0);
 		assertFalse("Token is invalid after 2 hours.", _fs.isValidToken(tok));
 	}
@@ -97,10 +96,10 @@ public class LoginTest extends AbstractServiceTest {
 		LoginService loginservice1 = new LoginService(_user.getUsername(), "pwd1234");
 		loginservice1.execute();
 		long tok = loginservice1.result();
-		
+
 		Login log = _fs.getLoginByToken(tok);
 		log.reduceExpirationDate(2, 0, 0);
-	
+
 		loginservice1.execute();
 		assertNull("Login has been culled.", _fs.getLoginByToken(tok));
 	}

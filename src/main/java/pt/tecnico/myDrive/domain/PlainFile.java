@@ -24,12 +24,12 @@ public class PlainFile extends PlainFile_Base {
     super();
   }
 
-  public PlainFile(FileSystem fs, Integer id, String name, Directory parent, User owner) {
-    this(fs, id, name, parent, owner, "");
+  public PlainFile(FileSystem fs, String name, Directory parent, User owner) {
+    init(fs, fs.requestId(), name, parent, owner, "");
   }
 
-  public PlainFile(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
-    init(fs, id, name, parent, owner, data);
+  public PlainFile(FileSystem fs, String name, Directory parent, User owner, String data) {
+    init(fs, fs.requestId(), name, parent, owner, data);
   }
 
   protected void init(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
@@ -39,7 +39,7 @@ public class PlainFile extends PlainFile_Base {
 
   @Override
   public int getSize(){
-    return getData().length();
+    return super.getData().length();
   }
 
   @Override
@@ -48,8 +48,8 @@ public class PlainFile extends PlainFile_Base {
   }
 
   @Override
-  public String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
-    return getData();
+  public String execute(User user) {
+    return super.getData();
   }
 
   @Override
@@ -62,13 +62,19 @@ public class PlainFile extends PlainFile_Base {
     throw new MethodDeniedException();
   }
 
-  // TODO: Exceptions
+  @Override
+  public String getData() {
+    throw new MethodDeniedException();
+  }
+
   public void setData(String data, User user) {
+    checkWritePermissions(user);
     super.setData(data);
     touch();
   }
 
   public String getData(User user) {
+    checkReadPermissions(user);
     return super.getData();
   }
 

@@ -21,12 +21,12 @@ public class App extends App_Base {
     super();
   }
 
-  public App(FileSystem fs, Integer id, String name, Directory parent, User owner) {
-    this(fs, id, name, parent, owner, "");
+  public App(FileSystem fs, String name, Directory parent, User owner) {
+    super.init(fs, fs.requestId(), name, parent, owner, "");
   }
 
-  public App(FileSystem fs, Integer id, String name, Directory parent, User owner, String data) {
-    super.init(fs, id, name, parent, owner, data);
+  public App(FileSystem fs, String name, Directory parent, User owner, String data) {
+    super.init(fs, fs.requestId(), name, parent, owner, data);
   }
 
   /**
@@ -51,11 +51,6 @@ public class App extends App_Base {
   @Override
   public <T> T accept(GenericVisitor<T> v){
     return v.visit(this);
-  }
-
-  @Override
-  public void remove() {
-    super.remove();
   }
 
   public void xmlImport(Element appElement) {

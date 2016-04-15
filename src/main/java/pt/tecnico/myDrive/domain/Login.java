@@ -18,74 +18,107 @@ import org.joda.time.DateTime;
 public class Login extends Login_Base {
   protected static final Logger log = LogManager.getRootLogger();
 
-	/**
-	 * Login constructor, receives logged user, currentDirectory and expiration date.
-	 */
-	public Login(FileSystem fs, User user, Directory currentDirectory, Long token) {
-		super();
-		setCurrentDirectory(currentDirectory);
+  /**
+   * Login constructor, receives logged user, currentDirectory and expiration date.
+   */
+  public Login(FileSystem fs, User user, Directory currentDirectory, Long token) {
+    super();
+    super.setCurrentDirectory(currentDirectory);
     super.setFileSystem(fs);
-		super.setUser(user);
-		super.setToken(token);
-		extendToken();
-	}
-	/**
-	 * Basic remove implementation for Login objects
-	 */
-	public void remove() {
-		nullifyRelations();
-		deleteDomainObject();
-	}
-	/**
-	 * Nullifies relations, that is, deletes/cancels any relation between this
-	 * object and eventual others.
-	 */
-	protected void nullifyRelations() {
-		super.setUser(null);
-		super.setCurrentDirectory(null);
-		super.setFileSystem(null);
-	}
+    super.setUser(user);
+    super.setToken(token);
+    extendToken();
+  }
+  /**
+   * Basic remove implementation for Login objects
+   */
+  public void remove() {
+    nullifyRelations();
+    deleteDomainObject();
+  }
+  /**
+   * Nullifies relations, that is, deletes/cancels any relation between this
+   * object and eventual others.
+   */
+  protected void nullifyRelations() {
+    super.setUser(null);
+    super.setCurrentDirectory(null);
+    super.setFileSystem(null);
+  }
 
-	public void extendToken() {
-		super.setExpirationDate(new DateTime().plusHours(2));
-	}
-	public boolean compareToken(long token) {
-		return token == super.getToken();
-	}
-	public boolean hasExpired () {
-		return new DateTime().compareTo(super.getExpirationDate()) >= 0;
-	}
-	public void reduceExpirationDate(int hours, int minutes, int seconds){
-		super.setExpirationDate(super.getExpirationDate().minusHours(hours).minusMinutes(minutes).minusSeconds(seconds));
-	}
-	@Override
-	public Long getToken() {
-		throw new MethodDeniedException();
-	}
-	@Override
-	public DateTime getExpirationDate() {
-		throw new MethodDeniedException();
-	}
-	@Override
-	public void setExpirationDate(DateTime expirationDate) {
-		throw new MethodDeniedException();
-	}
-	@Override
-	public void setToken(Long token) {
-		throw new MethodDeniedException();
-	}
-	@Override
-	public FileSystem getFileSystem() {
-		throw new MethodDeniedException();
-	}
-	@Override
-	public void setFileSystem(FileSystem fileSystem) {
-		throw new MethodDeniedException();
-	}
-	@Override
-	public void setUser(User user) {
-		throw new MethodDeniedException();
-	}
+  public void extendToken() {
+    super.setExpirationDate(new DateTime().plusHours(2));
+  }
+  public boolean compareToken(long token) {
+    return token == super.getToken();
+  }
+  public boolean hasExpired () {
+    return new DateTime().compareTo(super.getExpirationDate()) >= 0;
+  }
+  public void reduceExpirationDate(int hours, int minutes, int seconds){
+    super.setExpirationDate(super.getExpirationDate().minusHours(hours).minusMinutes(minutes).minusSeconds(seconds));
+  }
+
+  @Override
+  public Long getToken() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setToken(Long token) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public DateTime getExpirationDate() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setExpirationDate(DateTime expirationDate) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public FileSystem getFileSystem() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setFileSystem(FileSystem fileSystem) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setCurrentDirectory(Directory dir){
+    throw new MethodDeniedException();
+  }
+
+  public void setCurrentDirectory(Directory dir, User owner) {
+    dir.checkExecutionPermissions(owner);
+    super.setCurrentDirectory(dir);
+  }
+
+  @Override
+  public void setUser(User user) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public Set<EnvironmentVariable> getEnvVarSet() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void removeEnvVar(EnvironmentVariable ev) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void addEnvVar(EnvironmentVariable ev) {
+    throw new MethodDeniedException();
+  }
+
 
 
 }

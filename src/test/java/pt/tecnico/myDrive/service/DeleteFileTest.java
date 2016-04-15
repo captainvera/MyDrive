@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pt.tecnico.myDrive.service;
 
@@ -25,14 +25,14 @@ import pt.tecnico.myDrive.services.DeleteFileService;
  *
  */
 public class DeleteFileTest extends AbstractServiceTest {
-	
+
 	private FileSystem _fs;
   private User _user;
+  private User _otherUser;
   private Login _login;
-  private int _id;
   private Directory _dir1;
   private Directory _dir2;
-  
+
 	/* (non-Javadoc)
 	 * @see pt.tecnico.myDrive.service.AbstractServiceTest#populate()
 	 */
@@ -41,10 +41,11 @@ public class DeleteFileTest extends AbstractServiceTest {
 		try {
       _fs = FileSystem.getInstance();
       _user = new User(_fs, "litxo", "litxo", "litxo");
-			_user.setHomeDirectory(new Directory(_fs, _fs.requestId(),
-					"litxo", _fs.getHomeDirectory(), _user));
+			_user.setHomeDirectory(new Directory(_fs, "litxo", _fs.getHomeDirectory(), _user));
       _login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
-      _id = 9999;
+
+      // Only for permission testing
+      _otherUser = new User (_fs, "verixo", "verixo", "verixo");
 
       /* We'll have something like this
        * |- app
@@ -66,33 +67,33 @@ public class DeleteFileTest extends AbstractServiceTest {
        *          |- plainfile2
        * */
 
-      _dir1 = new Directory (_fs, _id++, "dir1", _user.getHomeDirectory(), _user);
-      _dir2 = new Directory (_fs, _id++, "dir2", _dir1                    , _user);
+      _dir1 = new Directory (_fs, "dir1", _user.getHomeDirectory(), _user);
+      _dir2 = new Directory (_fs, "dir2", _dir1                   , _otherUser);
 
-      new App       (_fs, _id++, "app", _user.getHomeDirectory(), _user, "app_Data");
-      new PlainFile (_fs, _id++, "pf" , _user.getHomeDirectory(), _user, "pf_Data");
+      new App       (_fs, "app", _user.getHomeDirectory(), _user, "app_Data");
+      new PlainFile (_fs, "pf" , _user.getHomeDirectory(), _user, "pf_Data");
 
-      new Link      (_fs, _id++, "linksucc1", _user.getHomeDirectory(), _user, "dir1/plainfile1");
-      new Link      (_fs, _id++, "linksucc2", _user.getHomeDirectory(), _user, "dir1/dir2/plainfile2");
+      new Link      (_fs, "linksucc1", _user.getHomeDirectory(), _user, "dir1/plainfile1");
+      new Link      (_fs, "linksucc2", _user.getHomeDirectory(), _user, "dir1/dir2/plainfile2");
 
-      new Link      (_fs, _id++, "linkpathsucc1", _dir2, _user, "../plainfile1");
-      new Link      (_fs, _id++, "linkpathsucc2", _dir2, _user, "plainfile2");
+      new Link      (_fs, "linkpathsucc1", _dir2, _user, "../plainfile1");
+      new Link      (_fs, "linkpathsucc2", _dir2, _user, "plainfile2");
 
-      new Link      (_fs, _id++, "linkfail1" , _user.getHomeDirectory(), _user, "dir1/dir2");
-      new Link      (_fs, _id++, "linkfail2" , _user.getHomeDirectory(), _user, ".");
+      new Link      (_fs, "linkfail1" , _user.getHomeDirectory(), _user, "dir1/dir2");
+      new Link      (_fs, "linkfail2" , _user.getHomeDirectory(), _user, ".");
 
-      new Link      (_fs, _id++, "link2linksucc1", _user.getHomeDirectory(), _user, "linksucc1");
-      new Link      (_fs, _id++, "link2linkfail1" , _user.getHomeDirectory(), _user, "linkfail1");
+      new Link      (_fs, "link2linksucc1", _user.getHomeDirectory(), _user, "linksucc1");
+      new Link      (_fs, "link2linkfail1" , _user.getHomeDirectory(), _user, "linkfail1");
 
-      new PlainFile (_fs, _id++, "plainfile1", _dir1, _user, "plainfile1_Data");
-      new PlainFile (_fs, _id++, "plainfile2", _dir2, _user, "plainfile2_Data");
+      new PlainFile (_fs, "plainfile1", _dir1, _user, "plainfile1_Data");
+      new PlainFile (_fs, "plainfile2", _dir2, _user, "plainfile2_Data");
 
     } catch(Exception e) {
       e.printStackTrace();
     }
   }
-	
-	
+
+
 	@Test
   public void deleteApp() throws Exception {
 		String filename = "app";
@@ -109,7 +110,7 @@ public class DeleteFileTest extends AbstractServiceTest {
     assertTrue("Link has been deleted!", deleted);
   }
 
-	
+
   @Test
   public void deletePF() throws Exception {
   	String filename = "pf";
@@ -125,7 +126,7 @@ public class DeleteFileTest extends AbstractServiceTest {
     }
     assertTrue("Link has been deleted!", deleted);
   }
-  
+
 
   @Test
   public void deleteLink() throws Exception {
@@ -141,9 +142,9 @@ public class DeleteFileTest extends AbstractServiceTest {
     		deleted = true;
     }
     assertTrue("Link has been deleted!", deleted);
-  } 
-  
-  
+  }
+
+
   @Test
   public void deleteDirectory() throws Exception {
   	String filename = "dir1";
@@ -159,37 +160,37 @@ public class DeleteFileTest extends AbstractServiceTest {
     		deleted = true;
     }
     assertTrue("Directory has been deleted!", deleted);
-  }  
-  
-  
+  }
+
+
   @Test(expected = FileUnknownException.class)
   public void fileUnknownException() throws Exception {
     DeleteFileService dfs = new DeleteFileService(123l, "dir3");
     dfs.execute();
   }
-  
-  
+
+
   @Test(expected = IllegalRemovalException.class)
   public void illegalRemovalException() throws Exception {
     DeleteFileService dfs = new DeleteFileService(123l, ".");
     dfs.execute();
   }
-  
-  
+
+
   @Test(expected = IllegalRemovalException.class)
   public void illegalRemovalException1() throws Exception {
     DeleteFileService dfs = new DeleteFileService(123l, "..");
     dfs.execute();
   }
-  
-  
+
+
   @Test(expected = InsufficientPermissionsException.class)
   public void InsufficientPermissionsException() throws Exception {
-  	_login.setCurrentDirectory(_dir1);
+  	_login.setCurrentDirectory(_dir1, _user);
   	DeleteFileService dfs = new DeleteFileService(123l, "dir2");
     dfs.execute();
   }
-  
+
 }
 
 
