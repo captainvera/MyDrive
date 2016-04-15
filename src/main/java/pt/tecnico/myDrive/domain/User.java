@@ -26,6 +26,12 @@ public class User extends User_Base {
     init(fs, username, name, password, "rwxd----");
   }
 
+  public User(FileSystem fs, String username, String name, String password, String umask) {
+    // FIXME: Move default umask to here
+    init(fs, username, name, password, umask);
+  }
+
+
   public User(FileSystem fs, String username, String name, String password, String umask, Directory homeDir) {
     init(fs, username, name, password, umask, homeDir);
   }
