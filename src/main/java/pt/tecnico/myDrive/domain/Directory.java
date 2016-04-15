@@ -100,7 +100,7 @@ public class Directory extends Directory_Base {
   /**
    * @return Lists the files inside the directory using only their name.
    */
-  public String listFilesSimple() {
+  private String listFilesSimple() {
     Comparator<File> comp = new Comparator<File>()
     {
       public int compare(File f1, File f2)
@@ -118,7 +118,9 @@ public class Directory extends Directory_Base {
   /**
    * @return List of the files inside the directory using their toString method.
    */
-  public String listFilesAll() {
+  public String listFilesAll(User user) {
+    checkReadPermissions(user);
+
     Comparator<File> comp = new Comparator<File>()
     {
       public int compare(File f1, File f2)
@@ -275,7 +277,7 @@ public class Directory extends Directory_Base {
   public String execute(User user) throws NotADirectoryException, InsufficientPermissionsException, FileUnknownException{
     String s = "Couldn't list directory.";
     try{
-      s = listFilesAll();
+      s = listFilesAll(user);
     }catch(Exception e){
       System.out.println("-- Error executing directory: " + e.getMessage());
     }
