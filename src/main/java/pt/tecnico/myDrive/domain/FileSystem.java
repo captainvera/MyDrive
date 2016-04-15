@@ -400,7 +400,7 @@ public class FileSystem extends FileSystem_Base {
    * @return current working directory listing (files)
    */
   public String listDirectory(Directory directory, User user) {
-    return directory.listFilesAll();
+    return directory.listFilesAll(user);
   }
 
   /**
@@ -462,7 +462,7 @@ public class FileSystem extends FileSystem_Base {
   public String listFileByPathSimple(String path, User user, Directory directory) {
     DirectoryVisitor dv = new DirectoryVisitor();
     Directory d = getFileByPath(path, user, directory).accept(dv);
-    return d.listFilesSimple();
+    return d.listFilesAll(user);
   }
 
 
@@ -475,7 +475,7 @@ public class FileSystem extends FileSystem_Base {
   public String listFileByPathAll(String path, User user, Directory directory) {
     DirectoryVisitor dv = new DirectoryVisitor();
     Directory d = getFileByPath(path, user, directory).accept(dv);
-    return d.listFilesAll();
+    return d.listFilesAll(user);
   }
 
   /**
