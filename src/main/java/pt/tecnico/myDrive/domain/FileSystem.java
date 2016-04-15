@@ -168,7 +168,7 @@ public class FileSystem extends FileSystem_Base {
    * @param user
    * @return True if user is the root user
    */
-  private boolean isRoot(User user) {
+  public boolean isRoot(User user) {
     return user == getRootUser();
   }
 
@@ -294,8 +294,6 @@ public class FileSystem extends FileSystem_Base {
    * @return the created User
    */
   public User createUser(String username, String name, String password) {
-    checkUsername(username);
-
     if (userExists(username))
       throw new UserExistsException(username);
 
@@ -338,6 +336,10 @@ public class FileSystem extends FileSystem_Base {
 
   private PlainFile createPlainFile(String name, Directory parent, User owner) {
     return parent.createPlainFile(name, owner);
+  }
+
+  private PlainFile createPlainFile(String name, Directory parent, User owner, String data) {
+    return parent.createPlainFile(name, owner, data);
   }
 
   private App createApp(String name, Directory parent, User owner) {
@@ -392,13 +394,6 @@ public class FileSystem extends FileSystem_Base {
    */
   public String listPath(Directory directory) {
     return directory.getPath();
-  }
-
-  /**
-   * @return current working directory name
-   */
-  public String currentDirectory(Directory directory) {
-    return directory.getName();
   }
 
   /**
@@ -585,58 +580,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   /* ****************************************************************************
-   * |                            Checking methods                              |
-   * ****************************************************************************
-   */
-
-  /**
-   * Verifies if username only contains letters and digits
-   * @param username
-   */
-  private void checkUsername(String username) {
-    char[] characters = username.toCharArray();
-
-    for (char c: characters) {
-      if (!Character.isLetter(c) && !Character.isDigit(c)) {
-        throw new InvalidUsernameException(username);
-      }
-    }
-  }
-
-  /**
-   * Verifies if filename only contains letters and digits
-   * @param filename
-   */
-  private void checkFilename(String filename) {
-
-    char[] characters = filename.toCharArray();
-
-    for (char c: characters) {
-      if ((!Character.isLetter(c) && !Character.isDigit(c))
-          || c == 0 || c == '\\') {
-        throw new InvalidFilenameException(filename);
-          }
-    }
-  }
-
-  /**
-   * Verifies if username has atleast 3 characters
-   * @param username
-   */
-  private void checkUsernameSize(String username) {
-    if(username.length() <= 3) throw new InvalidUsernameSizeException(3);
-  }
-
-  /**
-   * Verifies if filepath has atmost 1024 characters
-   * @param filepath
-   */
-  private void checkFilepathSize(String filepath) {
-    if(filepath.length() >= 1024) throw new InvalidFilepathSizeException(1024);
-  }
-
-
-  /* ****************************************************************************
    * |                           Asserting methods                              |
    * ****************************************************************************
    */
@@ -781,8 +724,6 @@ public class FileSystem extends FileSystem_Base {
   public void createFile(String name, String type, String content, long token) {
     updateSession(token);
 
-    checkFilename(name);
-
     if(content.equals("")) createFileWithoutContent(name, type, _login.getUser(), _login.getCurrentDirectory());
     else createFileWithContent(name, type, content, _login.getUser(), _login.getCurrentDirectory());
   }
@@ -791,11 +732,11 @@ public class FileSystem extends FileSystem_Base {
     Directory current = _login.getCurrentDirectory();
     switch(type.toLowerCase()){
       case "directory":
-        current.createDirectory(name, user);
+        createDirectory(name, current, user);
         break;
 
       case "plainfile":
-        current.createPlainFile(name, user);
+        createPlainFile(name, current, user);
         break;
 
       /*case "app":
@@ -814,7 +755,7 @@ public class FileSystem extends FileSystem_Base {
         throw new CreateDirectoryWithContentException();
 
       case "plainfile":
-        current.createPlainFile(name, user, data);
+        createPlainFile(name, current, user, data);
         break;
 
       /*case "app":
@@ -823,7 +764,7 @@ public class FileSystem extends FileSystem_Base {
         break;*/
 
       case "link":
-        current.createLink(name, user, data);
+        createLink(name, current, user, data);
         break;
     }
   }

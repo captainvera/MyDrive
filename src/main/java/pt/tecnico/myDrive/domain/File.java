@@ -5,11 +5,12 @@ import pt.tecnico.myDrive.visitors.GenericVisitor;
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
-
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
+import pt.tecnico.myDrive.exceptions.InvalidFilenameException;
+import pt.tecnico.myDrive.exceptions.InvalidFilepathSizeException;
+
 import java.util.ArrayList;
 
-import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 
 import org.joda.time.DateTime;
 
@@ -26,16 +27,52 @@ public abstract class File extends File_Base {
   }
 
   protected void init(FileSystem fs, Integer id, String name, Directory parent, User owner) {
+
+    if(!fs.isRoot(owner)){
+      checkFilename(name);
+      checkFilepathSize(parent.getPath(), name);
+    }
+
     super.setFileSystem(fs);
     super.setId(id);
     super.setName(name);
     setParent(parent);
     super.setOwner(owner);
     super.setLastModified(new DateTime());
+
     // File's initial permissions are the one's defined in the user's umask.
     super.setUserPermission(owner.getUmask().substring(0,4));
     super.setOthersPermission(owner.getUmask().substring(4,8));
   }
+
+  /**
+   * Verifies if filename only contains letters and digits
+   * @param filename
+   */
+  private void checkFilename(String filename) {
+
+    if(filename.length() == 0)
+        throw new InvalidFilenameException(filename);
+
+    char[] characters = filename.toCharArray();
+
+    for (char c: characters) {
+      if ((!Character.isLetter(c) && !Character.isDigit(c))
+
+          || c == 0 || c == '\\') {
+        throw new InvalidFilenameException(filename);
+          }
+    }
+  }
+
+  /**
+   * Verifies if filepath has atmost 1024 characters
+   * @param filepath
+   */
+  private void checkFilepathSize(String filepath, String filename) {
+    if((filepath.length() + filename.length() + 1) >= 1024) throw new InvalidFilepathSizeException(1024);
+  }
+
 
   /**
    * Basic remove implementation for File objects
@@ -124,8 +161,8 @@ public abstract class File extends File_Base {
   }
 
   public File getFileObject(User user) {
-      return this;
-    }
+    return this;
+  }
 
   // TODO
   /** @Override */
@@ -152,7 +189,7 @@ public abstract class File extends File_Base {
    * @param index
    * @param c
    */
-    protected void checkPermissions(User user, int index, char c) {
+  protected void checkPermissions(User user, int index, char c) {
     String permissions = getPermissions(user);
     if(permissions.charAt(index) != c)
       throw new InsufficientPermissionsException();
