@@ -612,8 +612,8 @@ public class FileSystem extends FileSystem_Base {
     char[] characters = filename.toCharArray();
 
     for (char c: characters) {
-      if (!Character.isLetter(c) && !Character.isDigit(c)
-          && c == 0 && c == '\\') {
+      if ((!Character.isLetter(c) && !Character.isDigit(c))
+          || c == 0 || c == '\\') {
         throw new InvalidFilenameException(filename);
           }
     }
@@ -780,46 +780,50 @@ public class FileSystem extends FileSystem_Base {
 
   public void createFile(String name, String type, String content, long token) {
     updateSession(token);
+
+    checkFilename(name);
+
     if(content.equals("")) createFileWithoutContent(name, type, _login.getUser(), _login.getCurrentDirectory());
     else createFileWithContent(name, type, content, _login.getUser(), _login.getCurrentDirectory());
   }
 
   private void createFileWithoutContent(String name, String type, User user, Directory directory) {
+    Directory current = _login.getCurrentDirectory();
     switch(type.toLowerCase()){
       case "directory":
-        createDirectory(name, directory, user);
+        current.createDirectory(name, user);
         break;
 
       case "plainfile":
-        createPlainFile(name, directory, user);
+        current.createPlainFile(name, user);
         break;
 
-      case "app":
-        createApp(name, directory, user);
-        break;
+      /*case "app":
+        createApp(name);
+        break;*/
 
       case "link":
         throw new CreateLinkWithoutContentException();
     }
   }
 
-  private void createFileWithContent(String name, String type, String content, User user, Directory directory) {
+  private void createFileWithContent(String name, String type, String data, User user, Directory directory) {
+    Directory current = _login.getCurrentDirectory();
     switch(type.toLowerCase()){
       case "directory":
         throw new CreateDirectoryWithContentException();
 
       case "plainfile":
-        PlainFile pf = createPlainFile(name, directory, user);
-        pf.setData(content);
+        current.createPlainFile(name, user, data);
         break;
 
-      case "app":
-        App a = createApp(name, directory, user);
-        a.setData(content);
-        break;
+      /*case "app":
+        App a = createApp(name, user, directory);
+        a.setData(data);
+        break;*/
 
       case "link":
-        createLink(name, directory, user, content);
+        current.createLink(name, user, data);
         break;
     }
   }

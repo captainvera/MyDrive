@@ -328,6 +328,14 @@ public class Directory extends Directory_Base {
     return new PlainFile(getFileSystem(), name, this, owner);
   }
 
+  public PlainFile createPlainFile(String name, User owner, String data){
+    checkWritePermissions(owner);
+    checkFileUnique(name);
+    PlainFile pf = new PlainFile (getFileSystem(), name, this, owner);
+    pf.setData(data, owner);
+    return pf;
+  }
+
   public App createApp(String name, User owner){
     checkWritePermissions(owner);
     checkFileUnique(name);
