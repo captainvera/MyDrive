@@ -18,6 +18,8 @@ import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.domain.Login;
 
 import pt.tecnico.myDrive.exceptions.*;
+
+import org.apache.commons.lang3.StringUtils;
 /**
  * @author miguel
  *
@@ -110,6 +112,12 @@ public class CreateFileTest extends AbstractServiceTest {
   public void createLinkWithContent() throws Exception {
     CreateFileService cfs = new CreateFileService(123l, "l", "link", "/home");
     cfs.execute();
+    cfs.execute();
+  }
+
+  @Test(expected=InvalidFilepathSizeException.class)
+  public void createFileWithHugeName() throws Exception {
+    CreateFileService cfs = new CreateFileService(123l, StringUtils.leftPad("test", 1025, 'a'), "link", "/home");
     cfs.execute();
   }
 
