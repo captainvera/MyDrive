@@ -25,6 +25,7 @@ public class ListDirectoryTest extends AbstractServiceTest {
 	private FileSystem _fs;
 	private User _user;
 	private User _user2;
+	private User _user3;
 	private Login _login;
 	private int _id;
 	private Directory _dirdirectories;
@@ -50,6 +51,9 @@ public class ListDirectoryTest extends AbstractServiceTest {
 			_user.setHomeDirectory(new Directory(_fs, "litxo", _fs.getHomeDirectory(), _user));
 			_user2 = new User(_fs, "user2", "user2", "litxo");
 			_user2.setHomeDirectory(new Directory(_fs, "user2", _fs.getHomeDirectory(), _user));
+
+			_user3 = new User(_fs, "user3", "user3", "litxo", "rwxd--x-");
+			_user3.setHomeDirectory(new Directory(_fs, "user3", _fs.getHomeDirectory(), _user3));
 			_login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
 			_id = 9999;
 
@@ -289,4 +293,10 @@ public class ListDirectoryTest extends AbstractServiceTest {
 		assertEquals("List dirdapplink", list , result);
 	}
 
+  @Test(expected = InsufficientPermissionsException.class)
+  public void testInsufficientPermissions() throws Exception {
+    _login.setCurrentDirectory(_user3.getHomeDirectory(), _user);
+    ListDirectoryService lds = new ListDirectoryService(123l);
+    lds.execute();
+  }
 }
