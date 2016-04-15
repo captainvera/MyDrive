@@ -66,7 +66,6 @@ public class Directory extends Directory_Base {
   public File getFile(ArrayList<String> tokens, User user) {
     // Terminal case
     File file;
-    System.out.println("DEBUG DIR: " + getPath());
     if(tokens.size() > 1){
       String name = tokens.remove(0);
       file = getFileByName(name).getFile(tokens, user);
