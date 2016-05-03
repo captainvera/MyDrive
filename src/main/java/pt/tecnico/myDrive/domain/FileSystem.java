@@ -500,21 +500,21 @@ public class FileSystem extends FileSystem_Base {
    */
   public Document xmlExport() {
     // FIXME TODO
-    /** XMLExporterVisitor xml = new XMLExporterVisitor(); */
-    /** Element mydrive = new Element("myDrive"); */
-    /** Document doc = new Document(mydrive); */
+    XMLExporterVisitor xml = new XMLExporterVisitor(); 
+    Element mydrive = new Element("myDrive"); 
+    Document doc = new Document(mydrive); 
 
-    /** for (User u: getUsersSet()){ */
-    /**   if(!u.getUsername().equals("root")) */
-    /**     mydrive.addContent(u.xmlExport()); */
-    /** } */
-    /** for (File f: getFilesSet()){ */
+    for (User u: super.getUsersSet()){ 
+     if(!u.getUsername().equals("root")) 
+         mydrive.addContent(u.xmlExport()); 
+    }
+    for (File f: super.getFilesSet()){ 
 
-    /**   if(isFileExportValid(f)) mydrive.addContent(f.accept(xml)); */
+    /*if(isFileExportValid(f))*/ 
+    mydrive.addContent(f.accept(xml)); 
 
-    /** } */
-    /** return doc; */
-    return null; //todo remove that <<<<<<<<
+    } 
+    return doc;
   }
 
   public void xmlImportUser(Element userElement) throws UnsupportedEncodingException {
