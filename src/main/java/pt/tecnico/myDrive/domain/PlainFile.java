@@ -78,23 +78,6 @@ public class PlainFile extends PlainFile_Base {
     return super.getData();
   }
 
-  public void xmlImport(Element plainElement) throws ImportDocumentException {
-    try{
-      setId(plainElement.getAttribute("id").getIntValue());
-
-      Element perm = plainElement.getChild("perm");
-      if (perm != null)
-        setUserPermission(new String(perm.getText().getBytes("UTF-8")));
-
-      Element value = plainElement.getChild("contents");
-      if (value != null)
-        setData(new String(value.getText().getBytes("UTF-8")));
-
-    } catch(UnsupportedEncodingException | DataConversionException e){
-      throw new ImportDocumentException(String.valueOf(getId()));
-    }
-  }
-
   @Override
   public String toString(){
     return "- " + getUserPermission() + getOthersPermission() + " " + getName();

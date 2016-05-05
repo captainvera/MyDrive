@@ -75,7 +75,7 @@ public class User extends User_Base {
    * @param username
    */
   private void checkUsernameSize(String username) {
-    if(username.length() <= 3) throw new InvalidUsernameSizeException(3);
+    if(username.length() < 3) throw new InvalidUsernameSizeException(3);
   }
 
 
@@ -125,7 +125,7 @@ public class User extends User_Base {
     userName.setText(getName());
 
     Element userPwd = new Element("password");
-    userPwd.setText(getPassword());
+    userPwd.setText(super.getPassword());
 
     Element userHomeDir = new Element("home");
     userHomeDir.setText(getHomeDirectory().getPath());

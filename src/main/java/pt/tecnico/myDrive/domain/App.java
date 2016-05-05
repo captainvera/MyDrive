@@ -53,23 +53,6 @@ public class App extends App_Base {
     return v.visit(this);
   }
 
-  public void xmlImport(Element appElement) {
-    try{
-      setId(appElement.getAttribute("id").getIntValue());
-
-      Element perm = appElement.getChild("perm");
-      if (perm != null)
-        setUserPermission(new String(perm.getText().getBytes("UTF-8")));
-
-      Element value = appElement.getChild("method");
-      if (value != null)
-        setData(new String(value.getText().getBytes("UTF-8")));
-
-    } catch(UnsupportedEncodingException | DataConversionException e){
-      throw new ImportDocumentException(String.valueOf(getId()));
-    }
-  }
-
   @Override
   public String toString(){
   	return "a " + getUserPermission() + getOthersPermission() + " " + getName();
