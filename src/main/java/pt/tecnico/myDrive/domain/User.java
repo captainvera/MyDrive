@@ -22,12 +22,10 @@ public class User extends User_Base {
   }
 
   public User(FileSystem fs, String username, String name, String password) {
-    // FIXME: Move default umask to here
     init(fs, username, name, password, "rwxd----");
   }
 
   public User(FileSystem fs, String username, String name, String password, String umask) {
-    // FIXME: Move default umask to here
     init(fs, username, name, password, umask);
   }
 
@@ -61,6 +59,8 @@ public class User extends User_Base {
   }
 
   private void checkUsername(String username) {
+    checkUsernameSize(username);
+
     char[] characters = username.toCharArray();
 
     for (char c: characters) {
@@ -83,9 +83,8 @@ public class User extends User_Base {
     /**
      * TODO: should be moved if there is a better place for it
      */
-    checkUsername(username);
     checkUsernameSize(username);
-    
+
     super.setFileSystem(fs);
     super.setUsername(username);
     super.setName(name);
@@ -93,7 +92,7 @@ public class User extends User_Base {
     super.setUmask(umask);
     super.setHomeDirectory(homeDir);
   }
-  
+
   protected void init(FileSystem fs, String username, String name, String password, String umask) {
     init(fs, username, name, password, umask, null);
   }
