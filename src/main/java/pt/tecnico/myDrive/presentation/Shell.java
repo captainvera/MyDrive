@@ -134,7 +134,7 @@ public abstract class Shell {
 
   abstract void setActiveToken (long token);
 
-  abstract long getActiveToken(long token);
+  abstract long getActiveToken();
 
   abstract TreeMap<String, Long> getTokens();
 }
