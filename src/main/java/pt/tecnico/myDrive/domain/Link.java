@@ -75,7 +75,7 @@ public class Link extends Link_Base {
   }
 
   @Override
-  public String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
+  public String execute(User user, String arguments) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
     return getFileObject(user).execute(user);
   }
 

@@ -100,7 +100,7 @@ public abstract class File extends File_Base {
   /**
    * Executes the file with diferent behaviour depending on the file type
    */
-  public abstract String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException;
+  public abstract String execute(User user, String arguments) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException;
 
   /**
    * The calculation of the size of the file will vary depending on subclass implementation
@@ -156,6 +156,10 @@ public abstract class File extends File_Base {
     throw new MethodDeniedException();
   }
 
+  @Override
+  public void setFileExtension(Extension extension){
+      throw new MethodDeniedException();
+  }
   protected final void touch(){
     super.setLastModified(new DateTime());
   }

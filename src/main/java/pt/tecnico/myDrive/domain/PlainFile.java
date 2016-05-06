@@ -48,7 +48,7 @@ public class PlainFile extends PlainFile_Base {
   }
 
   @Override
-  public String execute(User user) {
+  public String execute(User user, String arguments) {
     return super.getData();
   }
 

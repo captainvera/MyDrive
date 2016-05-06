@@ -412,7 +412,8 @@ public class FileSystem extends FileSystem_Base {
      * TODO::XXX:FIX PERMISSIONS
      */
     // checkExecutionPermissions(user, file);
-    return file.execute(user);
+
+    return file.execute(user, arguments);
   }
 
   /* ****************************************************************************
@@ -827,4 +828,8 @@ public class FileSystem extends FileSystem_Base {
     updateSession(token);
     return listDirectory(_login.getCurrentDirectory(), _login.getUser());
   }
+  
+  public void executeFile(long token, String filepath, String arguments){
+      updateSession(token);
+      executeFile(filepath, _login.getUser(), _login.getCurrentDirectory(), arguments);
 }
