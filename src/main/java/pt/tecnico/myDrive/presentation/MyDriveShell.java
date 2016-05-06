@@ -12,7 +12,7 @@ public class MyDriveShell extends Shell {
   }
 
   @Override
-  public long getActiveToken(long token){
+  public long getActiveToken(){
     return _activeToken;
   }
 
@@ -25,9 +25,15 @@ public class MyDriveShell extends Shell {
     sh.execute();
   }
 
-  public MyDriveShell() { // add commands here
+  public MyDriveShell() { 
     super("MyDrive");
     new Login(this);
+    new ChangeWorkingDirectory(this);
+    new ListDirectory(this);
+    new Execute(this);
+    new Write(this);
+    new Environment(this);
+    new Key(this);
   }
 
 }
