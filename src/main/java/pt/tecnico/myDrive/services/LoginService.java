@@ -22,7 +22,7 @@ public class LoginService extends myDriveService {
 	}
 
 	@Override
-	protected void dispatch() throws UserUnknownException, WrongPasswordException{
+	protected void dispatch() {
 		FileSystem fs = FileSystem.getInstance();
 		_result = fs.login(_username, _password);
 	}

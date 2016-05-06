@@ -24,7 +24,7 @@ public class ChangeDirectoryService extends myDriveService {
 	}
 
 	@Override
-	protected void dispatch() throws FileUnknownException, NotADirectoryException, InsufficientPermissionsException, InvalidTokenException, NotALinkException {
+	protected void dispatch() {
 		FileSystem fs = FileSystem.getInstance();
 		_data = fs.changeDirectory(_token, _dirpath);
 	}

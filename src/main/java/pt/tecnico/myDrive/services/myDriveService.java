@@ -18,10 +18,10 @@ public abstract class myDriveService {
   }
 
   @Atomic
-  public final void execute() throws Exception {
+  public final void execute() {
     dispatch();
   }
 
-  protected abstract void dispatch() throws Exception;
+  protected abstract void dispatch();
 
 }

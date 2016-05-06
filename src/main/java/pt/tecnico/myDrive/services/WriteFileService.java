@@ -18,7 +18,7 @@ public class WriteFileService extends myDriveService {
 	}
 
 	@Override
-	protected void dispatch() throws Exception {
+	protected void dispatch() {
 		FileSystem fs = getFileSystem();
 		fs.writeFile(_token, _filepath, _data);
 	}
