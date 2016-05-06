@@ -1,5 +1,4 @@
 package pt.tecnico.myDrive.domain;
-
 // Domain specific imports
 import pt.tecnico.myDrive.domain.App;
 import pt.tecnico.myDrive.domain.Directory;
@@ -406,9 +405,14 @@ public class FileSystem extends FileSystem_Base {
   /**
    * @return result of executing file
    */
-  public void executeFile(String filename, Directory directory, User user) {
-    File file = getFileByPath(filename, user, directory);
-    file.execute(user);
+  public String executeFile(String path, User user, Directory directory, String[] arguments) {
+    File file = getFileByPath(path, user, directory);
+    /**
+     * TODO::XXX:FIX PERMISSIONS
+     */
+    // checkExecutionPermissions(user, file);
+
+    return file.execute(user, arguments);
   }
 
   /* ****************************************************************************
@@ -890,7 +894,15 @@ public class FileSystem extends FileSystem_Base {
     return listDirectory(_login.getCurrentDirectory(), _login.getUser());
   }
 
-  public void executeFile(String filename) {
-    executeFile(filename, _login.getCurrentDirectory(), _login.getUser());
+  public void executeFile(long token, String filename, String[] arguments) {
+    updateSession(token);
+    executeFile(filename, _login.getUser(), _login.getCurrentDirectory(), arguments);
   }
+
+  public String addEnvironmentVariable(long token, String name, String value){
+    updateSession(token);
+    _login.addEnvVar(name, value); 
+    return _login.listEnvVar();
+  }
+
 }

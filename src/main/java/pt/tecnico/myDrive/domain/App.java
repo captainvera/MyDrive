@@ -12,6 +12,10 @@ import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.RuntimeException;
+
 import java.util.ArrayList;
 
 public class App extends App_Base {
@@ -44,8 +48,33 @@ public class App extends App_Base {
   }
 
   @Override
-  public String execute(User user) {
-    return "App execution not implemented yet.";
+  public String execute(User user, String[] arguments) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
+    
+    String appMethod = getData();
+
+    //last part of the string, being the method name of the package
+    String methodName = appMethod.substring(appMethod.lastIndexOf(".") + 1);
+    //the class name to look for
+    String className = appMethod.substring(0, appMethod.lastIndexOf("."));
+    try{
+        Method method = Class.forName(className).getMethod(methodName); 
+
+        Object[] args = new Object[]{arguments};
+
+        //dirty hack. confirm if UoD specifies ret values as strings, for
+        //simplification purposes
+        String result = (String) method.invoke(this, args);
+
+        return result;
+    } catch(NoSuchMethodException | ClassNotFoundException ) {
+      throw new RuntimeException("Unknown method or class on list file, or illegal access");
+    }
+    catch(IllegalAccessException e){
+        throw new RuntimeException("IllegalAccessException while executing app.");
+    }
+    catch(InvocationTargetException e){
+        throw new RuntimeException("InvocationTargetException while executing app");
+    }
   }
 
   @Override

@@ -6,20 +6,21 @@ public class ExecuteFileService extends myDriveService {
 
   private long _token;
   private String _filepath;
-
+  private String[] _arguments;
 	/**
 	 * Execute File Service
 	 */
 
-	public ExecuteFileService(long token, String filepath) {
+	public ExecuteFileService(long token, String filepath, String[] arguments) {
 		super();
     _token = token;
     _filepath = filepath;
+    _arguments = arguments;
 	}
 
 	@Override
-	protected void dispatch() {
+	protected void dispatch() { 
     FileSystem fs = getFileSystem();
-    fs.readFile(_token, _filepath);
+    fs.executeFile(_token, _filepath, _arguments);
 	}
 }
