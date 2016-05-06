@@ -302,19 +302,19 @@ public class Directory extends Directory_Base {
   public Directory createDirectory(String name, User owner){
     checkWritePermissions(owner);
     checkFileUnique(name);
-    return new Directory(getFileSystem(), name, this, owner);
+    return new Directory(getFileSystem$6p(), name, this, owner);
   }
 
   public PlainFile createPlainFile(String name, User owner){
     checkWritePermissions(owner);
     checkFileUnique(name);
-    return new PlainFile(getFileSystem(), name, this, owner);
+    return new PlainFile(getFileSystem$6p(), name, this, owner);
   }
 
   public PlainFile createPlainFile(String name, User owner, String data){
     checkWritePermissions(owner);
     checkFileUnique(name);
-    PlainFile pf = new PlainFile (getFileSystem(), name, this, owner);
+    PlainFile pf = new PlainFile (getFileSystem$6p(), name, this, owner);
     pf.setData(data, owner);
     return pf;
   }
@@ -322,13 +322,13 @@ public class Directory extends Directory_Base {
   public App createApp(String name, User owner){
     checkWritePermissions(owner);
     checkFileUnique(name);
-    return new App(getFileSystem(), name, this, owner);
+    return new App(getFileSystem$6p(), name, this, owner);
   }
 
   public Link createLink(String name, User owner, String data){
     checkWritePermissions(owner);
     checkFileUnique(name);
-    return new Link(getFileSystem(), name, this, owner, data);
+    return new Link(getFileSystem$6p(), name, this, owner, data);
   }
 
   /**

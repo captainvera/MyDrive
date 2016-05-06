@@ -57,7 +57,7 @@ public class Link extends Link_Base {
     System.out.println("DEBUG link: " + getPath());
 
     if(tokens.size() == 0)
-      return getFileSystem().getFileByPath(getData(user), user, getParent());
+      return getFileSystem$6p().getFileByPath(getData(user), user, getParent());
 
     checkExecutionPermissions(user);
     String remaining = "";
@@ -69,7 +69,7 @@ public class Link extends Link_Base {
       remaining += '/' + s;
 
     System.out.println("DEBUG!! " + remaining + " | ");
-    File file = getFileSystem().getFileByPath(remaining, user, getParent());
+    File file = getFileSystem$6p().getFileByPath(remaining, user, getParent());
     file.checkReadPermissions(user);
     return file;
   }
@@ -94,7 +94,7 @@ public class Link extends Link_Base {
 
   @Override
   public File getFileObject(User user) {
-    return getFileSystem().getFileByPath(getData(user), user, getParent());
+    return getFileSystem$6p().getFileByPath(getData(user), user, getParent());
   }
 
   @Override

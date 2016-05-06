@@ -19,7 +19,7 @@ public class DeleteFileService extends myDriveService{
 	protected void dispatch() throws Exception {
 		FileSystem fs = getFileSystem();
 		fs.deleteFile(_token, _filename);
-		
+
 	}
 
 }

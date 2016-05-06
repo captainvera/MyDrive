@@ -80,9 +80,6 @@ public class User extends User_Base {
 
 
   protected void init(FileSystem fs, String username, String name, String password, String umask, Directory homeDir) {
-    /**
-     * TODO: should be moved if there is a better place for it
-     */
     checkUsernameSize(username);
 
     super.setFileSystem(fs);

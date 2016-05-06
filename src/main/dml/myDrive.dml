@@ -1,24 +1,24 @@
 package pt.tecnico.myDrive.domain;
 
 class FileSystem {
-  Integer idCounter;
+  Integer IdCounter;
 }
 
 class Login {
-  DateTime expirationDate;
-  Long token;
+  DateTime ExpirationDate;
+  Long Token;
 }
 
 class EnvironmentVariable {
-  String name;
-  String value;
+  String Name;
+  String Value;
 }
 
 class User {
-  String username;
-  String password;
-  String name;
-  String umask;
+  String Username;
+  String Password;
+  String Name;
+  String Umask;
 }
 
 class RootUser extends User;
@@ -26,15 +26,15 @@ class RootUser extends User;
 class GuestUser extends User;
 
 class File {
-  String name;
-  Integer id;
-  DateTime lastModified;
-  String userPermission;
-  String othersPermission;
+  String Name;
+  Integer Id;
+  DateTime LastModified;
+  String UserPermission;
+  String OthersPermission;
 }
 
 class PlainFile extends File {
-  String data;
+  String Data;
 }
 
 class Directory extends File;
@@ -42,93 +42,100 @@ class Directory extends File;
 class RootDirectory extends Directory;
 
 class Link extends PlainFile{
-	boolean dirtyBit;
+	boolean DirtyBit;
 }
 
 class App extends PlainFile;
 
 relation DomainRootHasFileSystem {
-  .pt.ist.fenixframework.DomainRoot playsRole root {
+  .pt.ist.fenixframework.DomainRoot playsRole Root {
     multiplicity 0..1;
   }
-  FileSystem playsRole fileSystem {
+  FileSystem playsRole FileSystem {
     multiplicity 0..1;
   }
 }
 
 relation FileSystemContainsUsers {
-  FileSystem playsRole fileSystem;
-  User playsRole users {
+  FileSystem playsRole FileSystem;
+  User playsRole Users {
     multiplicity 1..*;
   }
 }
 
 relation FileSystemHasRootUser {
   FileSystem playsRole;
-  RootUser playsRole rootUser {
+  RootUser playsRole RootUser {
+    multiplicity 1;
+  }
+}
+
+relation FileSystemHasGuestUser {
+  FileSystem playsRole;
+  GuestUser playsRole GuestUser {
     multiplicity 1;
   }
 }
 
 relation FileSystemContainsFiles {
-  FileSystem playsRole fileSystem;
-  File playsRole files {
+  FileSystem playsRole FileSystem;
+  File playsRole Files {
     multiplicity 1..*;
   }
 }
 
 relation FileSystemHasRootDirectory {
   FileSystem playsRole;
-  RootDirectory playsRole rootDirectory {
+  RootDirectory playsRole RootDirectory {
     multiplicity 1;
   }
 }
 
 relation FileSystemContainsLogins {
-  FileSystem playsRole fileSystem;
-  Login playsRole logins {
+  FileSystem playsRole FileSystem;
+  Login playsRole Logins {
     multiplicity 0..*;
   }
 }
 
 relation LoginContainsEnvironmentVariables {
-  Login playsRole login;
-  EnvironmentVariable playsRole envVar {
+  Login playsRole Login;
+  EnvironmentVariable playsRole EnvVar {
     multiplicity 0..*;
   }
 }
 
 relation LoginHasUser {
   Login playsRole;
-  User playsRole user {
+  User playsRole User {
     multiplicity 1;
   }
 }
 
 relation LoginHasCurrentDirectory {
   Login playsRole;
-  Directory playsRole currentDirectory {
+  Directory playsRole CurrentDirectory {
     multiplicity 1;
   }
 }
 
 relation UserHasHomeDirectory {
-  User playsRole user;
-  Directory playsRole homeDirectory {
+  User playsRole User;
+  Directory playsRole HomeDirectory {
     multiplicity 1;
   }
 }
 
 relation FileHasOwner {
   File playsRole;
-  User playsRole owner {
+  User playsRole Owner {
 		multiplicity 1;
 	}
 }
 
 relation DirectoryContainsFiles {
-  Directory playsRole parent;
-  File playsRole file {
+  Directory playsRole Parent;
+  File playsRole File {
     multiplicity *;
   }
 }

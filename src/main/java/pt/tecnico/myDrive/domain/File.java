@@ -131,38 +131,6 @@ public abstract class File extends File_Base {
 
   public abstract File getFile(ArrayList<String> tokens, User user);
 
-  /**
-   * Two files are equal if they belong to the same file system, have the same
-   * id in the file system and the same path.
-   *
-   * @param file
-   * @return True if two files are equal
-   */
-  boolean equals(File file) {
-    return getFileSystem() == file.getFileSystem() &&
-      getId() == file.getId() &&
-      getPath().equals(file.getPath());
-  }
-
-  @Override
-  public void setUserPermission(String perm) {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void setOthersPermission(String perm) {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void setLastModified(DateTime lastModified) {
-    throw new MethodDeniedException();
-  }
-
-  protected final void touch(){
-    super.setLastModified(new DateTime());
-  }
-
   public File getFileObject(User user) {
     return this;
   }
@@ -215,14 +183,14 @@ public abstract class File extends File_Base {
   }
 
   protected String getPermissions(User user) {
-    if (getFileSystem().getRootUser().equals(user))
+    if (getFileSystem$6p().isRoot(user))
       return "rwxd";
     else if (getOwner().equals(user))
       return getUserPermission();
     else
       return getOthersPermission();
   }
-  
+
   public void xmlImport(Element dirElement) throws UnsupportedEncodingException, DataConversionException {
       super.setId(dirElement.getAttribute("id").getIntValue());
 
@@ -234,6 +202,46 @@ public abstract class File extends File_Base {
       }
   }
 
+
+  /**
+   * Fenix framework stuff
+   */
+
+  @Override
+  public void setUserPermission(String perm) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setOthersPermission(String perm) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setLastModified(DateTime lastModified) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setFileSystem(FileSystem fs) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public FileSystem getFileSystem() {
+    throw new MethodDeniedException();
+  }
+
+  /**
+   * Protected methods for subclass access
+   */
+  protected final FileSystem getFileSystem$6p() {
+    return super.getFileSystem();
+  }
+
+  protected final void touch() {
+    super.setLastModified(new DateTime());
+  }
 
 }
 

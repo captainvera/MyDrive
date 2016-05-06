@@ -6,7 +6,7 @@ public class ListDirectoryService extends myDriveService{
 
   private long _token;
   private String _data;
-  
+
 	/**
 	 * List Current Directory
 	 */
@@ -14,11 +14,11 @@ public class ListDirectoryService extends myDriveService{
 		super();
     _token = token;
 	}
-	
+
 
 	@Override
 	protected void dispatch() throws Exception {
-    FileSystem fs = getFileSystem(); 
+    FileSystem fs = getFileSystem();
     _data = fs.listCurrentDirectory(_token);
 	}
 

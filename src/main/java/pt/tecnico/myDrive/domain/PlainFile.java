@@ -83,10 +83,4 @@ public class PlainFile extends PlainFile_Base {
     return "- " + getUserPermission() + getOthersPermission() + " " + getName();
   }
 
-  public void writeToFile(String s, User user){
-    /*
-     * TODO::XXX:CHECK PERMISSIONS
-     */
-    super.setData(s);
-  }
 }

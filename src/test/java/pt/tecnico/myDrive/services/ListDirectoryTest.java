@@ -79,7 +79,7 @@ public class ListDirectoryTest extends AbstractServiceTest {
 			 *          |- dirapppf
 			 *              |- app
 			 *              |- pf
-			 *              
+			 *
 			 * */
 
 			_dirapp = new Directory (_fs, "dirapp", _user.getHomeDirectory(), _user);

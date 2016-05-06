@@ -56,8 +56,7 @@ public class FileSystem extends FileSystem_Base {
 
   /**
    * FileSystem temporary state variables
-   * _loggedUser: keeps track of the user logged in
-   * _currentDirectory: keeps track of the current navigation directory
+   * _login: keeps track of the current login
    */
 
   private Login _login;
@@ -96,8 +95,8 @@ public class FileSystem extends FileSystem_Base {
 
   public void cleanup() {
     try{
-      File file = getFileByPath("/", getRootUser(), super.getRootDirectory());
-      removeFile(file, getRootUser());
+      File file = getFileByPath("/", super.getRootUser(), super.getRootDirectory());
+      removeFile(file, super.getRootUser());
       super.getFilesSet().clear();
     }catch (InsufficientPermissionsException | FileUnknownException | NotADirectoryException e){
       e.printStackTrace();
@@ -154,13 +153,18 @@ public class FileSystem extends FileSystem_Base {
     super.setRootUser(new RootUser(this));
 
     log.trace("Creating root directory");
-    super.setRootDirectory(new RootDirectory(this, "/", getRootUser()));
+    super.setRootDirectory(new RootDirectory(this, "/", super.getRootUser()));
 
+    log.trace("Creating guest user");
+    super.setGuestUser(new GuestUser(this));
 
     log.trace("Creating home directory");
-    Directory homeDir = createDirectory("home",super.getRootDirectory(),getRootUser());
+    Directory homeDir = createDirectory("home",super.getRootDirectory(),super.getRootUser());
 
-    getRootUser().setHomeDirectory(createDirectory("root", homeDir, getRootUser()));
+    super.getRootUser().setHomeDirectory(createDirectory(super.getRootUser().getUsername(), homeDir, super.getRootUser()));
+
+    /** super.getGuestUser().setHomeDirectory(createDirectory(super.getGuestUser().getUsername(), homeDir, super.getGuestUser())); */
+    createDirectory("nobody", homeDir, super.getRootUser());
 
   }
 
@@ -170,7 +174,16 @@ public class FileSystem extends FileSystem_Base {
    * @return True if user is the root user
    */
   public boolean isRoot(User user) {
-    return user == getRootUser();
+    return user == super.getRootUser();
+  }
+
+  /**
+   *
+   * @param user
+   * @return True if user is the root user
+   */
+  public boolean isGuest(User user) {
+    return user == getGuestUser();
   }
 
   /**
@@ -209,81 +222,6 @@ public class FileSystem extends FileSystem_Base {
     return userExists(user.getName());
   }
 
-  @Override
-  public void setIdCounter(Integer id) {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public Integer getIdCounter() {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void setRoot(DomainRoot dr) {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void addUsers(User user) {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void addFiles(File file){
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void addLogins(Login login){
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void removeUsers(User user) {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void removeFiles(File file) {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void removeLogins(Login login) {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public Set<Login> getLoginsSet() {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public Set<File> getFilesSet() {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public Set<User> getUsersSet() {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void setRootUser(RootUser rootUser) {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public RootDirectory getRootDirectory() {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void setRootDirectory(RootDirectory rootDirectory) {
-    throw new MethodDeniedException();
-  }
-
 
   /* ****************************************************************************
    * |                 FileSystem's Users creation methods                       |
@@ -300,21 +238,10 @@ public class FileSystem extends FileSystem_Base {
 
     User user = new User(this, username, name, password);
 
-    /**
-     * TODO: Solve error throwing here. Exceptions shouldn't happen;
-     * Should be handled elsewhere
-     */
     log.trace("Adding user " + username);
-    try {
-      Directory home = assertDirectory(super.getRootDirectory().getFileByName("home"));
-      Directory userHome = createDirectory(username, home, user);
-      user.setHomeDirectory(userHome);
-    } catch(FileUnknownException e) {
-      System.out.println(e.getMessage());
-    } catch(NotADirectoryException e) {
-      System.out.println(e.getMessage());
-    }
-
+    Directory home = assertDirectory(super.getRootDirectory().getFileByName("home"));
+    Directory userHome = createDirectory(username, home, user);
+    user.setHomeDirectory(userHome);
 
     log.trace("Added user " + username);
 
@@ -365,14 +292,7 @@ public class FileSystem extends FileSystem_Base {
    */
 
   public Directory getHomeDirectory() {
-    /**
-     * TODO:XXX:FIXME DO PROPER CHECKING AND EXCEPTION HANDLING
-     */
-    try {
-      return (Directory) super.getRootDirectory().getFileByName("home");
-    }catch(FileUnknownException e){
-      throw new RuntimeException("WRONG FILE STRUCTURE");
-    }
+      return assertDirectory(super.getRootDirectory().getFileByName("home"));
   }
 
   /**
@@ -506,13 +426,13 @@ public class FileSystem extends FileSystem_Base {
     Document doc = new Document(mydrive);
 
     for (User u: super.getUsersSet()){
-     if(!u.getUsername().equals("root"))
-         mydrive.addContent(u.xmlExport());
+      if(!u.getUsername().equals("root"))
+        mydrive.addContent(u.xmlExport());
     }
     for (File f: super.getFilesSet()){
 
-    /*if(isFileExportValid(f))*/
-    mydrive.addContent(f.accept(xml));
+      /*if(isFileExportValid(f))*/
+      mydrive.addContent(f.accept(xml));
 
     }
     return doc;
@@ -553,7 +473,7 @@ public class FileSystem extends FileSystem_Base {
       try{
         current = assertDirectory(current.getFileByName(folder));
       } catch (FileUnknownException e){
-        current = new Directory (this, folder, current, getRootUser());
+        current = new Directory (this, folder, current, super.getRootUser());
       }
     }
     return current;
@@ -806,9 +726,9 @@ public class FileSystem extends FileSystem_Base {
         createPlainFile(name, current, user);
         break;
 
-      /*case "app":
-        createApp(name);
-        break; TODO IN THIRD DELIVER*/
+        /*case "app":
+          createApp(name);
+          break; TODO IN THIRD DELIVER*/
 
       case "link":
         throw new CreateLinkWithoutContentException();
@@ -825,10 +745,10 @@ public class FileSystem extends FileSystem_Base {
         createPlainFile(name, current, user, data);
         break;
 
-      /*case "app":
-        App a = createApp(name, user, directory);
-        a.setData(data);
-        break;TODO IN THIRD DELIVER*/
+        /*case "app":
+          App a = createApp(name, user, directory);
+          a.setData(data);
+          break;TODO IN THIRD DELIVER*/
 
       case "link":
         createLink(name, current, user, data);
@@ -894,4 +814,99 @@ public class FileSystem extends FileSystem_Base {
     updateSession(token);
     return listDirectory(_login.getCurrentDirectory(), _login.getUser());
   }
+
+  /**
+   * Fenix framework *sigh*
+   */
+
+  @Override
+  public void setIdCounter(Integer id) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public Integer getIdCounter() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setRoot(DomainRoot dr) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void addUsers(User user) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void addFiles(File file){
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void addLogins(Login login){
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void removeUsers(User user) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void removeFiles(File file) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void removeLogins(Login login) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public Set<Login> getLoginsSet() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public Set<File> getFilesSet() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public Set<User> getUsersSet() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setRootUser(RootUser rootUser) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setGuestUser(GuestUser guestUser) {
+    throw new MethodDeniedException();
+  }
+
+  /** @Override */
+  public RootUser getRootUser() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public GuestUser getGuestUser() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public RootDirectory getRootDirectory() {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setRootDirectory(RootDirectory rootDirectory) {
+    throw new MethodDeniedException();
+  }
+
 }
