@@ -127,6 +127,31 @@ public class Login extends Login_Base {
     throw new MethodDeniedException();
   }
 
+  public void addEnvVar(String name, String value) {
+    EnvironmentVariable envvar = getEnvVarbyName(name);
+    if(envvar == null){
+      envvar = new EnvironmentVariable(name, value);
+      super.addEnvVar(envvar); 
+    } else {
+      envvar.setValue(value);
+    } 
+  }
 
+  private EnvironmentVariable getEnvVarbyName(String name){
+    for (EnvironmentVariable envvar: super.getEnvVarSet()) {
+      if (envvar.getName().equalsIgnoreCase(name)) {
+        return envvar;
+      }
+    }
+    return null;
+  }
+
+  public String listEnvVar(){
+    String result = "";
+    for (EnvironmentVariable envvar: super.getEnvVarSet()){
+      result += "name: " + envvar.getName() + "value: " + envvar.getValue() + "\n";
+    }  
+    return result; 
+  }
 
 }

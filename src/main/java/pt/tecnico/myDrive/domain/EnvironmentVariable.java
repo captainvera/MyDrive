@@ -10,13 +10,15 @@ public class EnvironmentVariable extends EnvironmentVariable_Base {
         super();
     }
 
-    @Override
-    public void setName(String s) {
-      throw new MethodDeniedException();
+
+    public EnvironmentVariable(String name, String value) {
+      super();
+      super.setName(name);
+      super.setValue(value);
     }
 
     @Override
-    public void setValue(String s) {
+    public void setName(String s) {
       throw new MethodDeniedException();
     }
 

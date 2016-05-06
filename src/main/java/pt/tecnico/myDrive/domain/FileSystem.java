@@ -898,4 +898,11 @@ public class FileSystem extends FileSystem_Base {
     updateSession(token);
     executeFile(filename, _login.getUser(), _login.getCurrentDirectory(), arguments);
   }
+
+  public String addEnvironmentVariable(long token, String name, String value){
+    updateSession(token);
+    _login.addEnvVar(name, value); 
+    return _login.listEnvVar();
+  }
+
 }

@@ -19,7 +19,7 @@ public class ExecuteFileService extends myDriveService {
 	}
 
 	@Override
-	protected void dispatch() throws Exception {
+	protected void dispatch() { 
     FileSystem fs = getFileSystem();
     fs.executeFile(_token, _filepath, _arguments);
 	}
