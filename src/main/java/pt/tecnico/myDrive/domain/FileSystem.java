@@ -23,6 +23,7 @@ import pt.tecnico.myDrive.visitors.XMLExporterVisitor;
 // Jdom2
 import org.jdom2.Element;
 import org.jdom2.Document;
+import org.jdom2.DataConversionException;
 
 // IO
 import java.io.UnsupportedEncodingException;
@@ -55,8 +56,7 @@ public class FileSystem extends FileSystem_Base {
 
   /**
    * FileSystem temporary state variables
-   * _loggedUser: keeps track of the user logged in
-   * _currentDirectory: keeps track of the current navigation directory
+   * _login: keeps track of the current login in use 
    */
 
   private Login _login;
@@ -400,19 +400,15 @@ public class FileSystem extends FileSystem_Base {
    * @return current working directory listing (files)
    */
   public String listDirectory(Directory directory, User user) {
-    return directory.listFilesAll();
+    return directory.listFilesAll(user);
   }
 
   /**
    * @return result of executing file
    */
-  public String executeFile(String path, User user, Directory directory) {
-    File file = getFileByPath(path, user, directory);
-    /**
-     * TODO::XXX:FIX PERMISSIONS
-     */
-    // checkExecutionPermissions(user, file);
-    return file.execute(user);
+  public void executeFile(String filename, Directory directory, User user) {
+    File file = getFileByPath(filename, user, directory);
+    file.execute(user);
   }
 
   /* ****************************************************************************
@@ -462,7 +458,7 @@ public class FileSystem extends FileSystem_Base {
   public String listFileByPathSimple(String path, User user, Directory directory) {
     DirectoryVisitor dv = new DirectoryVisitor();
     Directory d = getFileByPath(path, user, directory).accept(dv);
-    return d.listFilesSimple();
+    return d.listFilesAll(user);
   }
 
 
@@ -475,7 +471,7 @@ public class FileSystem extends FileSystem_Base {
   public String listFileByPathAll(String path, User user, Directory directory) {
     DirectoryVisitor dv = new DirectoryVisitor();
     Directory d = getFileByPath(path, user, directory).accept(dv);
-    return d.listFilesAll();
+    return d.listFilesAll(user);
   }
 
   /**
@@ -500,83 +496,149 @@ public class FileSystem extends FileSystem_Base {
    */
   public Document xmlExport() {
     // FIXME TODO
-    /** XMLExporterVisitor xml = new XMLExporterVisitor(); */
-    /** Element mydrive = new Element("myDrive"); */
-    /** Document doc = new Document(mydrive); */
+    XMLExporterVisitor xml = new XMLExporterVisitor();
+    Element mydrive = new Element("myDrive");
+    Document doc = new Document(mydrive);
 
-    /** for (User u: getUsersSet()){ */
-    /**   if(!u.getUsername().equals("root")) */
-    /**     mydrive.addContent(u.xmlExport()); */
-    /** } */
-    /** for (File f: getFilesSet()){ */
+    for (User u: super.getUsersSet()){
+     if(!u.getUsername().equals("root"))
+         mydrive.addContent(u.xmlExport());
+    }
+    for (File f: super.getFilesSet()){
 
-    /**   if(isFileExportValid(f)) mydrive.addContent(f.accept(xml)); */
+    /*if(isFileExportValid(f))*/
+    mydrive.addContent(f.accept(xml));
 
-    /** } */
-    /** return doc; */
-    return null; //todo remove that <<<<<<<<
+    }
+    return doc;
   }
 
   public void xmlImportUser(Element userElement) throws UnsupportedEncodingException {
-    // FIXME TODO
-    /** String username = new String(userElement.getAttribute("username").getValue().getBytes("UTF-8")); */
+    //FIXME TODO
+    String username = new String(userElement.getAttribute("username").getValue());
 
-    /** Element nameElement = userElement.getChild("name"); */
-    /** String name; */
-    /** if (nameElement != null) name = new String(nameElement.getText().getBytes("UTF-8")); */
-    /** else name = username; */
+    Element nameElement = userElement.getChild("name");
+    String name;
+    if (nameElement != null) name = new String(nameElement.getText());
+    else name = username;
 
-    /** Element pwdElement = userElement.getChild("password"); */
-    /** String pwd; */
-    /** if (pwdElement != null) pwd = new String(pwdElement.getText().getBytes("UTF-8")); */
-    /** else pwd = username; */
+    Element pwdElement = userElement.getChild("password");
+    String pwd;
+    if (pwdElement != null) pwd = new String(pwdElement.getText());
+    else pwd = username;
 
-    /** createUser(username,name,pwd); */
+    Element permElement = userElement.getChild("mask");
+    String mask;
+    if (permElement != null) mask = new String(permElement.getText());
+    else mask = "rwxd----";
+
+    User u = new User(this, username, name, pwd, mask);
+    Directory home = (Directory) super.getRootDirectory().getFileByName("home");
+    Directory homeDir = new Directory (this, username, home, u);
+
+    u.setHomeDirectory(homeDir);
   }
 
-  public void xmlImportDir(Element dirElement) throws UnsupportedEncodingException {
-    // FIXME TODO
-    /** String name = new String(dirElement.getChild("name").getText().getBytes("UTF-8")); */
-    /** String path = new String(dirElement.getChild("path").getText().getBytes("UTF-8")); */
-    /** path = path + "/" + name; */
-    /** Directory dir = createDirectoryByPath(path, getRootUser(), getRootDirectory()); */
-
-    /** Element owner = dirElement.getChild("owner"); */
-    /** User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8"))); */
-    /** dir.setOwner(u); */
-
-    /** dir.xmlImport(dirElement); */
+  public Directory checkPathImport(String path){
+    path = path.substring(1, path.length());
+    String[] folders = path.split("/");
+    System.out.println("[DEBUUUUUG] " + path);
+    Directory current = super.getRootDirectory();
+    for (String folder : folders){
+      try{
+        current = assertDirectory(current.getFileByName(folder));
+      } catch (FileUnknownException e){
+        current = new Directory (this, folder, current, getRootUser());
+      }
+    }
+    return current;
   }
 
-  public void xmlImportPlain(Element plainElement) throws UnsupportedEncodingException {
+  public void xmlImportDir(Element dirElement) throws UnsupportedEncodingException, DataConversionException {
     // FIXME TODO
-    /** String name = new String(plainElement.getChild("name").getText().getBytes("UTF-8")); */
-    /** String path = new String(plainElement.getChild("path").getText().getBytes("UTF-8")); */
-    /** path = path + "/" + name; */
-    /** PlainFile plain = createPlainFileByPath(path, getRootUser(), getRootDirectory()); */
+    String name = new String(dirElement.getChild("name").getText());
+    String path = new String(dirElement.getChild("path").getText());
+    Directory parent = checkPathImport(path);
 
-    /** Element owner = plainElement.getChild("owner"); */
-    /** User u = getUserByUsername(new String(owner.getText().getBytes("UTF-8"))); */
-    /** plain.setOwner(u); */
+    Element owner = dirElement.getChild("owner");
+    User u = getUserByUsername(new String(owner.getText()));
+    Directory dir = new Directory(this, name, parent, u);
 
-    /** plain.xmlImport(plainElement); */
-  /** } */
+    dir.xmlImport(dirElement);
+  }
 
-  /** public void xmlImport(Element firstElement) { */
+  public void xmlImportPlain(Element plainElement) throws UnsupportedEncodingException, DataConversionException {
     // FIXME TODO
-    /** try { */
-    /**   for (Element userElement: firstElement.getChildren("user")) */
-    /**     xmlImportUser(userElement); */
+    String name = new String(plainElement.getChild("name").getText());
+    String path = new String(plainElement.getChild("path").getText());
+    Directory parent = checkPathImport(path);
 
-    /**   for (Element dirElement: firstElement.getChildren("dir")) */
-    /**     xmlImportDir(dirElement); */
+    Element owner = plainElement.getChild("owner");
+    User u = getUserByUsername(new String(owner.getText()));
 
-    /**   for (Element plainElement: firstElement.getChildren("plain")) */
-    /**     xmlImportPlain(plainElement); */
+    Element valueElement = plainElement.getChild("contents");
+    String value = new String(valueElement.getText());
 
-    /** } catch (UnsupportedEncodingException |  FileExistsException | UserUnknownException | ImportDocumentException | UserExistsException | InvalidUsernameException e) { */
-    /**   System.out.println("Error in import filesystem"); */
-    /** } */
+    PlainFile plain = new PlainFile(this, name, parent, u, value);
+
+    plain.xmlImport(plainElement);
+  }
+
+  public void xmlImportLink(Element linkElement) throws UnsupportedEncodingException, DataConversionException {
+    // FIXME TODO
+    String name = new String(linkElement.getChild("name").getText());
+    String path = new String(linkElement.getChild("path").getText());
+    Directory parent = checkPathImport(path);
+
+    Element owner = linkElement.getChild("owner");
+    User u = getUserByUsername(new String(owner.getText()));
+
+    Element valueElement = linkElement.getChild("value");
+    String value = new String(valueElement.getText());
+
+    Link link = new Link(this, name, parent, u, value);
+
+    link.xmlImport(linkElement);
+  }
+
+  public void xmlImportApp(Element appElement) throws UnsupportedEncodingException, DataConversionException {
+    // FIXME TODO
+    String name = new String(appElement.getChild("name").getText());
+    String path = new String(appElement.getChild("path").getText());
+    Directory parent = checkPathImport(path);
+
+    Element owner = appElement.getChild("owner");
+    User u = getUserByUsername(new String(owner.getText()));
+
+    Element valueElement = appElement.getChild("method");
+    String value = new String(valueElement.getText());
+
+    App app = new App(this, name, parent, u, value);
+
+    app.xmlImport(appElement);
+  }
+
+  public void xmlImport(Element firstElement) {
+    // FIXME TODO
+    try {
+      for (Element userElement: firstElement.getChildren("user"))
+        xmlImportUser(userElement);
+
+      for (Element dirElement: firstElement.getChildren("dir"))
+        xmlImportDir(dirElement);
+
+      for (Element plainElement: firstElement.getChildren("plain"))
+        xmlImportPlain(plainElement);
+
+      for (Element linkElement: firstElement.getChildren("link"))
+        xmlImportLink(linkElement);
+
+      for (Element appElement: firstElement.getChildren("app"))
+        xmlImportApp(appElement);
+
+    } catch (UnsupportedEncodingException | DataConversionException  e) {
+      System.out.println("Error in import filesystem");
+    }
   }
 
   /* ****************************************************************************
@@ -741,7 +803,7 @@ public class FileSystem extends FileSystem_Base {
 
       /*case "app":
         createApp(name);
-        break;*/
+        break; TODO IN THIRD DELIVER*/
 
       case "link":
         throw new CreateLinkWithoutContentException();
@@ -761,7 +823,7 @@ public class FileSystem extends FileSystem_Base {
       /*case "app":
         App a = createApp(name, user, directory);
         a.setData(data);
-        break;*/
+        break;TODO IN THIRD DELIVER*/
 
       case "link":
         createLink(name, current, user, data);
@@ -832,5 +894,9 @@ public class FileSystem extends FileSystem_Base {
     updateSession(token);
     _login.addEnvVar(name, value); 
     return _login.listEnvVar();
+  }
+
+  public void executeFile(String filename) {
+    executeFile(filename, _login.getCurrentDirectory(), _login.getUser());
   }
 }

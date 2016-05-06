@@ -3,10 +3,6 @@ package pt.tecnico.myDrive.domain;
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 import pt.tecnico.myDrive.visitors.DirectoryVisitor;
 
-import org.jdom2.Element;
-import java.io.UnsupportedEncodingException;
-import org.jdom2.DataConversionException;
-
 import pt.tecnico.myDrive.exceptions.UserUnknownException;
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
@@ -66,7 +62,6 @@ public class Directory extends Directory_Base {
   public File getFile(ArrayList<String> tokens, User user) {
     // Terminal case
     File file;
-    System.out.println("DEBUG DIR: " + getPath());
     if(tokens.size() > 1){
       String name = tokens.remove(0);
       file = getFileByName(name).getFile(tokens, user);
@@ -100,7 +95,7 @@ public class Directory extends Directory_Base {
   /**
    * @return Lists the files inside the directory using only their name.
    */
-  public String listFilesSimple() {
+  private String listFilesSimple() {
     Comparator<File> comp = new Comparator<File>()
     {
       public int compare(File f1, File f2)
@@ -118,7 +113,9 @@ public class Directory extends Directory_Base {
   /**
    * @return List of the files inside the directory using their toString method.
    */
-  public String listFilesAll() {
+  public String listFilesAll(User user) {
+    checkReadPermissions(user);
+
     Comparator<File> comp = new Comparator<File>()
     {
       public int compare(File f1, File f2)
@@ -272,10 +269,10 @@ public class Directory extends Directory_Base {
   }
 
   @Override
-  public String execute(User user) throws NotADirectoryException, InsufficientPermissionsException, FileUnknownException{
+  public String execute(User user) {
     String s = "Couldn't list directory.";
     try{
-      s = listFilesAll();
+      s = listFilesAll(user);
     }catch(Exception e){
       System.out.println("-- Error executing directory: " + e.getMessage());
     }
@@ -290,20 +287,6 @@ public class Directory extends Directory_Base {
   @Override
   public <T> T accept(GenericVisitor<T> v){
     return v.visit(this);
-  }
-
-  public void xmlImport(Element dirElement) throws ImportDocumentException {
-    try{
-      setId(dirElement.getAttribute("id").getIntValue());
-
-      Element perm = dirElement.getChild("perm");
-      if (perm != null)
-        setUserPermission(new String(perm.getText().getBytes("UTF-8")));
-
-
-    } catch(UnsupportedEncodingException | DataConversionException e){
-      throw new ImportDocumentException(String.valueOf(getId()));
-    }
   }
 
   @Override

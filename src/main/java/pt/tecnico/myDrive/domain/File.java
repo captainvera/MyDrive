@@ -11,6 +11,9 @@ import pt.tecnico.myDrive.exceptions.InvalidFilepathSizeException;
 
 import java.util.ArrayList;
 
+import org.jdom2.Element;
+import java.io.UnsupportedEncodingException;
+import org.jdom2.DataConversionException;
 
 import org.joda.time.DateTime;
 
@@ -100,7 +103,7 @@ public abstract class File extends File_Base {
   /**
    * Executes the file with diferent behaviour depending on the file type
    */
-  public abstract String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException;
+  public abstract String execute(User user); 
 
   /**
    * The calculation of the size of the file will vary depending on subclass implementation
@@ -218,6 +221,17 @@ public abstract class File extends File_Base {
       return getUserPermission();
     else
       return getOthersPermission();
+  }
+  
+  public void xmlImport(Element dirElement) throws UnsupportedEncodingException, DataConversionException {
+      super.setId(dirElement.getAttribute("id").getIntValue());
+
+      Element perm = dirElement.getChild("perm");
+      if (perm != null){
+        String userPermission = new String(perm.getText().getBytes("UTF-8"));
+        super.setUserPermission(userPermission.substring(0,4));
+        super.setOthersPermission(userPermission.substring(4,8));
+      }
   }
 
 

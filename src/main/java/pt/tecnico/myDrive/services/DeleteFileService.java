@@ -16,10 +16,10 @@ public class DeleteFileService extends myDriveService{
 	}
 
 	@Override
-	protected void dispatch() throws Exception {
+	protected void dispatch()  {
 		FileSystem fs = getFileSystem();
 		fs.deleteFile(_token, _filename);
-		
+
 	}
 
 }

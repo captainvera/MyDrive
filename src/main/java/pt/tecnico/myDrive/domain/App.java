@@ -44,30 +44,13 @@ public class App extends App_Base {
   }
 
   @Override
-  public String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
+  public String execute(User user) {
     return "App execution not implemented yet.";
   }
 
   @Override
   public <T> T accept(GenericVisitor<T> v){
     return v.visit(this);
-  }
-
-  public void xmlImport(Element appElement) {
-    try{
-      setId(appElement.getAttribute("id").getIntValue());
-
-      Element perm = appElement.getChild("perm");
-      if (perm != null)
-        setUserPermission(new String(perm.getText().getBytes("UTF-8")));
-
-      Element value = appElement.getChild("method");
-      if (value != null)
-        setData(new String(value.getText().getBytes("UTF-8")));
-
-    } catch(UnsupportedEncodingException | DataConversionException e){
-      throw new ImportDocumentException(String.valueOf(getId()));
-    }
   }
 
   @Override
