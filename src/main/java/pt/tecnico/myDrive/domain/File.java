@@ -57,7 +57,7 @@ public abstract class File extends File_Base {
   private void checkFilename(String filename) {
 
     if(filename.length() == 0)
-        throw new InvalidFilenameException(filename);
+      throw new InvalidFilenameException(filename);
 
     char[] characters = filename.toCharArray();
 
@@ -103,7 +103,7 @@ public abstract class File extends File_Base {
   /**
    * Executes the file with diferent behaviour depending on the file type
    */
-  public abstract String execute(User user);
+  public abstract String execute(User user, String[] arguments);
 
   /**
    * The calculation of the size of the file will vary depending on subclass implementation
@@ -140,14 +140,14 @@ public abstract class File extends File_Base {
   }
 
   public void xmlImport(Element dirElement) throws UnsupportedEncodingException, DataConversionException {
-      super.setId(dirElement.getAttribute("id").getIntValue());
+    super.setId(dirElement.getAttribute("id").getIntValue());
 
-      Element perm = dirElement.getChild("perm");
-      if (perm != null){
-        String userPermission = new String(perm.getText().getBytes("UTF-8"));
-        super.setUserPermission(userPermission.substring(0,4));
-        super.setOthersPermission(userPermission.substring(4,8));
-      }
+    Element perm = dirElement.getChild("perm");
+    if (perm != null){
+      String userPermission = new String(perm.getText().getBytes("UTF-8"));
+      super.setUserPermission(userPermission.substring(0,4));
+      super.setOthersPermission(userPermission.substring(4,8));
+    }
   }
 
 
@@ -172,6 +172,11 @@ public abstract class File extends File_Base {
 
   @Override
   public void setFileSystem(FileSystem fs) {
+    throw new MethodDeniedException();
+  }
+
+  @Override
+  public void setFileExtension(Extension extension){
     throw new MethodDeniedException();
   }
 

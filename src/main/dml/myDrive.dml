@@ -47,6 +47,10 @@ class Link extends PlainFile{
 
 class App extends PlainFile;
 
+class Extension{
+  String name;
+}
+
 relation DomainRootHasFileSystem {
   .pt.ist.fenixframework.DomainRoot playsRole Root {
     multiplicity 0..1;
@@ -138,4 +142,25 @@ relation DirectoryContainsFiles {
   File playsRole File {
     multiplicity *;
   }
+}
+
+relation FileHasAnExtension{
+    File playsRole file;
+    Extension playsRole fileExtension{
+        multiplicity 0..1;
+     }
+}    
+
+relation UserHasExtensions{
+    User playsRole user;
+    Extension playsRole userExtension{
+        multiplicity *;
+    }
+}
+
+relation ExtensionHasAnApp{
+    Extension playsRole extension;
+    App playsRole app{
+        multiplicity 0..1;
+    }
 }

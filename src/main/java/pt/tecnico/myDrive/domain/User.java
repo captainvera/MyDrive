@@ -129,6 +129,11 @@ public class User extends User_Base {
   /**
    * Basic remove implementation for User objects
    */
+  @Override
+  public void addUserExtension(Extension extension){
+      throw new MethodDeniedException();
+  }
+
   public void remove() {
     nullifyRelations();
     deleteDomainObject();

@@ -17,7 +17,7 @@ public class ListDirectoryService extends myDriveService{
 
 
 	@Override
-	protected void dispatch() throws Exception {
+	protected void dispatch() {
     FileSystem fs = getFileSystem();
     _data = fs.listCurrentDirectory(_token);
 	}
