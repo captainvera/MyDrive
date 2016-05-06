@@ -25,11 +25,13 @@ public class EnvironmentVariableService extends myDriveService {
 
   @Override
   protected void dispatch() {
+    System.out.println("asdasd");
     FileSystem fs = FileSystem.getInstance();
     _result = fs.addEnvironmentVariable(_token, _name, _value);
   }
 
   public List<EnvironmentVariabledto> result(){
+    System.out.println("ohohoho" + _result);
     return _result;
   }
 

@@ -830,8 +830,8 @@ public class FileSystem extends FileSystem_Base {
 
   public List<EnvironmentVariabledto> addEnvironmentVariable(long token, String name, String value){
     updateSession(token);
-    if(name == "" || name == null || value == null || name == null )
-      _login.addEnvVar(name, value); 
+    if(!name.equals("") && name != null && value != null && !value.equals(""))
+      _login.addEnvVar(name, value);
     return _login.listEnvVar();
   }
 

@@ -129,10 +129,10 @@ public class Login extends Login_Base {
     EnvironmentVariable envvar = getEnvVarbyName(name);
     if(envvar == null){
       envvar = new EnvironmentVariable(name, value);
-      super.addEnvVar(envvar); 
+      super.addEnvVar(envvar);
     } else {
       envvar.setValue(value);
-    } 
+    }
   }
 
   private EnvironmentVariable getEnvVarbyName(String name){
@@ -147,9 +147,9 @@ public class Login extends Login_Base {
   public List<EnvironmentVariabledto> listEnvVar(){
     List result = new ArrayList<EnvironmentVariabledto>();
     for (EnvironmentVariable envvar: super.getEnvVarSet()){
-      result.add( new EnvironmentVariable(envvar.getName(), envvar.getValue()));
-    } 
-    return result; 
+      result.add( new EnvironmentVariabledto(envvar.getName(), envvar.getValue()));
+    }
+    return result;
   }
 
 }

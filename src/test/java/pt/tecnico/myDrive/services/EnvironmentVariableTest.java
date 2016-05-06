@@ -1,17 +1,22 @@
-package pt.tecnico.myDrive.services;
+package pt.tecnico.myDrive.service;
 
 import org.junit.Test;
 import pt.tecnico.myDrive.domain.FileSystem;
 //assert
 import static org.junit.Assert.*;
 //service
-import pt.tecnico.myDrive.services.AddVariableService;
+import pt.tecnico.myDrive.services.EnvironmentVariableService;
 //domain
 import pt.tecnico.myDrive.domain.FileSystem;
 import pt.tecnico.myDrive.domain.Login;
 import pt.tecnico.myDrive.domain.User;
 import pt.tecnico.myDrive.domain.Directory;
-public class AddVariableTest extends AbstractServiceTest {
+import pt.tecnico.myDrive.service.AbstractServiceTest;
+import java.util.List;
+import java.util.ArrayList;
+import pt.tecnico.myDrive.services.dto.EnvironmentVariabledto;
+
+public class EnvironmentVariableTest extends AbstractServiceTest {
 	/* (non-Javadoc)
 	 * @see pt.tecnico.myDrive.service.AbstractServiceTest#populate()
 	 */
@@ -19,17 +24,17 @@ public class AddVariableTest extends AbstractServiceTest {
 	private FileSystem _fs;
 	private User _user;
 	private Login _login;
-  
+
 	@Override
 	protected void populate() throws Exception{
       try{
 
 		_fs = FileSystem.getInstance();
-		_user = new User(_fs, "litxo");
-    _user.setHomeDirectory(new Directory(_fs, "litxo", _fs.getHomeDirectory(), _user));
+		_user = new User(_fs, "user8888", "user8888", "user8888");
+    _user.setHomeDirectory(new Directory(_fs, "user8888", _fs.getHomeDirectory(), _user));
 
 		_login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
-    
+
 
 	  } catch(Exception e) {
 	    e.printStackTrace();
@@ -41,27 +46,37 @@ public class AddVariableTest extends AbstractServiceTest {
     _login.addEnvVar("name3","value3");
     _login.addEnvVar("name2","value2");
     _login.addEnvVar("name1","value1");
-    
-    String result = "name: "+ "name1" + "value: "+ "value1" + "\n" + "name: "+ "name2" + "value: "+ "value2" + "\n"+"name: "+ "name3" + "value: "+ "value3" + "\n";
-    
-    assertEquals("Environment Variables list is correct.",_login.listEnvVar(),result);
+
+    List<EnvironmentVariabledto> result = new ArrayList<EnvironmentVariabledto>();
+		result.add(new EnvironmentVariabledto("name1", "value1"));
+		result.add(new EnvironmentVariabledto("name2", "value2"));
+    result.add(new EnvironmentVariabledto("name3", "value3"));
+		System.out.println("look12" + result.get(0)._name + "\n" + _login.listEnvVar().get(0)._name);
+
+    assertTrue("Environment Variables list is correct.",_login.listEnvVar().equals(result));
   }
-  
+
   @Test
   public void simpleVariableAdd() throws Exception {
-    AddVariableService avs = new AddVariableService(123l, "name", "content");
+    EnvironmentVariableService avs = new EnvironmentVariableService(123l, "name", "content");
     avs.execute();
-    assertEquals(_login.listEnvVar(), "name: " + "name" + "value: " + "content" + "\n");
+		List<EnvironmentVariabledto> result = new ArrayList<EnvironmentVariabledto>();
+    result.add(new EnvironmentVariabledto("name","content"));
+    assertTrue(avs.result().equals(result));
   }
- 
+
 
   @Test
   public void replaceAddedVar() throws Exception {
-    AddVariableService avs = new AddVariableService(123l, "name", "content");
+    EnvironmentVariableService avs = new EnvironmentVariableService(123l, "name", "content");
     avs.execute();
-    avs = new AddVariableService(123l, "name", "content2");
+    avs = new EnvironmentVariableService(123l, "name", "content2");
     avs.execute();
-    assertEquals( "name: " + "name" + "value: " + "content2" + "\n", _login.listEnvVar());
+
+		List<EnvironmentVariabledto> result = new ArrayList<EnvironmentVariabledto>();
+		result.add(new EnvironmentVariabledto("name","content2"));
+
+    assertTrue( avs.result().equals(result) );
   }
-  
+
 }
