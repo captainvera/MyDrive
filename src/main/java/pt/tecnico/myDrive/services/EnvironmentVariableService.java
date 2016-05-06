@@ -6,7 +6,7 @@ import java.util.List;
 import pt.tecnico.myDrive.services.dto.EnvironmentVariabledto;
 
 
-public class AddVariableService extends myDriveService {
+public class EnvironmentVariableService extends myDriveService {
 
   private long _token;
   private String _name;
@@ -15,7 +15,7 @@ public class AddVariableService extends myDriveService {
   /**
    * Add Enviroment Variable Service Constructor 
    */
-  public AddVariableService(long token, String name, String value) {
+  public EnvironmentVariableService(long token, String name, String value) {
     super();
     _token = token;
     _name = name;

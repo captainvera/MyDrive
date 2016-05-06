@@ -6,8 +6,8 @@ public class EnvironmentVariabledto {
 
   public EnvironmentVariabledto(String name, String value) {
 
-    super.setName(name);
-    super.setValue(value);
+    _name = (name);
+    _value = (value);
 
   }
 }
