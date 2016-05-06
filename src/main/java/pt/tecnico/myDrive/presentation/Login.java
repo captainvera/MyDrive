@@ -18,7 +18,8 @@ public class Login extends MyDriveCommand {
 
     ls.execute();
     long token = ls.result();
-    String username = args[1];
+    String username = args[0];
+    shell().setUser(username);
     shell().setActiveToken(token);
     shell().getTokens().put(username, token);
   }
