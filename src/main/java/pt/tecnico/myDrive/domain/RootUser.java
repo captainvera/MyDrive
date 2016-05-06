@@ -14,34 +14,12 @@ public class RootUser extends RootUser_Base {
     super.init(fs, "root", "Super User", "***", "rwxdr-x-", null);
   }
 
-  @Override
-  public String getPassword(){
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void setPassword(String password){
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void setUmask(String umask){
-    throw new MethodDeniedException();
-  }
-
   /**
    * Root User shouldn't be removable
    */
+  @Override
   public void remove() {
     log.warn("Can't remove root user!");
   }
 
-  /**
-   * Nullifies relations, that is, deletes/cancels any relation between this
-   * object and eventual others.
-   */
-  protected void nullifyRelations() {
-    setHomeDirectory(null);
-    setFileSystem(null);
-  }
 }

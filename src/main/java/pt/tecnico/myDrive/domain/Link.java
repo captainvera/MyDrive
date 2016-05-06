@@ -91,22 +91,6 @@ public class Link extends Link_Base {
   /**
    * @param xml Element
    */
-  public void xmlImport(Element linkElement) throws ImportDocumentException{
-    try{
-      setId(linkElement.getAttribute("id").getIntValue());
-
-      Element perm = linkElement.getChild("perm");
-      if (perm != null)
-        setUserPermission(new String(perm.getText().getBytes("UTF-8")));
-
-      Element value = linkElement.getChild("value");
-      if (value != null)
-        setData(new String(value.getText().getBytes("UTF-8")));
-
-    } catch(UnsupportedEncodingException | DataConversionException e){
-      throw new ImportDocumentException(String.valueOf(getId()));
-    }
-  }
 
   @Override
   public File getFileObject(User user) {

@@ -145,26 +145,26 @@ public class myDriveApplication {
   @Atomic
   public static void xmlPrint() {
     // FIXME TODO
-    /** log.trace("xmlPrint: " + FenixFramework.getDomainRoot()); */
-    /** Document doc = FileSystem.getInstance().xmlExport(); */
-    /** XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat()); */
-    /** try { xmlOutput.output(doc, new PrintStream(System.out)); */
-    /** } catch (IOException e) { System.out.println(e); } */
+    log.trace("xmlPrint: " + FenixFramework.getDomainRoot());
+    Document doc = FileSystem.getInstance().xmlExport(); 
+    XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
+    try { xmlOutput.output(doc, new PrintStream(System.out)); 
+    } catch (Exception e) { System.out.println(e); } 
   }
 
 
   @Atomic
   public static void xmlScan(java.io.File file){
     // FIXME TODO
-    /** log.trace("xmlScan: " + FenixFramework.getDomainRoot()); */
-    /** FileSystem fs = FileSystem.getInstance(); */
-    /** SAXBuilder builder = new SAXBuilder(); */
-    /** try { */
-    /**   Document document = (Document)builder.build(file); */
-    /**   fs.xmlImport(document.getRootElement()); */
-    /** } catch (Exception e) { */
-    /**   e.printStackTrace(); */
-    /** } */
+    log.trace("xmlScan: " + FenixFramework.getDomainRoot());
+    FileSystem fs = FileSystem.getInstance();
+    SAXBuilder builder = new SAXBuilder(); 
+    try { 
+      Document document = (Document)builder.build(file); 
+      fs.xmlImport(document.getRootElement()); 
+    } catch (Exception e) { 
+      e.printStackTrace(); 
+    }
   }
 
 }
