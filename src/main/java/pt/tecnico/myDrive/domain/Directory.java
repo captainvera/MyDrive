@@ -3,10 +3,6 @@ package pt.tecnico.myDrive.domain;
 import pt.tecnico.myDrive.visitors.GenericVisitor;
 import pt.tecnico.myDrive.visitors.DirectoryVisitor;
 
-import org.jdom2.Element;
-import java.io.UnsupportedEncodingException;
-import org.jdom2.DataConversionException;
-
 import pt.tecnico.myDrive.exceptions.UserUnknownException;
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
@@ -273,7 +269,7 @@ public class Directory extends Directory_Base {
   }
 
   @Override
-  public String execute(User user) throws NotADirectoryException, InsufficientPermissionsException, FileUnknownException{
+  public String execute(User user, String[] arguments) {
     String s = "Couldn't list directory.";
     try{
       s = listFilesAll(user);
@@ -291,20 +287,6 @@ public class Directory extends Directory_Base {
   @Override
   public <T> T accept(GenericVisitor<T> v){
     return v.visit(this);
-  }
-
-  public void xmlImport(Element dirElement) throws ImportDocumentException {
-    try{
-      setId(dirElement.getAttribute("id").getIntValue());
-
-      Element perm = dirElement.getChild("perm");
-      if (perm != null)
-        setUserPermission(new String(perm.getText().getBytes("UTF-8")));
-
-
-    } catch(UnsupportedEncodingException | DataConversionException e){
-      throw new ImportDocumentException(String.valueOf(getId()));
-    }
   }
 
   @Override

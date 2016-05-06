@@ -48,7 +48,7 @@ public class PlainFile extends PlainFile_Base {
   }
 
   @Override
-  public String execute(User user, String arguments) {
+  public String execute(User user, String[] arguments) {
     return super.getData();
   }
 
@@ -76,23 +76,6 @@ public class PlainFile extends PlainFile_Base {
   public String getData(User user) {
     checkReadPermissions(user);
     return super.getData();
-  }
-
-  public void xmlImport(Element plainElement) throws ImportDocumentException {
-    try{
-      setId(plainElement.getAttribute("id").getIntValue());
-
-      Element perm = plainElement.getChild("perm");
-      if (perm != null)
-        setUserPermission(new String(perm.getText().getBytes("UTF-8")));
-
-      Element value = plainElement.getChild("contents");
-      if (value != null)
-        setData(new String(value.getText().getBytes("UTF-8")));
-
-    } catch(UnsupportedEncodingException | DataConversionException e){
-      throw new ImportDocumentException(String.valueOf(getId()));
-    }
   }
 
   @Override
