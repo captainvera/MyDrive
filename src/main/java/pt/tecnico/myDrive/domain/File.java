@@ -13,6 +13,8 @@ import java.util.ArrayList;
 
 import org.jdom2.Element;
 import java.io.UnsupportedEncodingException;
+import java.security.acl.Owner;
+
 import org.jdom2.DataConversionException;
 
 import org.joda.time.DateTime;
@@ -60,11 +62,9 @@ public abstract class File extends File_Base {
     char[] characters = filename.toCharArray();
 
     for (char c: characters) {
-      if ((!Character.isLetter(c) && !Character.isDigit(c))
-
-          || c == 0 || c == '\\') {
+      if (c == 0 || c == '\\') {
         throw new InvalidFilenameException(filename);
-          }
+      }
     }
   }
 
@@ -86,7 +86,7 @@ public abstract class File extends File_Base {
   }
 
   public void remove(User user) {
-    checkDeletionPermissions(user);
+    user.checkDeletionPermissions(this);
     remove();
   }
 
@@ -103,7 +103,7 @@ public abstract class File extends File_Base {
   /**
    * Executes the file with diferent behaviour depending on the file type
    */
-  public abstract String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException;
+  public abstract String execute(User user);
 
   /**
    * The calculation of the size of the file will vary depending on subclass implementation
@@ -135,60 +135,8 @@ public abstract class File extends File_Base {
     return this;
   }
 
-  // TODO
-  /** @Override */
-  /** public void setParent(Directory parent) { */
-  /**   throw new MethodDeniedException(); */
-  /** } */
-
-
-  @Override
-  public void setOwner(User owner) {
-    throw new MethodDeniedException();
-  }
-
-  @Override
-  public void setId(Integer id) {
-    throw new MethodDeniedException();
-  }
-
-
-  /**
-   * Verifies if user has permission to perform some operation on file
-   *
-   * @param user
-   * @param index
-   * @param c
-   */
-  protected void checkPermissions(User user, int index, char c) {
-    String permissions = getPermissions(user);
-    if(permissions.charAt(index) != c)
-      throw new InsufficientPermissionsException();
-  }
-
-  protected void checkReadPermissions(User user) {
-    checkPermissions(user, 0, 'r');
-  }
-
-  protected void checkWritePermissions(User user) {
-    checkPermissions(user, 1, 'w');
-  }
-
-  protected void checkExecutionPermissions(User user) {
-    checkPermissions(user, 2, 'x');
-  }
-
-  protected void checkDeletionPermissions(User user) {
-    checkPermissions(user, 3, 'd');
-  }
-
   protected String getPermissions(User user) {
-    if (getFileSystem$6p().isRoot(user))
-      return "rwxd";
-    else if (getOwner().equals(user))
-      return getUserPermission();
-    else
-      return getOthersPermission();
+    return user.getPermissions(this);
   }
 
   public void xmlImport(Element dirElement) throws UnsupportedEncodingException, DataConversionException {
@@ -231,6 +179,26 @@ public abstract class File extends File_Base {
   public FileSystem getFileSystem() {
     throw new MethodDeniedException();
   }
+
+  // TODO
+  /** @Override */
+  /** public void setParent(Directory parent) { */
+  /**   throw new MethodDeniedException(); */
+  /** } */
+
+
+  @Override
+  public void setOwner(User owner) {
+    // TODO|FIXME
+    // Shouldn't be public
+    super.setOwner(owner);
+  }
+
+  @Override
+  public void setId(Integer id) {
+    throw new MethodDeniedException();
+  }
+
 
   /**
    * Protected methods for subclass access

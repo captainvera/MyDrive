@@ -59,7 +59,7 @@ public class Link extends Link_Base {
     if(tokens.size() == 0)
       return getFileSystem$6p().getFileByPath(getData(user), user, getParent());
 
-    checkExecutionPermissions(user);
+    user.checkExecutionPermissions(this);
     String remaining = "";
     remaining += getData(user);
     if(remaining.charAt(remaining.length()-1) == '/')
@@ -70,12 +70,12 @@ public class Link extends Link_Base {
 
     System.out.println("DEBUG!! " + remaining + " | ");
     File file = getFileSystem$6p().getFileByPath(remaining, user, getParent());
-    file.checkReadPermissions(user);
+    user.checkReadPermissions(file);
     return file;
   }
 
   @Override
-  public String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
+  public String execute(User user) {
     return getFileObject(user).execute(user);
   }
 

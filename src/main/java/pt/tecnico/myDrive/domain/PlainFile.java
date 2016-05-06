@@ -68,13 +68,13 @@ public class PlainFile extends PlainFile_Base {
   }
 
   public void setData(String data, User user) {
-    checkWritePermissions(user);
+    user.checkWritePermissions(this);
     super.setData(data);
     touch();
   }
 
   public String getData(User user) {
-    checkReadPermissions(user);
+    user.checkReadPermissions(this);
     return super.getData();
   }
 

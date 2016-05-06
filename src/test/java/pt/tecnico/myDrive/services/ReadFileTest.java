@@ -31,8 +31,8 @@ public class ReadFileTest extends AbstractServiceTest {
   protected void populate() {
     try {
       _fs = FileSystem.getInstance();
-      _user = new User(_fs, "litxo", "litxo", "litxo");
-			_user.setHomeDirectory(new Directory(_fs, "litxo", _fs.getHomeDirectory(), _user));
+      _user = new User(_fs, "litxoe5sQu3nt0u", "litxoe5sQu3nt0u", "litxoe5sQu3nt0u");
+			_user.setHomeDirectory(new Directory(_fs, "litxoe5sQu3nt0u", _fs.getHomeDirectory(), _user));
       _login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
 
       /* We'll have something like this
@@ -146,7 +146,7 @@ public class ReadFileTest extends AbstractServiceTest {
 
   @Test
   public void readLinkByAbsPathSucc() throws Exception {
-    ReadFileService rfs = new ReadFileService(123l, "/home/litxo/linksucc1");
+    ReadFileService rfs = new ReadFileService(123l, "/home/litxoe5sQu3nt0u/linksucc1");
     rfs.execute();
     String result = rfs.result();
 

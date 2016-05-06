@@ -150,21 +150,27 @@ public class FileSystem extends FileSystem_Base {
     super.setIdCounter(0);
 
     log.trace("Creating root user");
-    super.setRootUser(new RootUser(this));
+    RootUser rootUser = new RootUser(this);
+    super.setRootUser(rootUser);
 
-    log.trace("Creating root directory");
-    super.setRootDirectory(new RootDirectory(this, "/", super.getRootUser()));
-
-    log.trace("Creating guest user");
-    super.setGuestUser(new GuestUser(this));
+    log.trace("Creating root directory ('/') ");
+    RootDirectory rootDir = new RootDirectory(this, "/", super.getRootUser());
+    super.setRootDirectory(rootDir);
 
     log.trace("Creating home directory");
     Directory homeDir = createDirectory("home",super.getRootDirectory(),super.getRootUser());
 
-    super.getRootUser().setHomeDirectory(createDirectory(super.getRootUser().getUsername(), homeDir, super.getRootUser()));
+    log.trace("Creating root home");
+    Directory rootHome = createDirectory(rootUser.getUsername(), homeDir, rootUser);
 
-    /** super.getGuestUser().setHomeDirectory(createDirectory(super.getGuestUser().getUsername(), homeDir, super.getGuestUser())); */
-    createDirectory("nobody", homeDir, super.getRootUser());
+    log.trace("Creating guest user");
+    GuestUser guestUser = new GuestUser(this);
+    super.setGuestUser(guestUser);
+
+    log.trace("Creating guest home");
+    Directory guestHome = createDirectory(guestUser.getUsername(), homeDir, rootUser);
+    guestUser.setHomeDirectory(guestHome);
+    guestHome.setOwner(guestUser);
 
   }
 
@@ -242,6 +248,8 @@ public class FileSystem extends FileSystem_Base {
     Directory home = assertDirectory(super.getRootDirectory().getFileByName("home"));
     Directory userHome = createDirectory(username, home, user);
     user.setHomeDirectory(userHome);
+    userHome.setOwner(user);
+
 
     log.trace("Added user " + username);
 
@@ -768,7 +776,6 @@ public class FileSystem extends FileSystem_Base {
       }
 
       _login = new Login(this, user, user.getHomeDirectory(), token);
-      super.addLogins(_login);
       return token;
     } else { // if password was incorrect;
       throw new WrongPasswordException(user.getUsername());
@@ -889,15 +896,15 @@ public class FileSystem extends FileSystem_Base {
     throw new MethodDeniedException();
   }
 
-  /** @Override */
+  @Override
   public RootUser getRootUser() {
     throw new MethodDeniedException();
   }
 
-  @Override
-  public GuestUser getGuestUser() {
-    throw new MethodDeniedException();
-  }
+  /** @Override */
+  /** public GuestUser getGuestUser() { */
+  /**   throw new MethodDeniedException(); */
+  /** } */
 
   @Override
   public RootDirectory getRootDirectory() {
