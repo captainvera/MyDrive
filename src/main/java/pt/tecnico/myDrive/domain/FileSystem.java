@@ -827,4 +827,10 @@ public class FileSystem extends FileSystem_Base {
     updateSession(token);
     return listDirectory(_login.getCurrentDirectory(), _login.getUser());
   }
+
+  public String addEnvironmentVariable(long token, String name, String value){
+    updateSession(token);
+    _login.addEnvVar(name, value); 
+    return _login.listEnvVar();
+  }
 }
