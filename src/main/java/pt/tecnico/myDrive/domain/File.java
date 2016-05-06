@@ -100,7 +100,7 @@ public abstract class File extends File_Base {
   /**
    * Executes the file with diferent behaviour depending on the file type
    */
-  public abstract String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException;
+  public abstract String execute(User user); 
 
   /**
    * The calculation of the size of the file will vary depending on subclass implementation

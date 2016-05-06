@@ -44,7 +44,7 @@ public class App extends App_Base {
   }
 
   @Override
-  public String execute(User user) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
+  public String execute(User user) {
     return "App execution not implemented yet.";
   }
 

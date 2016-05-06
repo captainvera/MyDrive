@@ -273,7 +273,7 @@ public class Directory extends Directory_Base {
   }
 
   @Override
-  public String execute(User user) throws NotADirectoryException, InsufficientPermissionsException, FileUnknownException{
+  public String execute(User user) {
     String s = "Couldn't list directory.";
     try{
       s = listFilesAll(user);
