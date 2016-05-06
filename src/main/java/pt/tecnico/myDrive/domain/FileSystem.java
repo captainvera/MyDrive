@@ -6,7 +6,7 @@ import pt.tecnico.myDrive.domain.Link;
 import pt.tecnico.myDrive.domain.User;
 import pt.tecnico.myDrive.domain.File;
 import pt.tecnico.myDrive.domain.PlainFile;
-
+import pt.tecnico.myDrive.services.dto.EnvironmentVariabledto;
 import pt.ist.fenixframework.DomainRoot;
 
 // Domain Exceptions
@@ -505,13 +505,13 @@ public class FileSystem extends FileSystem_Base {
     Document doc = new Document(mydrive);
 
     for (User u: super.getUsersSet()){
-     if(!u.getUsername().equals("root"))
-         mydrive.addContent(u.xmlExport());
+      if(!u.getUsername().equals("root"))
+        mydrive.addContent(u.xmlExport());
     }
     for (File f: super.getFilesSet()){
 
-    /*if(isFileExportValid(f))*/
-    mydrive.addContent(f.accept(xml));
+      /*if(isFileExportValid(f))*/
+      mydrive.addContent(f.accept(xml));
 
     }
     return doc;
@@ -805,9 +805,9 @@ public class FileSystem extends FileSystem_Base {
         createPlainFile(name, current, user);
         break;
 
-      /*case "app":
-        createApp(name);
-        break; TODO IN THIRD DELIVER*/
+        /*case "app":
+          createApp(name);
+          break; TODO IN THIRD DELIVER*/
 
       case "link":
         throw new CreateLinkWithoutContentException();
@@ -824,10 +824,10 @@ public class FileSystem extends FileSystem_Base {
         createPlainFile(name, current, user, data);
         break;
 
-      /*case "app":
-        App a = createApp(name, user, directory);
-        a.setData(data);
-        break;TODO IN THIRD DELIVER*/
+        /*case "app":
+          App a = createApp(name, user, directory);
+          a.setData(data);
+          break;TODO IN THIRD DELIVER*/
 
       case "link":
         createLink(name, current, user, data);
@@ -899,9 +899,10 @@ public class FileSystem extends FileSystem_Base {
     executeFile(filename, _login.getUser(), _login.getCurrentDirectory(), arguments);
   }
 
-  public String addEnvironmentVariable(long token, String name, String value){
+  public List<EnvironmentVariabledto> addEnvironmentVariable(long token, String name, String value){
     updateSession(token);
-    _login.addEnvVar(name, value); 
+    if(name == "" || name == null || value == null || name == null )
+      _login.addEnvVar(name, value); 
     return _login.listEnvVar();
   }
 

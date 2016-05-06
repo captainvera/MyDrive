@@ -14,6 +14,8 @@ import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Login extends Login_Base {
   protected static final Logger log = LogManager.getRootLogger();
@@ -146,11 +148,11 @@ public class Login extends Login_Base {
     return null;
   }
 
-  public String listEnvVar(){
-    String result = "";
+  public List<EnvironmentVariabledto> listEnvVar(){
+    List result = new ArrayList<EnvironmentVariabledto>();
     for (EnvironmentVariable envvar: super.getEnvVarSet()){
-      result += "name: " + envvar.getName() + "value: " + envvar.getValue() + "\n";
-    }  
+      result.add( new EnvironmentVariable(envvar.getName(), envvar.getValue()));
+    } 
     return result; 
   }
 
