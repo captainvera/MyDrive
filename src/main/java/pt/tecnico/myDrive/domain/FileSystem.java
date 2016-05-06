@@ -55,8 +55,7 @@ public class FileSystem extends FileSystem_Base {
 
   /**
    * FileSystem temporary state variables
-   * _loggedUser: keeps track of the user logged in
-   * _currentDirectory: keeps track of the current navigation directory
+   * _login: keeps track of the current login in use 
    */
 
   private Login _login;
@@ -406,13 +405,9 @@ public class FileSystem extends FileSystem_Base {
   /**
    * @return result of executing file
    */
-  public String executeFile(String path, User user, Directory directory) {
-    File file = getFileByPath(path, user, directory);
-    /**
-     * TODO::XXX:FIX PERMISSIONS
-     */
-    // checkExecutionPermissions(user, file);
-    return file.execute(user);
+  public void executeFile(String filename, Directory directory, User user) {
+    File file = getFileByPath(filename, user, directory);
+    file.execute(user);
   }
 
   /* ****************************************************************************
@@ -826,5 +821,9 @@ public class FileSystem extends FileSystem_Base {
   public String listCurrentDirectory(long token) {
     updateSession(token);
     return listDirectory(_login.getCurrentDirectory(), _login.getUser());
+  }
+
+  public void executeFile(String filename) {
+    executeFile(filename, _login.getCurrentDirectory(), _login.getUser());
   }
 }
