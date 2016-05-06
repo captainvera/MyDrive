@@ -56,7 +56,11 @@ public abstract class File extends File_Base {
    */
   private void checkFilename(String filename) {
 
-    if(filename.length() == 0)
+    /**
+     * File names can't have '$' as first character, since that's how an
+     * environment variable is recognized
+     */
+    if(filename.length() == 0 || filename.charAt(0) == '$')
       throw new InvalidFilenameException(filename);
 
     char[] characters = filename.toCharArray();
