@@ -24,10 +24,9 @@ public class Login extends Login_Base {
    * Login constructor, receives logged user, currentDirectory and expiration date.
    */
   public Login(FileSystem fs, User user, Directory currentDirectory, Long token) {
-    super();
-    super.setCurrentDirectory(currentDirectory);
     super.setFileSystem(fs);
     super.setUser(user);
+    super.setCurrentDirectory(currentDirectory);
     super.setToken(token);
     extendToken();
   }
@@ -51,10 +50,7 @@ public class Login extends Login_Base {
   }
 
   public void extendToken() {
-    if (super.getFileSystem().isRoot(super.getUser()))
-      super.setExpirationDate(new DateTime().plusMinutes(10));
-    else
-      super.setExpirationDate(new DateTime().plusHours(2));
+    super.setExpirationDate(super.getUser().getNextExpirationDate());
   }
 
   public boolean compareToken(long token) {
@@ -105,7 +101,7 @@ public class Login extends Login_Base {
   }
 
   public void setCurrentDirectory(Directory dir, User owner) {
-    dir.checkExecutionPermissions(owner);
+    owner.checkExecutionPermissions(dir);
     super.setCurrentDirectory(dir);
   }
 
