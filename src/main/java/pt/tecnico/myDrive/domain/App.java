@@ -66,7 +66,7 @@ public class App extends App_Base {
         String result = (String) method.invoke(this, args);
 
         return result;
-    } catch(NoSuchMethodException | ClassNotFoundException ) {
+    } catch(NoSuchMethodException | ClassNotFoundException e ) {
       throw new RuntimeException("Unknown method or class on list file, or illegal access");
     }
     catch(IllegalAccessException e){

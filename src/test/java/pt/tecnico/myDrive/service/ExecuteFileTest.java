@@ -24,6 +24,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
   private FileSystem _fs;
   private User _user, _user2;
   private Login _login;
+  private String args[] = {"1","2"};
 
   /* (non-Javadoc)
    * @see pt.tecnico.myDrive.service.AbstractServiceTest#populate()
@@ -84,94 +85,94 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
   @Test
   public void executeApp() throws Exception {
-    ExecuteFileService rfs = new ExecuteFileService(123l, "app");
-    rfs.execute();
+    ExecuteFileService efs = new ExecuteFileService(123l, "app", args );
+    efs.execute();
 
     ////assertEquals("App data is incorrect!", "app_Data", result);
   }
 
   @Test
   public void executePF() throws Exception {
-    ExecuteFileService rfs = new ExecuteFileService(123l, "pf");
-    rfs.execute();
+    ExecuteFileService efs = new ExecuteFileService(123l, "pf", args);
+    efs.execute();
 
     ////assertEquals("PlainFile data is incorrect!", "pf_Data", result);
   }
 
   @Test
   public void executePFByPath() throws Exception {
-    ExecuteFileService rfs = new ExecuteFileService(123l, "dir1/plainfile1");
-    rfs.execute();
+    ExecuteFileService efs = new ExecuteFileService(123l, "dir1/plainfile1", args);
+    efs.execute();
 
     ////assertEquals("PlainFile data is incorrect!", "plainfile1_Data", result);
   }
 
   @Test
   public void executeLinkSucc1() throws Exception {
-    ExecuteFileService rfs = new ExecuteFileService(123l, "linksucc1");
-    rfs.execute();
+    ExecuteFileService efs = new ExecuteFileService(123l, "linksucc1", args);
+    efs.execute();
 
     ////assertEquals("Link in current directory Data is incorrect!", "plainfile1_Data", result);
   }
 
   @Test
   public void executeLinkSucc2() throws Exception {
-    ExecuteFileService rfs = new ExecuteFileService(123l, "linksucc2");
-    rfs.execute();
+    ExecuteFileService efs = new ExecuteFileService(123l, "linksucc2", args);
+    efs.execute();
 
     ////assertEquals("Link in current directory Data is incorrect!", "plainfile2_Data", result);
   }
 
   @Test
   public void executeLinkByRelPathSucc1() throws Exception {
-    ExecuteFileService rfs = new ExecuteFileService(123l, "dir1/dir2/linkpathsucc1");
-    rfs.execute();
+    ExecuteFileService efs = new ExecuteFileService(123l, "dir1/dir2/linkpathsucc1", args);
+    efs.execute();
 
     //assertEquals("Link by relative path Data is incorrect!", "plainfile1_Data", result);
   }
 
   @Test
   public void executeLinkByRelPathSucc2() throws Exception {
-    ExecuteFileService rfs = new ExecuteFileService(123l, "dir1/dir2/linkpathsucc2");
-    rfs.execute();
+    ExecuteFileService efs = new ExecuteFileService(123l, "dir1/dir2/linkpathsucc2", args);
+    efs.execute();
 
     //assertEquals("Link by relative path Data is incorrect!", "plainfile2_Data", result);
   }
 
   @Test
   public void executeLinkByAbsPathSucc() throws Exception {
-    ExecuteFileService rfs = new ExecuteFileService(123l, "/home/litxo/linksucc1");
-    rfs.execute();
+    ExecuteFileService efs = new ExecuteFileService(123l, "/home/litxo/linksucc1", args);
+    efs.execute();
 
     //assertEquals("Link by absolute path Data is incorrect!", "plainfile1_Data", result);
   }
 
   @Test
   public void link2linkSucc () throws Exception {
-    ExecuteFileService rfs = new ExecuteFileService(123l, "link2linksucc1");
-    rfs.execute();
+    ExecuteFileService efs = new ExecuteFileService(123l, "link2linksucc1", args);
+    efs.execute();
 
     //assertEquals("Link to another link Data is incorrect!", "plainfile1_Data", result);
   }
 
    @Test
   public void link2linkPath () throws Exception {
-    ExecuteFileService rfs = new ExecuteFileService(123l, "linkfail1/plainfile2");
-    rfs.execute();
+    ExecuteFileService efs = new ExecuteFileService(123l, "linkfail1/plainfile2", args);
+    efs.execute();
 
     //assertEquals("Link to another link Data is incorrect!", "plainfile2_Data", result);
   }
 
   @Test(expected = FileUnknownException.class)
     public void executeUnknownFile() throws Exception {
-      ExecuteFileService rfs = new ExecuteFileService(123l, "nofile");
-      rfs.execute();
+      ExecuteFileService efs = new ExecuteFileService(123l, "nofile", args);
+      efs.execute();
     }
 
 
   @Test(expected = InsufficientPermissionsException.class)
     public void executeLinkDirectoryPath() throws Exception {
-      ExecuteFileService rfs = new ExecuteFileService(123l, "linkfail1");
-      rfs.execute();
+      ExecuteFileService efs = new ExecuteFileService(123l, "linkfail1", args);
+      efs.execute();
     }
 }

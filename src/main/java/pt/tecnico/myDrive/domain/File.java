@@ -159,10 +159,6 @@ public abstract class File extends File_Base {
     throw new MethodDeniedException();
   }
 
-  @Override
-  public void setFileExtension(Extension extension){
-      throw new MethodDeniedException();
-  }
   protected final void touch(){
     super.setLastModified(new DateTime());
   }

@@ -107,6 +107,11 @@ public class User extends User_Base {
       throw new MethodDeniedException();
   }
 
+  //empty on purpose, to be mocked 
+  public App getAssociation(String extension){
+    return null;
+  }
+
   public void remove() {
     nullifyRelations();
     deleteDomainObject();

@@ -137,13 +137,6 @@ relation DirectoryContainsFiles {
   }
 }
 
-relation FileHasAnExtension{
-    File playsRole file;
-    Extension playsRole fileExtension{
-        multiplicity 0..1;
-     }
-}    
-
 relation UserHasExtensions{
     User playsRole user;
     Extension playsRole userExtension{
