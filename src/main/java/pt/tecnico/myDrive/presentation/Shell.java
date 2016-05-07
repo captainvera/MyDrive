@@ -10,9 +10,13 @@ public abstract class Shell {
   private Map<String,Command> coms = new TreeMap<String,Command>();
   private PrintWriter out;
   private String name;
-  private String _username = "";
-  private String _currentDir = "";
 
+  /**
+   * Sessions 
+   */
+  private String _username = "";
+  private String _currentDir = "/";
+   
   public Shell(String n) { this(n, new PrintWriter(System.out, true), true); }
   public Shell(String n, Writer w) { this(n, w, true); }
   public Shell(String n, Writer w, boolean flush) {
@@ -135,13 +139,7 @@ public abstract class Shell {
     return true;
   }
 
-  abstract void setActiveToken (long token);
-
-  abstract long getActiveToken();
-
-  abstract TreeMap<String, Long> getTokens();
-
-  public void setUser(String username){
+ public void setUser(String username){
     _username = username;
   }
 

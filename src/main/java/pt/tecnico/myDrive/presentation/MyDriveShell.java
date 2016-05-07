@@ -3,26 +3,14 @@ package pt.tecnico.myDrive.presentation;
 import java.util.TreeMap;
 
 public class MyDriveShell extends Shell {
-  private long _activeToken;
-  private TreeMap<String, Long> _allTokens = new TreeMap<String, Long>();
 
-  @Override
-  public void setActiveToken (long token){
-    _activeToken = token;
-  }
+  private String _activeUser;
+  private Session _activeSession;
 
-  @Override
-  public long getActiveToken(){
-    return _activeToken;
-  }
+  private TreeMap<String, Session> _sessions = new TreeMap<String, Session>();
 
-  @Override
-  public TreeMap<String, Long> getTokens() {
-    return _allTokens;
-  }
   public static void main(String[] args) throws Exception {
     MyDriveShell sh = new MyDriveShell();
-    sh.setDir("/");
     sh.execute();
   }
 
@@ -37,4 +25,40 @@ public class MyDriveShell extends Shell {
     new Key(this);
   }
 
+  public void addSession(String username, long token){
+    if(_sessions.containsKey(username)){
+      _sessions.remove(username);
+    }
+    _sessions.put(username, new Session(token, "/home/"+username));
+  }
+
+  public void setActiveSession(String username){
+    Session session= _sessions.get(username);
+    if(session != null){
+      _activeUser = username;
+      _activeSession = session;
+
+      setUser(username);
+      setDir(session.getCurrentDirectory());
+    }else{
+      println("No session present for user " + username); 
+    }
+  };
+
+  public String getActiveUser(){
+    return _activeUser;
+  }
+
+  public long getActiveToken(){
+    return _activeSession.getToken();
+  }
+
+  public Session getActiveSession(){
+    return _activeSession;
+  }
+
+  public void changeCurrentDirectory(String currentDir){
+    _activeSession.setCurrentDirectory(currentDir);
+    setDir(currentDir);
+  }
 }
