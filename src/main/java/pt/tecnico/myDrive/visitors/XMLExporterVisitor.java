@@ -15,7 +15,7 @@ public class XMLExporterVisitor implements GenericVisitor<Element>{
   @Override
   public Element visit(Directory dir){
     //FIXME TODO
-    Element directory = new Element("dir"); 
+    Element directory = new Element("dir");
     directory.setAttribute("id",String.valueOf(dir.getId()));
 
     Element dirPath = new Element("path");
@@ -77,53 +77,53 @@ public class XMLExporterVisitor implements GenericVisitor<Element>{
     appPath.setText(a.getParent().getPath());
 
     Element appName = new Element("name");
-    appName.setText(a.getName()); 
+    appName.setText(a.getName());
 
     Element appOwner = new Element("owner");
      appOwner.setText(a.getOwner().getUsername());
 
-     Element appPerm = new Element("perm"); 
-     appPerm.setText(a.getUserPermission() + a.getOthersPermission()); 
+     Element appPerm = new Element("perm");
+     appPerm.setText(a.getUserPermission() + a.getOthersPermission());
 
-     Element appContent = new Element("method"); 
-     appContent.setText(a.getData(a.getOwner())); 
+     Element appContent = new Element("method");
+     appContent.setText(a.getData(a.getOwner()));
 
-     app.addContent(appPath); 
-     app.addContent(appName); 
-     app.addContent(appOwner); 
-     app.addContent(appPerm); 
-     app.addContent(appContent); 
+     app.addContent(appPath);
+     app.addContent(appName);
+     app.addContent(appOwner);
+     app.addContent(appPerm);
+     app.addContent(appContent);
 
-     return app; 
+     return app;
   }
   @Override
   public Element visit(Link l){
     //FIXME TODO
-    Element link = new Element("link"); 
-    link.setAttribute("id",String.valueOf(l.getId())); 
+    Element link = new Element("link");
+    link.setAttribute("id",String.valueOf(l.getId()));
 
-    Element linkPath = new Element("path"); 
-    linkPath.setText(l.getParent().getPath()); 
+    Element linkPath = new Element("path");
+    linkPath.setText(l.getParent().getPath());
 
-    Element linkName = new Element("name"); 
-    linkName.setText(l.getName()); 
+    Element linkName = new Element("name");
+    linkName.setText(l.getName());
 
-    Element linkOwner = new Element("owner"); 
-    linkOwner.setText(l.getOwner().getUsername()); 
+    Element linkOwner = new Element("owner");
+    linkOwner.setText(l.getOwner().getUsername());
 
-    Element linkPerm = new Element("perm"); 
-    linkPerm.setText(l.getUserPermission() + l.getOthersPermission()); 
+    Element linkPerm = new Element("perm");
+    linkPerm.setText(l.getUserPermission() + l.getOthersPermission());
 
-    Element linkContent = new Element("value"); 
-    linkContent.setText(l.getData(l.getOwner())); 
+    Element linkContent = new Element("value");
+    linkContent.setText(l.getData(l.getOwner()));
 
-    link.addContent(linkPath); 
-    link.addContent(linkName); 
-    link.addContent(linkOwner); 
-    link.addContent(linkPerm); 
-    link.addContent(linkContent); 
+    link.addContent(linkPath);
+    link.addContent(linkName);
+    link.addContent(linkOwner);
+    link.addContent(linkPerm);
+    link.addContent(linkContent);
 
-    return link; 
+    return link;
   }
 
 }

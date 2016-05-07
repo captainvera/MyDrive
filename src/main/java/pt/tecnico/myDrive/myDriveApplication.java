@@ -63,10 +63,10 @@ public class myDriveApplication {
   public static void xmlPrint() {
     // FIXME TODO
     log.trace("xmlPrint: " + FenixFramework.getDomainRoot());
-    Document doc = FileSystem.getInstance().xmlExport(); 
+    Document doc = FileSystem.getInstance().xmlExport();
     XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
-    try { xmlOutput.output(doc, new PrintStream(System.out)); 
-    } catch (Exception e) { System.out.println(e); } 
+    try { xmlOutput.output(doc, new PrintStream(System.out));
+    } catch (Exception e) { System.out.println(e); }
   }
 
 
@@ -75,12 +75,12 @@ public class myDriveApplication {
     // FIXME TODO
     log.trace("xmlScan: " + FenixFramework.getDomainRoot());
     FileSystem fs = FileSystem.getInstance();
-    SAXBuilder builder = new SAXBuilder(); 
-    try { 
-      Document document = (Document)builder.build(file); 
-      fs.xmlImport(document.getRootElement()); 
-    } catch (Exception e) { 
-      e.printStackTrace(); 
+    SAXBuilder builder = new SAXBuilder();
+    try {
+      Document document = (Document)builder.build(file);
+      fs.xmlImport(document.getRootElement());
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 

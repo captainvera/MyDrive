@@ -48,8 +48,8 @@ public class App extends App_Base {
   }
 
   @Override
-  public String execute(User user, String[] arguments) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException{
-    
+  public String execute(User user, String[] arguments) {
+
     String appMethod = getData();
 
     //last part of the string, being the method name of the package
@@ -57,7 +57,7 @@ public class App extends App_Base {
     //the class name to look for
     String className = appMethod.substring(0, appMethod.lastIndexOf("."));
     try{
-        Method method = Class.forName(className).getMethod(methodName); 
+        Method method = Class.forName(className).getMethod(methodName);
 
         Object[] args = new Object[]{arguments};
 
@@ -66,7 +66,7 @@ public class App extends App_Base {
         String result = (String) method.invoke(this, args);
 
         return result;
-    } catch(NoSuchMethodException | ClassNotFoundException ) {
+    } catch(NoSuchMethodException | ClassNotFoundException e ) {
       throw new RuntimeException("Unknown method or class on list file, or illegal access");
     }
     catch(IllegalAccessException e){
