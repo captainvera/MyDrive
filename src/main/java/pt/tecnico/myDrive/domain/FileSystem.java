@@ -162,6 +162,7 @@ public class FileSystem extends FileSystem_Base {
 
     log.trace("Creating root home");
     Directory rootHome = createDirectory(rootUser.getUsername(), homeDir, rootUser);
+    rootUser.setHomeDirectory(rootHome);
 
     log.trace("Creating guest user");
     GuestUser guestUser = new GuestUser(this);
