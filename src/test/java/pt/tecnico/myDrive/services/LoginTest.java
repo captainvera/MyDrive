@@ -47,29 +47,25 @@ public class LoginTest extends AbstractServiceTest {
 
   @Test
   public void testGuestUserCreation() {
-
+    // TODO
   }
 
 	@Test
 	public void testLogin(){
-		try {
-			LoginService loginservice1 = new LoginService(_user.getUsername(), "whatchumeanb6p");
-			LoginService loginservice2 = new LoginService("root", "***");
+    LoginService loginservice1 = new LoginService(_user.getUsername(), "whatchumeanb6p");
+    LoginService loginservice2 = new LoginService("root", "***");
 
-			loginservice1.execute();
-			loginservice2.execute();
+    loginservice1.execute();
+    loginservice2.execute();
 
-			long tok1 = loginservice1.result();
-			long tok2 = loginservice2.result();
+    long tok1 = loginservice1.result();
+    long tok2 = loginservice2.result();
 
-			User user1 = _fs.getUserByToken(tok1);
-			User user2 = _fs.getUserByToken(tok2);
+    User user1 = _fs.getUserByToken(tok1);
+    User user2 = _fs.getUserByToken(tok2);
 
-			assertTrue("Login user1 successful.", user1 == _user);
-			assertTrue("Login user2 successful.", user2.getUsername() == "root");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    assertTrue("Login user1 successful.", user1 == _user);
+    assertTrue("Login user2 successful.", user2.getUsername() == "root");
 	}
 
 
