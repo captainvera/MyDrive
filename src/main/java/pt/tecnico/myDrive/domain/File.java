@@ -13,6 +13,8 @@ import java.util.ArrayList;
 
 import org.jdom2.Element;
 import java.io.UnsupportedEncodingException;
+import java.security.acl.Owner;
+
 import org.jdom2.DataConversionException;
 
 import org.joda.time.DateTime;
@@ -54,17 +56,19 @@ public abstract class File extends File_Base {
    */
   private void checkFilename(String filename) {
 
-    if(filename.length() == 0)
-        throw new InvalidFilenameException(filename);
+    /**
+     * File names can't have '$' as first character, since that's how an
+     * environment variable is recognized
+     */
+    if(filename.length() == 0 || filename.charAt(0) == '$')
+      throw new InvalidFilenameException(filename);
 
     char[] characters = filename.toCharArray();
 
     for (char c: characters) {
-      if ((!Character.isLetter(c) && !Character.isDigit(c))
-
-          || c == 0 || c == '\\') {
+      if (c == 0 || c == '\\') {
         throw new InvalidFilenameException(filename);
-          }
+      }
     }
   }
 
@@ -86,7 +90,7 @@ public abstract class File extends File_Base {
   }
 
   public void remove(User user) {
-    checkDeletionPermissions(user);
+    user.checkDeletionPermissions(this);
     remove();
   }
 
@@ -103,7 +107,7 @@ public abstract class File extends File_Base {
   /**
    * Executes the file with diferent behaviour depending on the file type
    */
-  public abstract String execute(User user, String[] arguments) throws NotADirectoryException, FileUnknownException, InsufficientPermissionsException;
+  public abstract String execute(User user, String[] arguments);
 
   /**
    * The calculation of the size of the file will vary depending on subclass implementation
@@ -131,18 +135,29 @@ public abstract class File extends File_Base {
 
   public abstract File getFile(ArrayList<String> tokens, User user);
 
-  /**
-   * Two files are equal if they belong to the same file system, have the same
-   * id in the file system and the same path.
-   *
-   * @param file
-   * @return True if two files are equal
-   */
-  boolean equals(File file) {
-    return getFileSystem() == file.getFileSystem() &&
-      getId() == file.getId() &&
-      getPath().equals(file.getPath());
+  public File getFileObject(User user) {
+    return this;
   }
+
+  protected String getPermissions(User user) {
+    return user.getPermissions(this);
+  }
+
+  public void xmlImport(Element dirElement) throws UnsupportedEncodingException, DataConversionException {
+    super.setId(dirElement.getAttribute("id").getIntValue());
+
+    Element perm = dirElement.getChild("perm");
+    if (perm != null){
+      String userPermission = new String(perm.getText().getBytes("UTF-8"));
+      super.setUserPermission(userPermission.substring(0,4));
+      super.setOthersPermission(userPermission.substring(4,8));
+    }
+  }
+
+
+  /**
+   * Fenix framework stuff
+   */
 
   @Override
   public void setUserPermission(String perm) {
@@ -159,16 +174,17 @@ public abstract class File extends File_Base {
     throw new MethodDeniedException();
   }
 
-  @Override
-  public void setFileExtension(Extension extension){
-      throw new MethodDeniedException();
-  }
   protected final void touch(){
     super.setLastModified(new DateTime());
+     }
+  @Override
+  public void setFileSystem(FileSystem fs) {
+    throw new MethodDeniedException();
   }
 
-  public File getFileObject(User user) {
-    return this;
+  @Override
+  public FileSystem getFileSystem() {
+    throw new MethodDeniedException();
   }
 
   // TODO
@@ -180,7 +196,9 @@ public abstract class File extends File_Base {
 
   @Override
   public void setOwner(User owner) {
-    throw new MethodDeniedException();
+    // TODO|FIXME
+    // Shouldn't be public
+    super.setOwner(owner);
   }
 
   @Override
@@ -190,54 +208,11 @@ public abstract class File extends File_Base {
 
 
   /**
-   * Verifies if user has permission to perform some operation on file
-   *
-   * @param user
-   * @param index
-   * @param c
+   * Protected methods for subclass access
    */
-  protected void checkPermissions(User user, int index, char c) {
-    String permissions = getPermissions(user);
-    if(permissions.charAt(index) != c)
-      throw new InsufficientPermissionsException();
+  protected final FileSystem getFileSystem$6p() {
+    return super.getFileSystem();
   }
-
-  protected void checkReadPermissions(User user) {
-    checkPermissions(user, 0, 'r');
-  }
-
-  protected void checkWritePermissions(User user) {
-    checkPermissions(user, 1, 'w');
-  }
-
-  protected void checkExecutionPermissions(User user) {
-    checkPermissions(user, 2, 'x');
-  }
-
-  protected void checkDeletionPermissions(User user) {
-    checkPermissions(user, 3, 'd');
-  }
-
-  protected String getPermissions(User user) {
-    if (getFileSystem().getRootUser().equals(user))
-      return "rwxd";
-    else if (getOwner().equals(user))
-      return getUserPermission();
-    else
-      return getOthersPermission();
-  }
-  
-  public void xmlImport(Element dirElement) throws UnsupportedEncodingException, DataConversionException {
-      super.setId(dirElement.getAttribute("id").getIntValue());
-
-      Element perm = dirElement.getChild("perm");
-      if (perm != null){
-        String userPermission = new String(perm.getText().getBytes("UTF-8"));
-        super.setUserPermission(userPermission.substring(0,4));
-        super.setOthersPermission(userPermission.substring(4,8));
-      }
-  }
-
 
 }
 

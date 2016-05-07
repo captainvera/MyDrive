@@ -13,6 +13,7 @@ import pt.tecnico.myDrive.domain.Link;
 import pt.tecnico.myDrive.domain.Login;
 import pt.tecnico.myDrive.domain.PlainFile;
 import pt.tecnico.myDrive.domain.User;
+import pt.tecnico.myDrive.domain.GuestUser;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
 import pt.tecnico.myDrive.exceptions.IllegalRemovalException;
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
@@ -29,9 +30,14 @@ public class DeleteFileTest extends AbstractServiceTest {
 	private FileSystem _fs;
   private User _user;
   private User _otherUser;
+  private User _anotherOne;
   private Login _login;
   private Directory _dir1;
   private Directory _dir2;
+
+  private Login _guestLogin;
+  private GuestUser _guestUser;
+  private long _guestToken;
 
 	/* (non-Javadoc)
 	 * @see pt.tecnico.myDrive.service.AbstractServiceTest#populate()
@@ -40,12 +46,18 @@ public class DeleteFileTest extends AbstractServiceTest {
 	protected void populate() {
 		try {
       _fs = FileSystem.getInstance();
-      _user = new User(_fs, "litxo", "litxo", "litxo");
-			_user.setHomeDirectory(new Directory(_fs, "litxo", _fs.getHomeDirectory(), _user));
+      _user = new User(_fs, "litxoe5sQu3nt0u", "litxoe5sQu3nt0u", "litxoe5sQu3nt0u");
+			_user.setHomeDirectory(new Directory(_fs, "litxoe5sQu3nt0u", _fs.getHomeDirectory(), _user));
       _login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
 
       // Only for permission testing
-      _otherUser = new User (_fs, "verixo", "verixo", "verixo");
+      _otherUser  = new User (_fs, "verixoe5sQu3nt0u", "verixoe5sQu3nt0u", "verixoe5sQu3nt0u");
+      _anotherOne = new User (_fs, "swaglordus", "swaglordus", "swaglordus", "rwxdrwxd");
+      _anotherOne.setHomeDirectory(new Directory(_fs, "swaglordus", _fs.getHomeDirectory(), _anotherOne));
+
+      _guestToken = 120398l;
+      _guestUser = _fs.getGuestUser();
+      _guestLogin = new Login(_fs, _guestUser, _guestUser.getHomeDirectory(), _guestToken);
 
       /* We'll have something like this
        * |- app
@@ -88,6 +100,9 @@ public class DeleteFileTest extends AbstractServiceTest {
       new PlainFile (_fs, "plainfile1", _dir1, _user, "plainfile1_Data");
       new PlainFile (_fs, "plainfile2", _dir2, _user, "plainfile2_Data");
 
+      new PlainFile (_fs, "plainfile3", _anotherOne.getHomeDirectory(), _anotherOne, "plainfile3_Data");
+      new PlainFile (_fs, "plainfile4", _guestUser.getHomeDirectory(), _guestUser, "plainfile3_Data");
+
     } catch(Exception e) {
       e.printStackTrace();
     }
@@ -101,10 +116,10 @@ public class DeleteFileTest extends AbstractServiceTest {
     DeleteFileService dfs = new DeleteFileService(123l, filename);
     dfs.execute();
     Directory home = _user.getHomeDirectory();
-    try{
+    try {
     	home.getFileByName(filename);
-    }catch (FileUnknownException e){
-    	if(e.getFileName() == filename)
+    } catch (FileUnknownException e) {
+    	if(e.getFileName().equals(filename))
     		deleted = true;
     }
     assertTrue("Link has been deleted!", deleted);
@@ -118,10 +133,10 @@ public class DeleteFileTest extends AbstractServiceTest {
     DeleteFileService dfs = new DeleteFileService(123l, filename);
     dfs.execute();
     Directory home = _user.getHomeDirectory();
-    try{
+    try {
     	home.getFileByName(filename);
-    }catch (FileUnknownException e){
-    	if(e.getFileName() == filename)
+    } catch (FileUnknownException e) {
+    	if(e.getFileName().equals(filename))
     		deleted = true;
     }
     assertTrue("Link has been deleted!", deleted);
@@ -135,10 +150,10 @@ public class DeleteFileTest extends AbstractServiceTest {
     DeleteFileService dfs = new DeleteFileService(123l,filename );
     dfs.execute();
     Directory home = _user.getHomeDirectory();
-    try{
+    try {
     	home.getFileByName(filename);
-    }catch (FileUnknownException e){
-    	if(e.getFileName() == filename)
+    } catch (FileUnknownException e) {
+    	if(e.getFileName().equals(filename))
     		deleted = true;
     }
     assertTrue("Link has been deleted!", deleted);
@@ -153,15 +168,33 @@ public class DeleteFileTest extends AbstractServiceTest {
     dfs.execute();
     Directory home = _user.getHomeDirectory();
 
-    try{
+    try {
     	home.getFileByName(filename);
-    }catch (FileUnknownException e){
-    	if(e.getFileName() == filename)
+    } catch (FileUnknownException e) {
+    	if(e.getFileName().equals(filename))
     		deleted = true;
     }
     assertTrue("Directory has been deleted!", deleted);
   }
 
+  @Test
+  public void testGuestDeletionSuccess() throws Exception {
+    boolean deleted = false;
+
+    _guestLogin.setCurrentDirectory(_guestUser.getHomeDirectory(), _guestUser);
+
+    DeleteFileService dfs = new DeleteFileService(_guestToken, "plainfile4");
+    dfs.execute();
+
+    try {
+    	_guestLogin.getCurrentDirectory().getFileByName("plainfile4");
+    } catch (FileUnknownException e) {
+    	if(e.getFileName().equals("plainfile4"))
+    		deleted = true;
+    }
+    assertTrue("Directory has been deleted!", deleted);
+
+  }
 
   @Test(expected = FileUnknownException.class)
   public void fileUnknownException() throws Exception {
@@ -190,6 +223,14 @@ public class DeleteFileTest extends AbstractServiceTest {
   	DeleteFileService dfs = new DeleteFileService(123l, "dir2");
     dfs.execute();
   }
+
+  @Test(expected = InsufficientPermissionsException.class)
+    public void testGuestDeletionOtherOwner() throws Exception {
+      _guestLogin.setCurrentDirectory(_anotherOne.getHomeDirectory(), _guestUser);
+
+      DeleteFileService dfs = new DeleteFileService(_guestToken, "plainfile3");
+      dfs.execute();
+    }
 
 }
 

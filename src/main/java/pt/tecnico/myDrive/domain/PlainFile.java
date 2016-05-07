@@ -16,6 +16,7 @@ import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 
 import org.joda.time.DateTime;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class PlainFile extends PlainFile_Base {
 
@@ -49,7 +50,31 @@ public class PlainFile extends PlainFile_Base {
 
   @Override
   public String execute(User user, String[] arguments) {
-    return super.getData();
+    return executePlainFile(user);
+  }
+
+  public String executePlainFile(User user){
+    String data = getData();
+    String[] fileLines = data.split("\\r?\\n");
+
+    for(String line : fileLines){
+        String[] tokens = line.split("\\s+");
+        String path = tokens[0];
+        String[] arguments = ArrayUtils.removeElement(tokens,0);
+
+        //FIXME what to do with directory
+        File file = getFileSystem().getFileByPath(path, user, new Directory());
+        //TODO fixme - user extension to execute non executable files      
+        file.execute(user, arguments);
+        //if non execable do executewithextension
+    }
+    //placeholder - ret values? void?
+    return null;
+  }
+
+  public String executeWithExtensionApp(User user, String extension, String[] arguments){
+    App app = user.getAssociation(extension);
+    return app.execute(user, arguments);
   }
 
   @Override
@@ -68,13 +93,13 @@ public class PlainFile extends PlainFile_Base {
   }
 
   public void setData(String data, User user) {
-    checkWritePermissions(user);
+    user.checkWritePermissions(this);
     super.setData(data);
     touch();
   }
 
   public String getData(User user) {
-    checkReadPermissions(user);
+    user.checkReadPermissions(this);
     return super.getData();
   }
 
@@ -83,10 +108,4 @@ public class PlainFile extends PlainFile_Base {
     return "- " + getUserPermission() + getOthersPermission() + " " + getName();
   }
 
-  public void writeToFile(String s, User user){
-    /*
-     * TODO::XXX:CHECK PERMISSIONS
-     */
-    super.setData(s);
-  }
 }

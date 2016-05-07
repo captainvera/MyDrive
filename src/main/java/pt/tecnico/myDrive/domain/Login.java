@@ -14,7 +14,9 @@ import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
-
+import java.util.List;
+import java.util.ArrayList;
+import pt.tecnico.myDrive.services.dto.EnvironmentVariabledto;
 public class Login extends Login_Base {
   protected static final Logger log = LogManager.getRootLogger();
 
@@ -22,10 +24,9 @@ public class Login extends Login_Base {
    * Login constructor, receives logged user, currentDirectory and expiration date.
    */
   public Login(FileSystem fs, User user, Directory currentDirectory, Long token) {
-    super();
-    super.setCurrentDirectory(currentDirectory);
     super.setFileSystem(fs);
     super.setUser(user);
+    super.setCurrentDirectory(currentDirectory);
     super.setToken(token);
     extendToken();
   }
@@ -49,10 +50,7 @@ public class Login extends Login_Base {
   }
 
   public void extendToken() {
-    if (super.getFileSystem().isRoot(super.getUser()))
-      super.setExpirationDate(new DateTime().plusMinutes(10));
-    else
-      super.setExpirationDate(new DateTime().plusHours(2));
+    super.setExpirationDate(super.getUser().getNextExpirationDate());
   }
 
   public boolean compareToken(long token) {
@@ -103,7 +101,7 @@ public class Login extends Login_Base {
   }
 
   public void setCurrentDirectory(Directory dir, User owner) {
-    dir.checkExecutionPermissions(owner);
+    owner.checkExecutionPermissions(dir);
     super.setCurrentDirectory(dir);
   }
 
@@ -131,10 +129,10 @@ public class Login extends Login_Base {
     EnvironmentVariable envvar = getEnvVarbyName(name);
     if(envvar == null){
       envvar = new EnvironmentVariable(name, value);
-      super.addEnvVar(envvar); 
+      super.addEnvVar(envvar);
     } else {
       envvar.setValue(value);
-    } 
+    }
   }
 
   private EnvironmentVariable getEnvVarbyName(String name){
@@ -146,12 +144,12 @@ public class Login extends Login_Base {
     return null;
   }
 
-  public String listEnvVar(){
-    String result = "";
+  public List<EnvironmentVariabledto> listEnvVar(){
+    List result = new ArrayList<EnvironmentVariabledto>();
     for (EnvironmentVariable envvar: super.getEnvVarSet()){
-      result += "name: " + envvar.getName() + "value: " + envvar.getValue() + "\n";
-    }  
-    return result; 
+      result.add( new EnvironmentVariabledto(envvar.getName(), envvar.getValue()));
+    }
+    return result;
   }
 
 }
