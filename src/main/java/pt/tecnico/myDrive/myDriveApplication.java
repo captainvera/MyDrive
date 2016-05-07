@@ -24,6 +24,8 @@ import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.DomainRoot;
 import pt.ist.fenixframework.FenixFramework;
 
+import pt.tecnico.myDrive.presentation.MyDriveShell;
+
 public class myDriveApplication {
   private static final Logger log = LogManager.getRootLogger();
 
@@ -33,8 +35,13 @@ public class myDriveApplication {
     try {
       if(args.length > 0) xmlScan(new java.io.File(args[0]));
       else setupDrive();
-      xmlPrint();
-    } finally {
+      //xmlPrint();
+       
+      MyDriveShell.main(new String[0]);
+
+    } catch(Exception e){
+      e.printStackTrace();
+    }finally {
       // ensure an orderly shutdown
       FenixFramework.shutdown();
     }
@@ -43,103 +50,13 @@ public class myDriveApplication {
   @Atomic
   public static void init(){
   	log.trace("Initializing: " + FenixFramework.getDomainRoot());
-  	FileSystem.getInstance().reset();
+  	FileSystem.getInstance();
   }
 
 
   @Atomic
   public static void setupDrive(){
-    //FIXME TODO
-//    /**
-//     * Basic setup to test desired functionality
-//     */
-//
-//    log.trace("executing setupDrive()");
-//    log.debug("Setting root: " + FenixFramework.getDomainRoot());
-//
-//    FileSystem fs = FileSystem.getInstance();
-//
-//    try {
-//      LoginService login = new LoginService("root","***");
-//      login.execute();
-//      long token = login.result();
-//    } catch(Exception e) {
-//      System.out.println("Couldn't login with root!");
-//      e.printStackTrace();
-//    }
-//
-//    /*
-//     * Criação do ficheiro README mudando o working directory
-//     * */
-//    try {
-//      log.debug("Showing Current Directory Path");
-//      System.out.println(fs.listPath());
-//
-//      log.debug("Changing directory to /home");
-//      fs.changeDirectory("..");
-//
-//      log.debug("Showing Current Directory Path");
-//      System.out.println(fs.listPath());
-//      log.debug("Listing current Directory");
-//      System.out.println(fs.listDirectory());
-//      log.debug("Showing result of opening README");
-//      System.out.println(fs.executeFile("README"));
-//
-//    } catch(Exception e) {
-//      e.printStackTrace();
-//    }
-//
-//    /*
-//     * Criação do caminho /usr/local/bin absolutamente
-//     */
-//    try {
-//      log.debug("Listing /usr/local");
-//      System.out.println(fs.listFileByPathSimple("/usr/local"));
-//
-//      log.debug("Removing /usr/local/bin");
-//      fs.removeFileByPath("/usr/local/bin");
-//
-//      log.debug("Listing /usr/local");
-//      System.out.println(fs.listFileByPathSimple("/usr/local"));
-//
-//
-//      log.debug("Listing /home");
-//      System.out.println(fs.listFileByPathSimple("/home"));
-//      log.debug("Removing /home/README");
-//      //fs.removeFileByPath("/home/README");
-//      log.debug("Listing /home");
-//      System.out.println(fs.listFileByPathSimple("/home"));
-//
-//      log.debug("Number of files in file system pre-remove: " + fs.getFilesSet().size());
-//      log.debug("Files pre-remove: ");
-//      for (File f : fs.getFilesSet())
-//        System.out.println(f);
-//
-//
-//      log.debug("Number of files in file system pos-remove: " + fs.getFilesSet().size());
-//      log.debug("Files pos-remove: ");
-//      for (File f : fs.getFilesSet())
-//        System.out.println(f);
-//		//TODO EXECUTE APP
-//	  log.debug("creating link");
-//	  Link l1 = fs.createLink("cenas","/home/README");
-//	  Link l2 = fs.createLink("dirlink","/home");
-//	  log.debug("listing");
-//	  System.out.println(fs.listDirectory());
-//	  //execute
-//	  log.debug("executing readme...");
-//     // System.out.println(fs.executeFile("l1"));
-//	  log.debug("trying to write to link");
-//	  l1.setData("blabla");
-//	  System.out.println(l1.execute());
-//	  log.debug("changing directory");
-//      fs.changeDirectory("dirlink");
-//	  System.out.println(fs.listDirectory());
-//    } catch(Exception e) {
-//      e.printStackTrace();
-//    }
-//
-//    log.trace("Successful default setup!");
+    init();
   }
 
   @Atomic
