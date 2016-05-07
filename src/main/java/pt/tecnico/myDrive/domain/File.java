@@ -33,10 +33,8 @@ public abstract class File extends File_Base {
 
   protected void init(FileSystem fs, Integer id, String name, Directory parent, User owner) {
 
-    if(!fs.isRoot(owner)){
-      checkFilename(name);
-      checkFilepathSize(parent.getPath(), name);
-    }
+    checkFilepathSize(parent, name);
+    checkFilename(name);
 
     super.setFileSystem(fs);
     super.setId(id);
@@ -76,8 +74,9 @@ public abstract class File extends File_Base {
    * Verifies if filepath has atmost 1024 characters
    * @param filepath
    */
-  private void checkFilepathSize(String filepath, String filename) {
-    if((filepath.length() + filename.length() + 1) >= 1024) throw new InvalidFilepathSizeException(1024);
+  private void checkFilepathSize(Directory parent, String filename) {
+    String filepath = filename + (parent == null ? "" : parent.getPath());
+    if(filepath.length() >= 1024) throw new InvalidFilepathSizeException(1024);
   }
 
 
