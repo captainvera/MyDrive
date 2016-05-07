@@ -34,7 +34,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
     try {
       _fs = FileSystem.getInstance();
       _user = new User(_fs, "litxo88888", "litxo88888", "litxo8888");
-			_user.setHomeDirectory(new Directory(_fs, "litxo", _fs.getHomeDirectory(), _user));
+			_user.setHomeDirectory(new Directory(_fs, "litxo88888", _fs.getHomeDirectory(), _user));
       _login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
 
       /* We'll have something like this

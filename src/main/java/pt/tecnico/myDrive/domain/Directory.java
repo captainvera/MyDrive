@@ -65,11 +65,11 @@ public class Directory extends Directory_Base {
     if(tokens.size() > 1){
       String name = tokens.remove(0);
       file = getFileByName(name).getFile(tokens, user);
-      file.checkExecutionPermissions(user);
+      user.checkExecutionPermissions(file);
       return file;
     }else if(tokens.size() == 1){
       file = getFileByName(tokens.get(0)).getFileObject(user);
-      file.checkReadPermissions(user);
+      user.checkReadPermissions(file);
       return file;
     }else{
       throw new RuntimeException("Shouldn't happen! (Wrongly formated token array in get File)");
@@ -95,7 +95,9 @@ public class Directory extends Directory_Base {
   /**
    * @return Lists the files inside the directory using only their name.
    */
-  private String listFilesSimple() {
+  private String listFilesSimple(User user) {
+    user.checkReadPermissions(this);
+
     Comparator<File> comp = new Comparator<File>()
     {
       public int compare(File f1, File f2)
@@ -114,7 +116,7 @@ public class Directory extends Directory_Base {
    * @return List of the files inside the directory using their toString method.
    */
   public String listFilesAll(User user) {
-    checkReadPermissions(user);
+    user.checkReadPermissions(this);
 
     Comparator<File> comp = new Comparator<File>()
     {
@@ -300,35 +302,35 @@ public class Directory extends Directory_Base {
    */
 
   public Directory createDirectory(String name, User owner){
-    checkWritePermissions(owner);
+    owner.checkWritePermissions(this);
     checkFileUnique(name);
-    return new Directory(getFileSystem(), name, this, owner);
+    return new Directory(getFileSystem$6p(), name, this, owner);
   }
 
   public PlainFile createPlainFile(String name, User owner){
-    checkWritePermissions(owner);
+    owner.checkWritePermissions(this);
     checkFileUnique(name);
-    return new PlainFile(getFileSystem(), name, this, owner);
+    return new PlainFile(getFileSystem$6p(), name, this, owner);
   }
 
   public PlainFile createPlainFile(String name, User owner, String data){
-    checkWritePermissions(owner);
+    owner.checkWritePermissions(this);
     checkFileUnique(name);
-    PlainFile pf = new PlainFile (getFileSystem(), name, this, owner);
+    PlainFile pf = new PlainFile (getFileSystem$6p(), name, this, owner);
     pf.setData(data, owner);
     return pf;
   }
 
   public App createApp(String name, User owner){
-    checkWritePermissions(owner);
+    owner.checkWritePermissions(this);
     checkFileUnique(name);
-    return new App(getFileSystem(), name, this, owner);
+    return new App(getFileSystem$6p(), name, this, owner);
   }
 
   public Link createLink(String name, User owner, String data){
-    checkWritePermissions(owner);
+    owner.checkWritePermissions(this);
     checkFileUnique(name);
-    return new Link(getFileSystem(), name, this, owner, data);
+    return new Link(getFileSystem$6p(), name, this, owner, data);
   }
 
   /**

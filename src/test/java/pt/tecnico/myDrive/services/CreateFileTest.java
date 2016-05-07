@@ -11,6 +11,7 @@ import pt.tecnico.myDrive.services.CreateFileService;
 import pt.tecnico.myDrive.domain.App;
 import pt.tecnico.myDrive.domain.Link;
 import pt.tecnico.myDrive.domain.User;
+import pt.tecnico.myDrive.domain.GuestUser;
 import pt.tecnico.myDrive.domain.File;
 import pt.tecnico.myDrive.domain.PlainFile;
 import pt.tecnico.myDrive.domain.FileSystem;
@@ -18,6 +19,9 @@ import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.domain.Login;
 
 import pt.tecnico.myDrive.exceptions.*;
+
+import pt.tecnico.myDrive.visitors.PlainFileVisitor;
+import pt.tecnico.myDrive.visitors.DirectoryVisitor;
 
 import org.apache.commons.lang3.StringUtils;
 /**
@@ -35,20 +39,66 @@ public class CreateFileTest extends AbstractServiceTest {
   private Login _login;
   private Login _loginOther;
 
+  private User _anotherOne;
+  private Login _guestLogin;
+  private GuestUser _guestUser;
+  private long _guestToken;
+
   @Override
   protected void populate() {
     _fs = FileSystem.getInstance();
 
-    _user = new User(_fs, "litxo", "litxo", "litxo");
-    _user.setHomeDirectory(new Directory(_fs, "litxo", _fs.getHomeDirectory(), _user));
+    _user = new User(_fs, "litxoe5sQu3nt0u", "litxoe5sQu3nt0u", "litxoe5sQu3nt0u");
+    _user.setHomeDirectory(new Directory(_fs, "litxoe5sQu3nt0u", _fs.getHomeDirectory(), _user));
     _login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
 
-    _otherUser = new User(_fs, "leicxo", "leicxo", "leicxo");
+    _otherUser = new User(_fs, "leicxoe5sQu3nt0u", "leicxoe5sQu3nt0u", "leicxoe5sQu3nt0u");
     _otherUser.setHomeDirectory(_fs.getHomeDirectory());
     _loginOther = new Login(_fs, _otherUser, _otherUser.getHomeDirectory(), 124l);
 
+    _anotherOne = new User (_fs, "swaglordus", "swaglordus", "swaglordus", "rwxdrwxd");
+    _anotherOne.setHomeDirectory(new Directory(_fs, "swaglordus", _fs.getHomeDirectory(), _anotherOne));
+
+    _guestToken = 120398l;
+    _guestUser = _fs.getGuestUser();
+    _guestLogin = new Login(_fs, _guestUser, _guestUser.getHomeDirectory(), _guestToken);
+
     new PlainFile (_fs, "pftest" , _user.getHomeDirectory(), _user, "pf_Data");
-    new Directory (_fs, "dirtest" , _user.getHomeDirectory(), _user);
+    new Directory (_fs, "dirtest", _user.getHomeDirectory(), _user);
+
+    new Directory (_fs, "dirZ", _guestUser.getHomeDirectory(), _guestUser);
+    new PlainFile (_fs, "pf", _guestUser.getHomeDirectory(), _user, "pf_Data");
+  }
+
+  public void testGuestCreatePFSuccess() throws Exception {
+    _guestLogin.setCurrentDirectory(_guestUser.getHomeDirectory(), _guestUser);
+    CreateFileService cfs = new CreateFileService(_guestToken, "pf", "plaINFILE");
+    cfs.execute();
+
+    File f = _guestUser.getHomeDirectory().getFileByName("pf");
+
+    PlainFile pf = f.accept(new PlainFileVisitor());
+
+    assertTrue(pf != null && pf.getData(_guestUser).equals("plaINFILE") && pf.getOwner().equals(_guestUser));
+  }
+
+  public void testGuestCreateDirSuccess() throws Exception {
+    _guestLogin.setCurrentDirectory(_guestUser.getHomeDirectory(), _guestUser);
+    CreateFileService cfs = new CreateFileService(_guestToken, "dir", "dirZ");
+    cfs.execute();
+
+    File f = _guestUser.getHomeDirectory().getFileByName("dirZ");
+
+    Directory dir = f.accept(new DirectoryVisitor());
+
+    assertTrue(dir != null && dir.getOwner().equals(_guestUser));
+  }
+
+  @Test(expected = InsufficientPermissionsException.class)
+  public void testGuestCreatePF() throws Exception {
+    _guestLogin.setCurrentDirectory(_anotherOne.getHomeDirectory(), _guestUser);
+    CreateFileService cfs = new CreateFileService(_guestToken, "pf", "plaINFILE");
+    cfs.execute();
   }
 
   @Test(expected=FileExistsException.class)
@@ -91,7 +141,7 @@ public class CreateFileTest extends AbstractServiceTest {
 
   @Test(expected = InvalidFilenameException.class)
     public void invalidFilename() throws Exception {
-      CreateFileService cfs = new CreateFileService(123l, "00000@££@§@£€£", "plainfile");
+      CreateFileService cfs = new CreateFileService(123l, "00000\\\\\\\0", "plainfile");
       cfs.execute();
     }
 

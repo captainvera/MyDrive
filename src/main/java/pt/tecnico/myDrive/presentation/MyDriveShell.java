@@ -22,6 +22,7 @@ public class MyDriveShell extends Shell {
   }
   public static void main(String[] args) throws Exception {
     MyDriveShell sh = new MyDriveShell();
+    sh.setDir("/");
     sh.execute();
   }
 

@@ -10,6 +10,8 @@ public abstract class Shell {
   private Map<String,Command> coms = new TreeMap<String,Command>();
   private PrintWriter out;
   private String name;
+  private String _username = "";
+  private String _currentDir = "";
 
   public Shell(String n) { this(n, new PrintWriter(System.out, true), true); }
   public Shell(String n, Writer w) { this(n, w, true); }
@@ -71,9 +73,9 @@ public abstract class Shell {
 
   public void execute() throws Exception {
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    String str, prompt = null; // System.getenv().get("PS1");
+    String str, prompt = _username + " @ " + _currentDir + " ~ "; // System.getenv().get("PS1");
 
-    if (prompt == null) prompt = "6P@MLG$420 > ";
+    //if (prompt == null) prompt = "6P@MLG$420 > ";
     System.out.println(name+" shell ('quit' to leave)");
     System.out.print(prompt);
     while ((str = in.readLine()) != null) {
@@ -89,6 +91,7 @@ public abstract class Shell {
       } else
 	      if (arg[0].length() > 0)
           System.err.println(arg[0]+": command not found. ('help' for command list)");
+      prompt = _username + " @ " + _currentDir + " ~ ";
       System.out.print(prompt);
     }
     System.out.println(name+" end");
@@ -137,4 +140,12 @@ public abstract class Shell {
   abstract long getActiveToken(long token);
 
   abstract TreeMap<String, Long> getTokens();
+
+  public void setUser(String username){
+    _username = username;
+  }
+
+  public void setDir(String currentDir){
+    _currentDir = currentDir;
+  }
 }
