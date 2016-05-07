@@ -74,6 +74,7 @@ public class myDriveApplication {
   public static void xmlScan(java.io.File file){
     // FIXME TODO
     log.trace("xmlScan: " + FenixFramework.getDomainRoot());
+  	FileSystem.getInstance().reset();
     FileSystem fs = FileSystem.getInstance();
     SAXBuilder builder = new SAXBuilder();
     try {

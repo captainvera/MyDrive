@@ -20,7 +20,7 @@ public class Login extends MyDriveCommand {
 
     long token = ls.result();
     String username = args[0];
-
+    shell().println("Logged in, token:" + token);
     shell().addSession(username, token);
     shell().setActiveSession(username);
   }
