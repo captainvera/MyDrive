@@ -21,7 +21,7 @@ public class GuestUser extends GuestUser_Base {
 
   @Override
   protected DateTime getNextExpirationDate() {
-    return new DateTime().plusHours(Integer.MAX_VALUE);
+    return new DateTime().plus(Integer.MAX_VALUE);
   }
 
   @Override
