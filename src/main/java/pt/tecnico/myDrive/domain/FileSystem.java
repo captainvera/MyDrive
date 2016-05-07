@@ -55,7 +55,7 @@ public class FileSystem extends FileSystem_Base {
 
   /**
    * FileSystem temporary state variables
-   * _login: keeps track of the current login in use 
+   * _login: keeps track of the current login in use
    */
 
   private Login _login;
@@ -795,19 +795,18 @@ public class FileSystem extends FileSystem_Base {
   }
 
   private void createFileWithoutContent(String name, String type, User user, Directory directory) {
-    Directory current = _login.getCurrentDirectory();
     switch(type.toLowerCase()){
       case "directory":
-        createDirectory(name, current, user);
+        createDirectory(name, directory, user);
         break;
 
       case "plainfile":
-        createPlainFile(name, current, user);
+        createPlainFile(name, directory, user);
         break;
 
-      /*case "app":
-        createApp(name);
-        break; TODO IN THIRD DELIVER*/
+      case "app":
+        createApp(name, directory, user);
+        break;
 
       case "link":
         throw new CreateLinkWithoutContentException();
@@ -815,22 +814,21 @@ public class FileSystem extends FileSystem_Base {
   }
 
   private void createFileWithContent(String name, String type, String data, User user, Directory directory) {
-    Directory current = _login.getCurrentDirectory();
     switch(type.toLowerCase()){
       case "directory":
         throw new CreateDirectoryWithContentException();
 
       case "plainfile":
-        createPlainFile(name, current, user, data);
+        createPlainFile(name, directory, user, data);
         break;
 
-      /*case "app":
-        App a = createApp(name, user, directory);
+      case "app":
+        App a = createApp(name, directory, user);
         a.setData(data);
-        break;TODO IN THIRD DELIVER*/
+        break;
 
       case "link":
-        createLink(name, current, user, data);
+        createLink(name, directory, user, data);
         break;
     }
   }
@@ -901,7 +899,7 @@ public class FileSystem extends FileSystem_Base {
 
   public String addEnvironmentVariable(long token, String name, String value){
     updateSession(token);
-    _login.addEnvVar(name, value); 
+    _login.addEnvVar(name, value);
     return _login.listEnvVar();
   }
 
