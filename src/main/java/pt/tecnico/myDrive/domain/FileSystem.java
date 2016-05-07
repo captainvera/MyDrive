@@ -740,6 +740,8 @@ public class FileSystem extends FileSystem_Base {
 
       case "link":
         throw new CreateLinkWithoutContentException();
+      default:
+        throw new UnknownTypeException(type);
     }
   }
 
@@ -760,6 +762,8 @@ public class FileSystem extends FileSystem_Base {
       case "link":
         createLink(name, directory, user, data);
         break;
+      default:
+        throw new UnknownTypeException(type);
     }
   }
   /**
@@ -911,11 +915,6 @@ public class FileSystem extends FileSystem_Base {
   public RootUser getRootUser() {
     throw new MethodDeniedException();
   }
-
-  /** @Override */
-  /** public GuestUser getGuestUser() { */
-  /**   throw new MethodDeniedException(); */
-  /** } */
 
   @Override
   public RootDirectory getRootDirectory() {
