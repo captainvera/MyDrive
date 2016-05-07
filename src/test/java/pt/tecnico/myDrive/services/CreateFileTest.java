@@ -22,6 +22,7 @@ import pt.tecnico.myDrive.exceptions.*;
 
 import pt.tecnico.myDrive.visitors.PlainFileVisitor;
 import pt.tecnico.myDrive.visitors.DirectoryVisitor;
+import pt.tecnico.myDrive.visitors.AppVisitor;
 
 import org.apache.commons.lang3.StringUtils;
 /**
@@ -66,25 +67,25 @@ public class CreateFileTest extends AbstractServiceTest {
     new PlainFile (_fs, "pftest" , _user.getHomeDirectory(), _user, "pf_Data");
     new Directory (_fs, "dirtest", _user.getHomeDirectory(), _user);
 
-    new Directory (_fs, "dirZ", _guestUser.getHomeDirectory(), _guestUser);
-    new PlainFile (_fs, "pf", _guestUser.getHomeDirectory(), _user, "pf_Data");
   }
 
+  @Test
   public void testGuestCreatePFSuccess() throws Exception {
     _guestLogin.setCurrentDirectory(_guestUser.getHomeDirectory(), _guestUser);
-    CreateFileService cfs = new CreateFileService(_guestToken, "pf", "plaINFILE");
+    CreateFileService cfs = new CreateFileService(_guestToken, "pf", "plaINFILE", "hello");
     cfs.execute();
 
     File f = _guestUser.getHomeDirectory().getFileByName("pf");
 
     PlainFile pf = f.accept(new PlainFileVisitor());
 
-    assertTrue(pf != null && pf.getData(_guestUser).equals("plaINFILE") && pf.getOwner().equals(_guestUser));
+    assertTrue(pf != null && pf.getData(_guestUser).equals("hello") && pf.getOwner().equals(_guestUser));
   }
 
+  @Test
   public void testGuestCreateDirSuccess() throws Exception {
     _guestLogin.setCurrentDirectory(_guestUser.getHomeDirectory(), _guestUser);
-    CreateFileService cfs = new CreateFileService(_guestToken, "dir", "dirZ");
+    CreateFileService cfs = new CreateFileService(_guestToken, "dirZ", "dir");
     cfs.execute();
 
     File f = _guestUser.getHomeDirectory().getFileByName("dirZ");
@@ -92,6 +93,19 @@ public class CreateFileTest extends AbstractServiceTest {
     Directory dir = f.accept(new DirectoryVisitor());
 
     assertTrue(dir != null && dir.getOwner().equals(_guestUser));
+  }
+
+  @Test
+  public void testGuestCreateAppSuccess() throws Exception {
+    _guestLogin.setCurrentDirectory(_guestUser.getHomeDirectory(), _guestUser);
+    CreateFileService cfs = new CreateFileService(_guestToken, "appZ", "app");
+    cfs.execute();
+
+    File f = _guestUser.getHomeDirectory().getFileByName("appZ");
+
+    App app = f.accept(new AppVisitor());
+
+    assertTrue(app != null && app.getOwner().equals(_guestUser));
   }
 
   @Test(expected = InsufficientPermissionsException.class)
