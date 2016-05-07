@@ -23,6 +23,8 @@ import pt.tecnico.myDrive.exceptions.*;
 import pt.tecnico.myDrive.visitors.PlainFileVisitor;
 import pt.tecnico.myDrive.visitors.DirectoryVisitor;
 
+import java.util.Arrays;
+
 import org.apache.commons.lang3.StringUtils;
 /**
  * @author miguel
@@ -72,38 +74,64 @@ public class CreateFileTest extends AbstractServiceTest {
 
   public void testGuestCreatePFSuccess() throws Exception {
     _guestLogin.setCurrentDirectory(_guestUser.getHomeDirectory(), _guestUser);
-    CreateFileService cfs = new CreateFileService(_guestToken, "pf", "plaINFILE");
+    CreateFileService cfs = new CreateFileService(_guestToken, "pf", "plainfile");
     cfs.execute();
 
     File f = _guestUser.getHomeDirectory().getFileByName("pf");
 
     PlainFile pf = f.accept(new PlainFileVisitor());
 
-    assertTrue(pf != null && pf.getData(_guestUser).equals("plaINFILE") && pf.getOwner().equals(_guestUser));
+    assertTrue(pf != null && pf.getData(_guestUser).equals("plainfile") && pf.getOwner().equals(_guestUser));
+  }
+
+  public void testCreateFileWithCiph() throws Exception {
+    CreateFileService cfs = new CreateFileService(123l, "p$f$$$6p", "plainfile");
+    cfs.execute();
+
+    File f = _user.getHomeDirectory().getFileByName("p$f$$$6p");
+
+    PlainFile pf = f.accept(new PlainFileVisitor());
+
+    assertTrue(pf != null && pf.getData(_user).equals("plainfile") && pf.getOwner().equals(_user));
   }
 
   public void testGuestCreateDirSuccess() throws Exception {
     _guestLogin.setCurrentDirectory(_guestUser.getHomeDirectory(), _guestUser);
-    CreateFileService cfs = new CreateFileService(_guestToken, "dir", "dirZ");
+    CreateFileService cfs = new CreateFileService(_guestToken, "dir", "directory");
     cfs.execute();
 
-    File f = _guestUser.getHomeDirectory().getFileByName("dirZ");
+    File f = _guestUser.getHomeDirectory().getFileByName("dir");
 
     Directory dir = f.accept(new DirectoryVisitor());
 
     assertTrue(dir != null && dir.getOwner().equals(_guestUser));
   }
 
+  @Test(expected = UnknownTypeException.class)
+  public void testFileUnknownType() throws Exception {
+    CreateFileService cfs = new CreateFileService(123l, "directory", "diectory");
+    cfs.execute();
+  }
+
+  @Test(expected = InvalidFilepathSizeException.class)
+  public void testFilePathTooBig() throws Exception {
+    char[] chars = new char[1024];
+    Arrays.fill(chars, 'a');
+    String text = new String(chars);
+    CreateFileService cfs = new CreateFileService(123l, text, "directory");
+    cfs.execute();
+  }
+
   @Test(expected = InsufficientPermissionsException.class)
   public void testGuestCreatePF() throws Exception {
     _guestLogin.setCurrentDirectory(_anotherOne.getHomeDirectory(), _guestUser);
-    CreateFileService cfs = new CreateFileService(_guestToken, "pf", "plaINFILE");
+    CreateFileService cfs = new CreateFileService(_guestToken, "pf", "plainfile");
     cfs.execute();
   }
 
   @Test(expected=FileExistsException.class)
   public void createPfWithoutContent() throws Exception {
-    CreateFileService cfs = new CreateFileService(123l, "pf", "plaINFILE");
+    CreateFileService cfs = new CreateFileService(123l, "pf", "plainfile");
     cfs.execute();
     cfs.execute();
   }
@@ -142,6 +170,12 @@ public class CreateFileTest extends AbstractServiceTest {
   @Test(expected = InvalidFilenameException.class)
     public void invalidFilename() throws Exception {
       CreateFileService cfs = new CreateFileService(123l, "00000\\\\\\\0", "plainfile");
+      cfs.execute();
+    }
+
+  @Test(expected = InvalidFilenameException.class)
+    public void invalidFilenameWithCiph() throws Exception {
+      CreateFileService cfs = new CreateFileService(123l, "$something", "plainfile");
       cfs.execute();
     }
 
