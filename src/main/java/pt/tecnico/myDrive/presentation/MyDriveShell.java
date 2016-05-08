@@ -14,7 +14,7 @@ public class MyDriveShell extends Shell {
     sh.execute();
   }
 
-  public MyDriveShell() { 
+  public MyDriveShell() {
     super("MyDrive");
     new Login(this);
     new ChangeWorkingDirectory(this);
@@ -41,7 +41,7 @@ public class MyDriveShell extends Shell {
       setUser(username);
       setDir(session.getCurrentDirectory());
     }else{
-      println("No session present for user " + username); 
+      println("No session present for user " + username);
     }
   };
 
