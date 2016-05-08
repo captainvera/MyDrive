@@ -4,7 +4,7 @@
 package pt.tecnico.myDrive.service;
 import org.junit.*;
 import static org.junit.Assert.*;
-
+import org.apache.commons.lang.StringUtils;
 import java.math.BigInteger;
 
 import pt.tecnico.myDrive.service.AbstractServiceTest;
@@ -65,7 +65,7 @@ public class LoginTest extends AbstractServiceTest {
     User user2 = _fs.getUserByToken(tok2);
 
     assertTrue("Login user1 successful.", user1 == _user);
-    assertTrue("Login user2 successful.", user2.getUsername() == "root");
+    assertTrue("Login user2 successful.", user2.getUsername().equals("root"));
 	}
 
 
