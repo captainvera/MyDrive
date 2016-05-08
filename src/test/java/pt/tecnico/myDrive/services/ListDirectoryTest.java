@@ -81,6 +81,7 @@ public class ListDirectoryTest extends AbstractServiceTest {
        *     |- dirapplink
        *     			|- app
        *     			|- link
+       *     			|- linkapp -> app
        *     |- dirpflink
        *     			|- pf
        *     			|- link
@@ -127,6 +128,8 @@ public class ListDirectoryTest extends AbstractServiceTest {
        */
       new App (_fs,  "app", _dirapplink, _user, "app_Data");
       new Link (_fs, "link", _dirapplink, _user, "../../dirdirectories/dirall");
+      new Link (_fs, "linkapp", _dirapplink, _user, "app");
+      new Link (_fs, "link2unknown", _dirapplink, _user, "awdklhawdjkl");
 
       /*
        * adding pf and link to _dirpflink
@@ -139,13 +142,13 @@ public class ListDirectoryTest extends AbstractServiceTest {
 			e.printStackTrace();
 		}
 	}
+
 	/**
-	 * directory.toString()
-	 * plainfile.toString()
-	 * application.toString()
+	 * Directory.toString()
+	 * Plainfile.toString()
+	 * Application.toString()
 	 * Link.toString()
 	 */
-
 	@Test
 	public void toStrings() throws Exception {
 		String directory = "d " + _user.getUmask() + " " + "litxoe5sQu3nt0u";
@@ -165,6 +168,25 @@ public class ListDirectoryTest extends AbstractServiceTest {
 	@Test
 	public void listOrder() throws Exception {
 		ListDirectoryService lds = new ListDirectoryService(123l);
+		lds.execute();
+		String result = lds.result();
+
+		Directory home =_user.getHomeDirectory();
+		String self = ((String) home.toString().replaceAll(home.getName(), ".") + "\n");
+		String parent = ((String) home.getParent().toString().replaceAll(home.getParent().getName(), "..") + "\n");
+		String dirapp = "d " + _user.getUmask() + " " + "dirapp" + "\n";
+		String dirdirectories = "d " + _user.getUmask() + " " + "dirdirectories" + "\n";
+		String dirlink = "d " + _user.getUmask() + " " + "dirlink" + "\n";
+		String dirpf = "d " + _user.getUmask() + " " + "dirpf" + "\n";
+		String list = self + parent + dirapp + dirdirectories + dirlink + dirpf;
+
+
+		assertEquals("List user1", list, result);
+	}
+
+	@Test
+	public void listOrderByPath() throws Exception {
+		ListDirectoryService lds = new ListDirectoryService(123l, ".");
 		lds.execute();
 		String result = lds.result();
 
@@ -202,6 +224,46 @@ public class ListDirectoryTest extends AbstractServiceTest {
 	}
 
 	@Test
+	public void listdirdirectoriesByPathCurrent() throws Exception {
+		Directory tested = _dirdirectories;
+		_login.setCurrentDirectory(tested, _user);
+		ListDirectoryService lds = new ListDirectoryService(123l, ".");
+		lds.execute();
+		String result = lds.result();
+
+
+		String self = ((String) tested.toString().replaceAll(tested.getName(), ".") + "\n");
+		String parent = ((String) tested.getParent().toString().replaceAll(tested.getParent().getName(), "..") + "\n");
+		String dirapplink = _dirapplink.toString() + "\n";
+		String dirpflink = _dirpflink.toString() + "\n";
+		String dirall = _dirall.toString() + "\n";
+		String list = self + parent + dirall + dirapplink + dirpflink;
+
+
+		assertEquals("List dirdirectories", list, result);
+	}
+
+	@Test
+	public void listdirdirectoriesByPathPrevious() throws Exception {
+		Directory tested = _dirapplink;
+		_login.setCurrentDirectory(tested, _user);
+		ListDirectoryService lds = new ListDirectoryService(123l, "..");
+		lds.execute();
+		String result = lds.result();
+
+
+		String self = ((String) tested.toString().replaceAll(tested.getName(), ".") + "\n");
+		String parent = ((String) tested.getParent().toString().replaceAll(tested.getParent().getName(), "..") + "\n");
+		String dirapplink = _dirapplink.toString() + "\n";
+		String dirpflink = _dirpflink.toString() + "\n";
+		String dirall = _dirall.toString() + "\n";
+		String list = self + parent + dirall + dirapplink + dirpflink;
+
+
+		assertEquals("List dirdirectories", list, result);
+	}
+
+	@Test
 	public void testGuestListDirDirectories() throws Exception {
 		Directory tested = _anotherOne.getHomeDirectory();
 		_guestLogin.setCurrentDirectory(tested, _anotherOne);
@@ -220,10 +282,50 @@ public class ListDirectoryTest extends AbstractServiceTest {
 	}
 
 	@Test
+	public void testGuestListDirDirectoriesAbsPath() throws Exception {
+		Directory tested = _anotherOne.getHomeDirectory();
+		_guestLogin.setCurrentDirectory(tested, _anotherOne);
+		ListDirectoryService lds = new ListDirectoryService(_guestToken, "/home/swaglordus");
+		lds.execute();
+		String result = lds.result();
+
+
+		String self = ((String) tested.toString().replaceAll(tested.getName(), ".") + "\n");
+		String parent = ((String) tested.getParent().toString().replaceAll(tested.getParent().getName(), "..") + "\n");
+    String pf = tested.getFileByName("pf").toString() + "\n";
+		String list = self + parent + pf;
+
+
+		assertEquals("List dirdirectories", list, result);
+	}
+
+
+	@Test
 	public void listdirall() throws Exception {
 		Directory tested = _dirall;
 		_login.setCurrentDirectory(tested, _user);
 		ListDirectoryService lds = new ListDirectoryService(123l);
+		lds.execute();
+		String result = lds.result();
+
+
+		String self = ((String) tested.toString().replaceAll(tested.getName(), ".") + "\n");
+		String parent = ((String) tested.getParent().toString().replaceAll(tested.getParent().getName(), "..") + "\n");
+		String app = tested.getFileByName("app").toString() + "\n";
+		String link = tested.getFileByName("link").toString() + "\n";
+		String pf = tested.getFileByName("pf").toString() + "\n";
+		String dir = tested.getFileByName("dirapppf").toString() + "\n";
+		String list = self + parent + app + dir + link + pf;
+
+
+		assertEquals("List dirall", list , result);
+	}
+
+	@Test
+	public void listdirallByPathLink() throws Exception {
+		Directory tested = _dirall;
+		_login.setCurrentDirectory(_user.getHomeDirectory(), _user);
+		ListDirectoryService lds = new ListDirectoryService(123l, "dirlink/link");
 		lds.execute();
 		String result = lds.result();
 
@@ -319,9 +421,32 @@ public class ListDirectoryTest extends AbstractServiceTest {
 		String parent = ((String) tested.getParent().toString().replaceAll(tested.getParent().getName(), "..") + "\n");
 		String app = tested.getFileByName("app").toString() + "\n";
 		String link = tested.getFileByName("link").toString() + "\n";
-		String list = self + parent + app + link;
+		String link2unknown = tested.getFileByName("link2unknown").toString() + "\n";
+		String linkapp = tested.getFileByName("linkapp").toString() + "\n";
 
-		assertEquals("List dirdapplink", list , result);
+		String list = self + parent + app + link + link2unknown + linkapp;
+
+		assertEquals("List dirapplink", list , result);
+	}
+
+	@Test
+	public void listdirapplinkByPath() throws Exception {
+		Directory tested = _dirapplink;
+		_login.setCurrentDirectory(_user.getHomeDirectory(), _user);
+		ListDirectoryService lds = new ListDirectoryService(123l, "dirdirectories/dirapplink");
+		lds.execute();
+		String result = lds.result();
+
+		String self = ((String) tested.toString().replaceAll(tested.getName(), ".") + "\n");
+		String parent = ((String) tested.getParent().toString().replaceAll(tested.getParent().getName(), "..") + "\n");
+		String app = tested.getFileByName("app").toString() + "\n";
+		String link = tested.getFileByName("link").toString() + "\n";
+		String link2unknown = tested.getFileByName("link2unknown").toString() + "\n";
+		String linkapp = tested.getFileByName("linkapp").toString() + "\n";
+
+		String list = self + parent + app + link + link2unknown + linkapp;
+
+		assertEquals("List dirapplink", list , result);
 	}
 
   @Test(expected = InsufficientPermissionsException.class)
@@ -330,4 +455,43 @@ public class ListDirectoryTest extends AbstractServiceTest {
     ListDirectoryService lds = new ListDirectoryService(123l);
     lds.execute();
   }
+
+  @Test(expected = InsufficientPermissionsException.class)
+  public void testInsufficientPermissionsByPath() throws Exception {
+    _login.setCurrentDirectory(_user.getHomeDirectory(), _user);
+    ListDirectoryService lds = new ListDirectoryService(123l, _user3e5sQu3nt0u.getHomeDirectory().getPath());
+    lds.execute();
+  }
+
+  @Test(expected = NotADirectoryException.class)
+  public void testListApp() throws Exception {
+    ListDirectoryService lds = new ListDirectoryService(123l, "dirdirectories/dirall/app");
+    lds.execute();
+  }
+
+  @Test(expected = NotADirectoryException.class)
+  public void testListPlainFile() throws Exception {
+    ListDirectoryService lds = new ListDirectoryService(123l, "dirdirectories/dirall/pf");
+    lds.execute();
+  }
+
+  @Test(expected = NotADirectoryException.class)
+  public void testListLinkNonDir() throws Exception {
+    ListDirectoryService lds = new ListDirectoryService(123l, "dirdirectories/dirapplink/linkapp");
+    lds.execute();
+  }
+
+  @Test(expected = FileUnknownException.class)
+  public void testUnknownFile() throws Exception {
+    ListDirectoryService lds = new ListDirectoryService(123l, "awkdhjawkdjh");
+    lds.execute();
+  }
+
+  @Test(expected = FileUnknownException.class)
+  public void testUnknownFileLink() throws Exception {
+    ListDirectoryService lds = new ListDirectoryService(123l, "dirdirectories/dirapplink/link2unknown");
+    lds.execute();
+
+  }
+
 }

@@ -804,7 +804,7 @@ public class FileSystem extends FileSystem_Base {
   public void writeFile(long token, String path, String content) {
     updateSession(token);
 
-    File file = getFileByPath(path,_login.getUser(), _login.getCurrentDirectory());
+    File file = getFileByPath(path, _login.getUser(), _login.getCurrentDirectory());
 
     PlainFile pf = assertPlainFile(file);
     pf.setData(content, _login.getUser());
@@ -821,9 +821,10 @@ public class FileSystem extends FileSystem_Base {
     return _login.getCurrentDirectory().getPath();
   }
 
-  public String listCurrentDirectory(long token) {
+  public String listDirectory(long token, String filepath) {
     updateSession(token);
-    return listDirectory(_login.getCurrentDirectory(), _login.getUser());
+    Directory dir = assertDirectory(getFileByPath(filepath, _login.getUser(), _login.getCurrentDirectory()));
+    return listDirectory(dir, _login.getUser());
   }
 
   public void executeFile(long token, String filename, String[] arguments) {

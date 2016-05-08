@@ -18,7 +18,6 @@ public class LoginService extends myDriveService {
 		super();
 		_username = username;
 		_password = password;
-
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package pt.tecnico.myDrive.presentation;
 
+import pt.tecnico.myDrive.services.LoginService;
+
 import java.util.TreeMap;
 
 public class MyDriveShell extends Shell {
@@ -23,6 +25,15 @@ public class MyDriveShell extends Shell {
     new Write(this);
     new Environment(this);
     new Key(this);
+
+    String guest = "nobody";
+    LoginService ls = new LoginService(guest,"");
+    ls.execute();
+
+    long token = ls.result();
+
+    addSession(guest, token);
+    setActiveSession(guest);
   }
 
   public void addSession(String username, long token){

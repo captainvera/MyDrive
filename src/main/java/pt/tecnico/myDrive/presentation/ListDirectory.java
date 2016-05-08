@@ -8,16 +8,13 @@ public class ListDirectory extends MyDriveCommand {
   public ListDirectory(MyDriveShell sh) { super(sh, "ls", "lists a directory"); }
 
   public void execute(String[] args) {
-    ListDirectoryService ls = null;
-	  if (args.length > 1)
-	    throw new RuntimeException("USAGE: "+name()+" [path]");
-    else if(args.length == 0)
+    ListDirectoryService ls;
+	  if (args.length == 0)
       ls = new ListDirectoryService(shell().getActiveToken());
-    /**
-     * TODO::FIXME::Suport file paths here
-     */
     else if(args.length == 1)
-      ls = new ListDirectoryService(shell().getActiveToken());
+      ls = new ListDirectoryService(shell().getActiveToken(), args[0]);
+    else
+	    throw new RuntimeException("USAGE: " + name() + " [path]");
 
     ls.execute();
     String res = ls.result();
