@@ -135,7 +135,7 @@ public class Login extends Login_Base {
     }
   }
 
-  private EnvironmentVariable getEnvVarbyName(String name){
+  public EnvironmentVariable getEnvVarbyName(String name){
     for (EnvironmentVariable envvar: super.getEnvVarSet()) {
       if (envvar.getName().equalsIgnoreCase(name)) {
         return envvar;

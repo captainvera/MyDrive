@@ -49,7 +49,8 @@ public abstract class File extends File_Base {
   }
 
   /**
-   * Verifies if filename only contains letters and digits
+   * Verifies if filename only contains letters and digits and doesn't start
+   * with a '$'
    * @param filename
    */
   private void checkFilename(String filename) {
@@ -205,6 +206,11 @@ public abstract class File extends File_Base {
     throw new MethodDeniedException();
   }
 
+  public String parseExtension(){
+      String fileName = getName();
+      String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+      return extension;
+  }
 
   /**
    * Protected methods for subclass access

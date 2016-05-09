@@ -363,10 +363,10 @@ public class FileSystem extends FileSystem_Base {
     if (path.equals("/")) return super.getRootDirectory();
 
     ArrayList<String> tokensList = processPath(path);
-
+    //tokensList = processEnvVars(tokensList);
     // Absolute or relative?
     if (path.charAt(0) == '/') {
-      tokensList.remove(0);
+      //tokensList.remove(0);
       return super.getRootDirectory().getFile(tokensList, user);
     } else {
       return directory.getFile(tokensList, user);
@@ -374,14 +374,30 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public ArrayList<String> processPath(String path) {
-    if(path.charAt(path.length()-1) == '/') {
-      path = path.substring(0, path.length()-1);
-    }
-
+    ArrayList<String> result = new ArrayList<String>();
+    if(path.charAt(path.length()-1) == '/') 
+        path = path.substring(0, path.length()-1);
+    
+    if(path.charAt(0) == '/') 
+        path = path.substring(1,path.length());
+    
     String [] tokens = path.split("/");
 
-    return new ArrayList<String>(Arrays.asList(tokens));
+    for(String token : tokens){
+        if(token.charAt(0) == '$') result.addAll(processEnvVars(token));
+        else result.add(token);
+    }
+    return result;
+
   }
+
+  public ArrayList<String> processEnvVars(String token){
+    String envVarPath = _login.getEnvVarbyName(token.substring(0,token.length() -1 )).getValue();
+    ArrayList<String> tokens = processPath(envVarPath);
+      
+    return tokens;
+  }
+
 
   /**
    * @param path
@@ -928,4 +944,7 @@ public class FileSystem extends FileSystem_Base {
     throw new MethodDeniedException();
   }
 
+  public static String apptest(String[] cenas){
+    return "HEY!";
+  }
 }
