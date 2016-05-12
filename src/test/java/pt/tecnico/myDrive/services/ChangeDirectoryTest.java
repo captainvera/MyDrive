@@ -30,6 +30,7 @@ public class ChangeDirectoryTest extends AbstractServiceTest {
   private Login _login1;
 	private Directory dir1;
 	private Directory dir2;
+  private Directory dir3;
 
   private Login _guestLogin;
   private GuestUser _guestUser;
@@ -73,6 +74,7 @@ public class ChangeDirectoryTest extends AbstractServiceTest {
 
       dir1 = new Directory (_fs, "dir1", _user1.getHomeDirectory(), _user1);
       dir2 = new Directory (_fs, "dir2", dir1, _user2);
+      dir3 = new Directory (_fs, "dir3", _guestUser.getHomeDirectory(), _guestUser);
 
       new App       (_fs, "app", _user1.getHomeDirectory(), _user1, "app_Data");
       new PlainFile (_fs, "pf" , _user1.getHomeDirectory(), _user1, "pf_Data");
@@ -96,128 +98,93 @@ public class ChangeDirectoryTest extends AbstractServiceTest {
 
 	@Test
 	public void changeDirectoryAbsolute(){
-		try {
 			ChangeDirectoryService changeDirectory = new ChangeDirectoryService(123l, "/home/user1e5sQu3nt0u/dir1");
 
 			changeDirectory.execute();
 			String result = changeDirectory.result();
 
 			assertEquals("Directory doesn't match expected", dir1.getPath(), result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test
 	public void changeDirectoryRelative(){
-		try {
 			ChangeDirectoryService changeDirectory = new ChangeDirectoryService(123l, "dir1");
 
 			changeDirectory.execute();
 			String result = changeDirectory.result();
 
 			assertEquals("Directory doesn't match expected", dir1.getPath(), result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test
 	public void testGuestchangeDirectoryAbsolute(){
-		try {
 			ChangeDirectoryService changeDirectory = new ChangeDirectoryService(_guestToken, "/home/user1e5sQu3nt0u/dir1");
 
 			changeDirectory.execute();
 			String result = changeDirectory.result();
 
 			assertEquals("Directory doesn't match expected", dir1.getPath(), result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test
 	public void testGuestchangeDirectoryRelative(){
-		try {
-			ChangeDirectoryService changeDirectory = new ChangeDirectoryService(_guestToken, "dir1");
+			ChangeDirectoryService changeDirectory = new ChangeDirectoryService(_guestToken, "dir3");
 
 			changeDirectory.execute();
 			String result = changeDirectory.result();
 
-			assertEquals("Directory doesn't match expected", dir1.getPath(), result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			assertEquals("Directory doesn't match expected", dir3.getPath(), result);
 	}
 
 	@Test
 	public void changeDirectoryLinkAbsoluteToAbsolute(){
-		try {
 			ChangeDirectoryService changeDirectory = new ChangeDirectoryService(123l, "/home/user1e5sQu3nt0u/linkAbsolute");
 
 			changeDirectory.execute();
 			String result = changeDirectory.result();
 
 			assertEquals("Directory doesn't match expected", dir1.getPath(), result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test
 	public void changeDirectoryLinkRelativeToAbsolute(){
-		try {
 			ChangeDirectoryService changeDirectory = new ChangeDirectoryService(123l, "linkAbsolute");
 
 			changeDirectory.execute();
 			String result = changeDirectory.result();
 
 			assertEquals("Directory doesn't match expected", dir1.getPath(), result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test
 	public void changeDirectoryLinkAbsoluteToRelative(){
-		try {
 			ChangeDirectoryService changeDirectory = new ChangeDirectoryService(123l, "/home/user1e5sQu3nt0u/linkRelative");
 
 			changeDirectory.execute();
 			String result = changeDirectory.result();
 
 			assertEquals("Directory doesn't match expected", dir1.getPath(), result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test
 	public void changeDirectoryLinkRelativeToRelative(){
-		try {
 			ChangeDirectoryService changeDirectory = new ChangeDirectoryService(123l, "linkRelative");
 
 			changeDirectory.execute();
 			String result = changeDirectory.result();
 
 			assertEquals("Directory doesn't match expected", dir1.getPath(), result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test
 	public void changeDirectoryLinkToLink(){
-		try {
 			ChangeDirectoryService changeDirectory = new ChangeDirectoryService(123l, "dir1/linkToLink");
 
 			changeDirectory.execute();
 			String result = changeDirectory.result();
 
 			assertEquals("Directory doesn't match expected", dir1.getPath(), result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
 	}
 
 	@Test(expected = FileUnknownException.class)
