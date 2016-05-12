@@ -122,6 +122,14 @@ public class User extends User_Base {
     checkPermissions(file, 2, 'x');
   }
 
+  protected boolean isExecutable(File file) {
+
+    String permissions = getPermissions(file);
+    if(permissions.charAt(2) != 'x')
+        return false;
+    return true;
+  }
+
   protected void checkDeletionPermissions(File file) {
     checkPermissions(file, 3, 'd');
   }
@@ -201,4 +209,5 @@ public class User extends User_Base {
   public void setName(String umask) {
     throw new MethodDeniedException();
   }
+
 }

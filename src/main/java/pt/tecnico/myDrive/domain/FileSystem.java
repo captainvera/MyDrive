@@ -326,11 +326,10 @@ public class FileSystem extends FileSystem_Base {
    */
   public void executeFile(String path, User user, Directory directory, String[] arguments) {
     File file = getFileByPath(path, user, directory);
-    try{
+    if(user.isExecutable(file))
         file.execute(user, arguments);
-    } catch(InsufficientPermissionsException e){
+    else
         executeWithExtensionApp(user, file, path);
-    }
   }
 
 
@@ -346,12 +345,7 @@ public class FileSystem extends FileSystem_Base {
         throw new NoAssociatedAppException(extension);
 
     String[] arguments = {path};
-
-    try{
         app.execute(user,arguments);
-    } catch(InsufficientPermissionsException e){
-        e.printStackTrace();
-    }
   }
   /* ****************************************************************************
    * |                          Operations by Path                              |
@@ -367,6 +361,7 @@ public class FileSystem extends FileSystem_Base {
    * @return The file at the end of the path.
    */
   public File getFileByPath(String path, User user, Directory directory) {
+    if (path.length() == 0) throw new FileUnknownException(path);
     if (path.equals("/")) return super.getRootDirectory();
 
     ArrayList<String> tokensList = processPath(path);
@@ -382,13 +377,18 @@ public class FileSystem extends FileSystem_Base {
 
   public ArrayList<String> processPath(String path) {
     ArrayList<String> result = new ArrayList<String>();
+
     if(path.charAt(path.length()-1) == '/') 
         path = path.substring(0, path.length()-1);
     
     if(path.charAt(0) == '/') 
         path = path.substring(1,path.length());
     
-    String [] tokens = path.split("/");
+    String[] tokens = {path};
+    CharSequence cs = "/";
+    if(path.contains(cs)){
+      tokens = path.split("/");
+    }
 
     for(String token : tokens){
         if(token.charAt(0) == '$') result.addAll(processEnvVars(token));
