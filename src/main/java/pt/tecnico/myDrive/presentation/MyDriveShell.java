@@ -1,6 +1,7 @@
 package pt.tecnico.myDrive.presentation;
 
 import pt.tecnico.myDrive.services.LoginService;
+import pt.tecnico.myDrive.services.LogoutService;
 
 import java.util.TreeMap;
 
@@ -8,6 +9,8 @@ public class MyDriveShell extends Shell {
 
   private String _activeUser;
   private Session _activeSession;
+  long _token;
+
 
   private TreeMap<String, Session> _sessions = new TreeMap<String, Session>();
 
@@ -25,14 +28,15 @@ public class MyDriveShell extends Shell {
     new Write(this);
     new Environment(this);
     new Key(this);
+    new Quit(this);
 
     String guest = "nobody";
     LoginService ls = new LoginService(guest,"");
     ls.execute();
 
-    long token = ls.result();
+    _token = ls.result();
 
-    addSession(guest, token);
+    addSession(guest, _token);
     setActiveSession(guest);
   }
 
@@ -72,4 +76,9 @@ public class MyDriveShell extends Shell {
     _activeSession.setCurrentDirectory(currentDir);
     setDir(currentDir);
   }
+
+  public void shutdown(){
+    new LogoutService(_token).execute(); 
+    System.exit(0);
+  } 
 }
