@@ -126,9 +126,6 @@ public class User extends User_Base {
     checkPermissions(file, 3, 'd');
   }
 
-  /**
-   * Basic remove implementation for User objects
-   */
   @Override
   public void addUserExtension(Extension extension){
       throw new MethodDeniedException();
@@ -139,6 +136,9 @@ public class User extends User_Base {
     return null;
   }
 
+  /**
+   * Basic remove implementation for User objects
+   */
   public void remove() {
     nullifyRelations();
     deleteDomainObject();

@@ -8,6 +8,8 @@ import pt.tecnico.myDrive.exceptions.FileUnknownException;
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 import pt.tecnico.myDrive.exceptions.InvalidFilenameException;
 import pt.tecnico.myDrive.exceptions.InvalidFilepathSizeException;
+import pt.tecnico.myDrive.exceptions.NoExtensionException;
+import pt.tecnico.myDrive.exceptions.NoAssociatedAppException;
 
 import java.util.ArrayList;
 
@@ -49,7 +51,8 @@ public abstract class File extends File_Base {
   }
 
   /**
-   * Verifies if filename only contains letters and digits
+   * Verifies if filename only contains letters and digits and doesn't start
+   * with a '$'
    * @param filename
    */
   private void checkFilename(String filename) {
@@ -106,7 +109,8 @@ public abstract class File extends File_Base {
   /**
    * Executes the file with diferent behaviour depending on the file type
    */
-  public abstract String execute(User user, String[] arguments);
+  public abstract void execute(User user, String[] arguments);
+
 
   /**
    * The calculation of the size of the file will vary depending on subclass implementation
@@ -205,6 +209,12 @@ public abstract class File extends File_Base {
     throw new MethodDeniedException();
   }
 
+  public String parseExtension(){
+      String fileName = getName();
+      if(fileName.lastIndexOf(".") == -1) return null;
+      String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+      return extension;
+  }
 
   /**
    * Protected methods for subclass access

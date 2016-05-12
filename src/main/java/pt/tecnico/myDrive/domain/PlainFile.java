@@ -8,15 +8,16 @@ import pt.tecnico.myDrive.exceptions.UserUnknownException;
 import pt.tecnico.myDrive.exceptions.ImportDocumentException;
 import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
-
-import pt.tecnico.myDrive.visitors.GenericVisitor;
-import java.util.ArrayList;
-
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
+import pt.tecnico.myDrive.exceptions.NoExtensionException;
 
+import pt.tecnico.myDrive.visitors.GenericVisitor;
+
+import pt.tecnico.myDrive.domain.App;
 import org.joda.time.DateTime;
 import org.apache.commons.lang3.ArrayUtils;
+import java.util.ArrayList;
 
 public class PlainFile extends PlainFile_Base {
 
@@ -49,33 +50,22 @@ public class PlainFile extends PlainFile_Base {
   }
 
   @Override
-  public String execute(User user, String[] arguments) {
-    return executePlainFile(user);
-  }
-
-  public String executePlainFile(User user){
-    String data = getData();
+  public void execute(User user, String[] arguments) {
+    user.checkExecutionPermissions(this);
+    FileSystem fs = getFileSystem$6p();
+    String data = getData(user);
     String[] fileLines = data.split("\\r?\\n");
 
     for(String line : fileLines){
         String[] tokens = line.split("\\s+");
         String path = tokens[0];
-        String[] arguments = ArrayUtils.removeElement(tokens,0);
+        String[] args = ArrayUtils.removeElement(tokens,0);
 
-        //FIXME what to do with directory
-        File file = getFileSystem().getFileByPath(path, user, new Directory());
-        //TODO fixme - user extension to execute non executable files      
-        file.execute(user, arguments);
-        //if non execable do executewithextension
+        File file = fs.getFileByPath(path, user, getParent());
+        if (file instanceof App ) file.execute(user, args);
     }
-    //placeholder - ret values? void?
-    return null;
   }
 
-  public String executeWithExtensionApp(User user, String extension, String[] arguments){
-    App app = user.getAssociation(extension);
-    return app.execute(user, arguments);
-  }
 
   @Override
   public <T> T accept(GenericVisitor<T> v){

@@ -11,6 +11,7 @@ import pt.tecnico.myDrive.exceptions.NotADirectoryException;
 import pt.tecnico.myDrive.exceptions.FileUnknownException;
 import pt.tecnico.myDrive.exceptions.FileExistsException;
 import pt.tecnico.myDrive.exceptions.MethodDeniedException;
+import pt.tecnico.myDrive.exceptions.CannotExecuteDirectoryException;
 
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 
@@ -271,14 +272,15 @@ public class Directory extends Directory_Base {
   }
 
   @Override
-  public String execute(User user, String[] arguments) {
-    String s = "Couldn't list directory.";
-    try{
-      s = listFilesAll(user);
-    }catch(Exception e){
-      System.out.println("-- Error executing directory: " + e.getMessage());
-    }
-    return s;
+  public void execute(User user, String[] arguments) {
+    //String s = "Couldn't list directory.";
+    //try{
+    //  s = listFilesAll(user);
+    //}catch(Exception e){
+    //  System.out.println("-- Error executing directory: " + e.getMessage());
+    //}
+    //return s;
+    throw new CannotExecuteDirectoryException(getName());
   }
 
   public void checkIllegalRemoval(String filename) {

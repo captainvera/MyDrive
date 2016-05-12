@@ -6,7 +6,7 @@ import pt.tecnico.myDrive.domain.Link;
 import pt.tecnico.myDrive.domain.User;
 import pt.tecnico.myDrive.domain.File;
 import pt.tecnico.myDrive.domain.PlainFile;
-import pt.tecnico.myDrive.services.dto.EnvironmentVariabledto;
+import pt.tecnico.myDrive.services.dto.EnvironmentVariableDTO;
 import pt.ist.fenixframework.DomainRoot;
 
 // Domain Exceptions
@@ -324,16 +324,35 @@ public class FileSystem extends FileSystem_Base {
   /**
    * @return result of executing file
    */
-  public String executeFile(String path, User user, Directory directory, String[] arguments) {
+  public void executeFile(String path, User user, Directory directory, String[] arguments) {
     File file = getFileByPath(path, user, directory);
-    /**
-     * TODO::XXX:FIX PERMISSIONS
-     */
-    // checkExecutionPermissions(user, file);
-
-    return file.execute(user, arguments);
+    try{
+        file.execute(user, arguments);
+    } catch(InsufficientPermissionsException e){
+        executeWithExtensionApp(user, file, path);
+    }
   }
 
+
+  public void executeWithExtensionApp(User user, File file, String path){
+    //assertExtension
+    String extension = file.parseExtension();
+    if( extension == null) 
+        throw new NoExtensionException(file.getName());
+
+    //assertassociation
+    App app = user.getAssociation(extension);
+    if(app == null)
+        throw new NoAssociatedAppException(extension);
+
+    String[] arguments = {path};
+
+    try{
+        app.execute(user,arguments);
+    } catch(InsufficientPermissionsException e){
+        e.printStackTrace();
+    }
+  }
   /* ****************************************************************************
    * |                          Operations by Path                              |
    * ****************************************************************************
@@ -351,10 +370,10 @@ public class FileSystem extends FileSystem_Base {
     if (path.equals("/")) return super.getRootDirectory();
 
     ArrayList<String> tokensList = processPath(path);
-
+    //tokensList = processEnvVars(tokensList);
     // Absolute or relative?
     if (path.charAt(0) == '/') {
-      tokensList.remove(0);
+      //tokensList.remove(0);
       return super.getRootDirectory().getFile(tokensList, user);
     } else {
       return directory.getFile(tokensList, user);
@@ -362,14 +381,30 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public ArrayList<String> processPath(String path) {
-    if(path.charAt(path.length()-1) == '/') {
-      path = path.substring(0, path.length()-1);
-    }
-
+    ArrayList<String> result = new ArrayList<String>();
+    if(path.charAt(path.length()-1) == '/') 
+        path = path.substring(0, path.length()-1);
+    
+    if(path.charAt(0) == '/') 
+        path = path.substring(1,path.length());
+    
     String [] tokens = path.split("/");
 
-    return new ArrayList<String>(Arrays.asList(tokens));
+    for(String token : tokens){
+        if(token.charAt(0) == '$') result.addAll(processEnvVars(token));
+        else result.add(token);
+    }
+    return result;
+
   }
+
+  public ArrayList<String> processEnvVars(String token){
+    String envVarPath = _login.getEnvVarbyName(token.substring(1,token.length())).getValue();
+    ArrayList<String> tokens = processPath(envVarPath);
+      
+    return tokens;
+  }
+
 
   /**
    * @param path
@@ -832,7 +867,7 @@ public class FileSystem extends FileSystem_Base {
     executeFile(filename, _login.getUser(), _login.getCurrentDirectory(), arguments);
   }
 
-  public List<EnvironmentVariabledto> addEnvironmentVariable(long token, String name, String value){
+  public List<EnvironmentVariableDTO> addEnvironmentVariable(long token, String name, String value){
     updateSession(token);
     if(!name.equals("") && name != null && value != null && !value.equals(""))
       _login.addEnvVar(name, value);
@@ -937,4 +972,7 @@ public class FileSystem extends FileSystem_Base {
     throw new MethodDeniedException();
   }
 
+  public static String apptest(String[] cenas){
+    return "HEY!";
+  }
 }
