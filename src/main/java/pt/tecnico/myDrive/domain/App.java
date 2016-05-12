@@ -61,8 +61,6 @@ public class App extends App_Base {
         Method method = Class.forName(className).getDeclaredMethod(methodName, arg);
         Object[] args = new Object[]{arguments};
         
-        //dirty hack. confirm if UoD specifies ret values as strings, for
-        //simplification purposes
         method.invoke(this, args);
 
     } catch(NoSuchMethodException e) {
