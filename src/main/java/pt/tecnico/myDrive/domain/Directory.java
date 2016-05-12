@@ -272,7 +272,7 @@ public class Directory extends Directory_Base {
   }
 
   @Override
-  public String execute(User user, String[] arguments) {
+  public void execute(User user, String[] arguments) {
     //String s = "Couldn't list directory.";
     //try{
     //  s = listFilesAll(user);

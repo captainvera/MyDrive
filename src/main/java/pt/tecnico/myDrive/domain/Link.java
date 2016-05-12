@@ -75,9 +75,9 @@ public class Link extends Link_Base {
   }
 
   @Override
-  public String execute(User user, String[] arguments) {
+  public void execute(User user, String[] arguments) {
     user.checkExecutionPermissions(this);
-    return getFileObject(user).execute(user, arguments);
+    getFileObject(user).execute(user, arguments);
   }
 
   @Override
