@@ -122,13 +122,18 @@ public class User extends User_Base {
     checkPermissions(file, 2, 'x');
   }
 
+  protected boolean isExecutable(File file) {
+
+    String permissions = getPermissions(file);
+    if(permissions.charAt(2) != 'x')
+        return false;
+    return true;
+  }
+
   protected void checkDeletionPermissions(File file) {
     checkPermissions(file, 3, 'd');
   }
 
-  /**
-   * Basic remove implementation for User objects
-   */
   @Override
   public void addUserExtension(Extension extension){
       throw new MethodDeniedException();
@@ -139,6 +144,9 @@ public class User extends User_Base {
     return null;
   }
 
+  /**
+   * Basic remove implementation for User objects
+   */
   public void remove() {
     nullifyRelations();
     deleteDomainObject();
@@ -201,4 +209,5 @@ public class User extends User_Base {
   public void setName(String umask) {
     throw new MethodDeniedException();
   }
+
 }

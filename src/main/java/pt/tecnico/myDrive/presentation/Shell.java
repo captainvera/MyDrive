@@ -23,13 +23,6 @@ public abstract class Shell {
     name = n;
     out = new PrintWriter(w, flush);
 
-    new Command(this, "quit", "Quit the command interpreter") {
-      void execute(String[] args) {
-	       System.out.println(name+" quit");
-         System.exit(0);
-      }
-    };
-
     new Command(this, "exec", "execute an external command") {
       void execute(String[] args) {
 	      try { Sys.output(out); Sys.main(args);

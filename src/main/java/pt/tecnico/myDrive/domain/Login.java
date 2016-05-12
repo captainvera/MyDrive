@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import java.util.List;
 import java.util.ArrayList;
-import pt.tecnico.myDrive.services.dto.EnvironmentVariabledto;
+import pt.tecnico.myDrive.services.dto.EnvironmentVariableDTO;
 public class Login extends Login_Base {
   protected static final Logger log = LogManager.getRootLogger();
 
@@ -135,7 +135,7 @@ public class Login extends Login_Base {
     }
   }
 
-  private EnvironmentVariable getEnvVarbyName(String name){
+  public EnvironmentVariable getEnvVarbyName(String name){
     for (EnvironmentVariable envvar: super.getEnvVarSet()) {
       if (envvar.getName().equalsIgnoreCase(name)) {
         return envvar;
@@ -144,10 +144,10 @@ public class Login extends Login_Base {
     return null;
   }
 
-  public List<EnvironmentVariabledto> listEnvVar(){
-    List result = new ArrayList<EnvironmentVariabledto>();
+  public List<EnvironmentVariableDTO> listEnvVar(){
+    List result = new ArrayList<EnvironmentVariableDTO>();
     for (EnvironmentVariable envvar: super.getEnvVarSet()){
-      result.add( new EnvironmentVariabledto(envvar.getName(), envvar.getValue()));
+      result.add( new EnvironmentVariableDTO(envvar.getName(), envvar.getValue()));
     }
     return result;
   }

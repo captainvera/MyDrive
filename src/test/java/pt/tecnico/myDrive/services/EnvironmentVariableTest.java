@@ -14,7 +14,7 @@ import pt.tecnico.myDrive.domain.Directory;
 import pt.tecnico.myDrive.service.AbstractServiceTest;
 import java.util.List;
 import java.util.ArrayList;
-import pt.tecnico.myDrive.services.dto.EnvironmentVariabledto;
+import pt.tecnico.myDrive.services.dto.EnvironmentVariableDTO;
 
 public class EnvironmentVariableTest extends AbstractServiceTest {
 	/* (non-Javadoc)
@@ -47,10 +47,10 @@ public class EnvironmentVariableTest extends AbstractServiceTest {
     _login.addEnvVar("name2","value2");
     _login.addEnvVar("name1","value1");
 
-    List<EnvironmentVariabledto> result = new ArrayList<EnvironmentVariabledto>();
-		result.add(new EnvironmentVariabledto("name1", "value1"));
-		result.add(new EnvironmentVariabledto("name2", "value2"));
-    result.add(new EnvironmentVariabledto("name3", "value3"));
+    List<EnvironmentVariableDTO> result = new ArrayList<EnvironmentVariableDTO>();
+		result.add(new EnvironmentVariableDTO("name1", "value1"));
+		result.add(new EnvironmentVariableDTO("name2", "value2"));
+    result.add(new EnvironmentVariableDTO("name3", "value3"));
 		System.out.println("look12" + result.get(0)._name + "\n" + _login.listEnvVar().get(0)._name);
 
     assertTrue("Environment Variables list is correct.",_login.listEnvVar().equals(result));
@@ -60,8 +60,8 @@ public class EnvironmentVariableTest extends AbstractServiceTest {
   public void simpleVariableAdd() throws Exception {
     EnvironmentVariableService avs = new EnvironmentVariableService(123l, "name", "content");
     avs.execute();
-		List<EnvironmentVariabledto> result = new ArrayList<EnvironmentVariabledto>();
-    result.add(new EnvironmentVariabledto("name","content"));
+		List<EnvironmentVariableDTO> result = new ArrayList<EnvironmentVariableDTO>();
+    result.add(new EnvironmentVariableDTO("name","content"));
     assertTrue(avs.result().equals(result));
   }
 
@@ -73,8 +73,8 @@ public class EnvironmentVariableTest extends AbstractServiceTest {
     avs = new EnvironmentVariableService(123l, "name", "content2");
     avs.execute();
 
-		List<EnvironmentVariabledto> result = new ArrayList<EnvironmentVariabledto>();
-		result.add(new EnvironmentVariabledto("name","content2"));
+		List<EnvironmentVariableDTO> result = new ArrayList<EnvironmentVariableDTO>();
+		result.add(new EnvironmentVariableDTO("name","content2"));
 
     assertTrue( avs.result().equals(result) );
   }

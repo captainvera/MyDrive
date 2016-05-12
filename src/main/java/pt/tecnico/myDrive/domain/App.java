@@ -48,32 +48,28 @@ public class App extends App_Base {
   }
 
   @Override
-  public String execute(User user, String[] arguments) {
-
-    String appMethod = getData();
-
-    //last part of the string, being the method name of the package
-    String methodName = appMethod.substring(appMethod.lastIndexOf(".") + 1);
-    //the class name to look for
-    String className = appMethod.substring(0, appMethod.lastIndexOf("."));
-    try{
-        Method method = Class.forName(className).getMethod(methodName);
-
+  public void execute(User user, String[] arguments){
+      try{
+        user.checkExecutionPermissions(this);
+        String appMethod = getData(user);
+        //last part of the string, being the method name of the package
+        String methodName = appMethod.substring(appMethod.lastIndexOf(".") + 1);
+        //the class name to look for
+        String className = appMethod.substring(0, appMethod.lastIndexOf("."));
+        Class[] arg = new Class[1];
+        arg[0] = String[].class;
+        Method method = Class.forName(className).getDeclaredMethod(methodName, arg);
         Object[] args = new Object[]{arguments};
+        
+        method.invoke(this, args);
 
-        //dirty hack. confirm if UoD specifies ret values as strings, for
-        //simplification purposes
-        String result = (String) method.invoke(this, args);
-
-        return result;
-    } catch(NoSuchMethodException | ClassNotFoundException e ) {
-      throw new RuntimeException("Unknown method or class on list file, or illegal access");
-    }
-    catch(IllegalAccessException e){
-        throw new RuntimeException("IllegalAccessException while executing app.");
-    }
-    catch(InvocationTargetException e){
-        throw new RuntimeException("InvocationTargetException while executing app");
+    } catch(NoSuchMethodException e) {
+      throw new RuntimeException("Unknown method on list file");
+    } catch(ClassNotFoundException e ) {
+      throw new RuntimeException("Unknown class on list file");
+    } catch(IllegalAccessException e){ throw new RuntimeException("IllegalAccessException while executing app.");
+    } catch(InvocationTargetException e){
+      throw new RuntimeException("InvocationTargetException while executing app");
     }
   }
 
