@@ -289,5 +289,10 @@ public class ExecuteFileTest extends AbstractServiceTest {
     efs.execute();
   }
   //test with extension with success
-
+  
+  @Test(expected = InvalidTokenException.class)
+  public void executeInvalidToken() throws Exception {
+    ExecuteFileService efs = new ExecuteFileService(911112l, "app", args );
+    efs.execute();
+  }
 }
