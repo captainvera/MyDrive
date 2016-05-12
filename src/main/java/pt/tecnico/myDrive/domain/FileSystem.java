@@ -451,7 +451,6 @@ public class FileSystem extends FileSystem_Base {
    * Creates a document, with the data in the FileSystem, in XML
    */
   public Document xmlExport() {
-    // FIXME TODO
     XMLExporterVisitor xml = new XMLExporterVisitor();
     Element mydrive = new Element("myDrive");
     Document doc = new Document(mydrive);
@@ -470,7 +469,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void xmlImportUser(Element userElement) throws UnsupportedEncodingException {
-    //FIXME TODO
     String username = new String(userElement.getAttribute("username").getValue());
 
     Element nameElement = userElement.getChild("name");
@@ -511,7 +509,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void xmlImportDir(Element dirElement) throws UnsupportedEncodingException, DataConversionException {
-    // FIXME TODO
     String name = new String(dirElement.getChild("name").getText());
     String path = new String(dirElement.getChild("path").getText());
     Directory parent = checkPathImport(path);
@@ -524,7 +521,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void xmlImportPlain(Element plainElement) throws UnsupportedEncodingException, DataConversionException {
-    // FIXME TODO
     String name = new String(plainElement.getChild("name").getText());
     String path = new String(plainElement.getChild("path").getText());
     Directory parent = checkPathImport(path);
@@ -541,7 +537,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void xmlImportLink(Element linkElement) throws UnsupportedEncodingException, DataConversionException {
-    // FIXME TODO
     String name = new String(linkElement.getChild("name").getText());
     String path = new String(linkElement.getChild("path").getText());
     Directory parent = checkPathImport(path);
@@ -558,7 +553,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void xmlImportApp(Element appElement) throws UnsupportedEncodingException, DataConversionException {
-    // FIXME TODO
     String name = new String(appElement.getChild("name").getText());
     String path = new String(appElement.getChild("path").getText());
     Directory parent = checkPathImport(path);
@@ -575,7 +569,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void xmlImport(Element firstElement) {
-    // FIXME TODO
     try {
       for (Element userElement: firstElement.getChildren("user"))
         xmlImportUser(userElement);

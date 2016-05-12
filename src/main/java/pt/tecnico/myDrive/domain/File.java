@@ -190,13 +190,6 @@ public abstract class File extends File_Base {
     throw new MethodDeniedException();
   }
 
-  // TODO
-  /** @Override */
-  /** public void setParent(Directory parent) { */
-  /**   throw new MethodDeniedException(); */
-  /** } */
-
-
   @Override
   public void setOwner(User owner) {
     // TODO|FIXME
