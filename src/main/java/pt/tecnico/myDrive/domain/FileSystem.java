@@ -336,16 +336,35 @@ public class FileSystem extends FileSystem_Base {
   /**
    * @return result of executing file
    */
-  public String executeFile(String path, User user, Directory directory, String[] arguments) {
+  public void executeFile(String path, User user, Directory directory, String[] arguments) {
     File file = getFileByPath(path, user, directory);
-    /**
-     * TODO::XXX:FIX PERMISSIONS
-     */
-    // checkExecutionPermissions(user, file);
-
-    return file.execute(user, arguments);
+    try{
+        file.execute(user, arguments);
+    } catch(InsufficientPermissionsException e){
+        executeWithExtensionApp(user, file, path);
+    }
   }
 
+
+  public void executeWithExtensionApp(User user, File file, String path){
+    //assertExtension
+    String extension = file.parseExtension();
+    if( extension == null) 
+        throw new NoExtensionException(file.getName());
+
+    //assertassociation
+    App app = user.getAssociation(extension);
+    if(app == null)
+        throw new NoAssociatedAppException(extension);
+
+    String[] arguments = {path};
+
+    try{
+        app.execute(user,arguments);
+    } catch(InsufficientPermissionsException e){
+        e.printStackTrace();
+    }
+  }
   /* ****************************************************************************
    * |                          Operations by Path                              |
    * ****************************************************************************

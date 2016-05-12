@@ -50,12 +50,8 @@ public class PlainFile extends PlainFile_Base {
   }
 
   @Override
-  public String execute(User user, String[] arguments) {
+  public void execute(User user, String[] arguments) {
     user.checkExecutionPermissions(this);
-    return executePlainFile(user);
-  }
-
-  public String executePlainFile(User user){
     FileSystem fs = getFileSystem$6p();
     String data = getData(user);
     String[] fileLines = data.split("\\r?\\n");
@@ -63,24 +59,13 @@ public class PlainFile extends PlainFile_Base {
     for(String line : fileLines){
         String[] tokens = line.split("\\s+");
         String path = tokens[0];
-        String[] arguments = ArrayUtils.removeElement(tokens,0);
+        String[] args = ArrayUtils.removeElement(tokens,0);
 
         File file = fs.getFileByPath(path, user, getParent());
-        App app = fs.assertApp(file);
-        if (app != null ) app.execute(user, arguments);
-        else executeWithExtensionApp(user, parseExtension() , path);
-
+        if (file instanceof App ) file.execute(user, args);
     }
-    //placeholder - ret values? void?
-    return null;
   }
 
-  public String executeWithExtensionApp(User user, String extension, String path){
-    if( extension == null) throw new NoExtensionException(getName());
-    App app = user.getAssociation(extension);
-    String[] arguments = {path};
-    return app.execute(user,arguments);
-  }
 
   @Override
   public <T> T accept(GenericVisitor<T> v){
