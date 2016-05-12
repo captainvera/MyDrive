@@ -46,28 +46,8 @@ public class ExecuteFileTest extends AbstractServiceTest {
       _fs = FileSystem.getInstance();
       _user = new User(_fs, "litxo88888", "litxo88888", "litxo8888");
 	  _user.setHomeDirectory(new Directory(_fs, "litxo88888", _fs.getHomeDirectory(), _user));
-      _user2 = new User(_fs, "esquentador" , "esquentador", "rwxdrwxd", "esquentador");
+      _user2 = new User(_fs, "esquentador" , "esquentador", "esquentador", "rwxdr---");
       _login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
-
-      /* We'll have something like this
-       * |- app
-       * |- pf
-       * |
-       * |- link2fail1 -> linkfail1
-       * |- linkfail1 -> dir1/dir2
-       * |- linkfail2 -> .
-       * |
-       * |- link2linksucc1 -> linksuc1
-       * |- linksucc1 -> dir1/plainfile1
-       * |- linksucc2 -> dir1/dir2/plainfile2
-       * |
-       * |- dir1
-       *     |- plainfile1
-       *     |- dir2
-       *          |- linkpathsucc1 -> ../plainfile1
-       *          |- linkpathsucc2 -> plainfile2
-       *          |- plainfile2
-       * */
 
       Directory dir1 = new Directory (_fs, "dir1", _user.getHomeDirectory(), _user);
       Directory dir2 = new Directory (_fs, "dir2", dir1                    , _user);
@@ -258,13 +238,58 @@ public class ExecuteFileTest extends AbstractServiceTest {
   //no execution permission, with extension, tries to execute but no permissions
   @Test(expected = InsufficientPermissionsException.class)
   public void executeOtherUserFile() throws Exception {
+    try{
     new MockUp<User>(){
         @Mock
         public App getAssociation(String extension){
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
+            System.out.println(otherUserApp.toString());
             return otherUserApp;
         }
     };
-
     ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
     efs.execute();
   }
