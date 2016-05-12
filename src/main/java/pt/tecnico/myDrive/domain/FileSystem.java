@@ -411,7 +411,7 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public ArrayList<String> processEnvVars(String token){
-    String envVarPath = _login.getEnvVarbyName(token.substring(0,token.length() -1 )).getValue();
+    String envVarPath = _login.getEnvVarbyName(token.substring(1,token.length())).getValue();
     ArrayList<String> tokens = processPath(envVarPath);
       
     return tokens;
