@@ -6,12 +6,15 @@ import org.junit.runner.RunWith;
 
 import mockit.Expectations;
 import mockit.Verifications;
+import mockit.Mock;
+import mockit.MockUp;
 import mockit.Mocked;
 import mockit.integration.junit4.JMockit;
 
 import pt.tecnico.myDrive.services.ExecuteFileService;
 
 import pt.tecnico.myDrive.domain.App;
+import pt.tecnico.myDrive.domain.File;
 import pt.tecnico.myDrive.domain.Link;
 import pt.tecnico.myDrive.domain.User;
 import pt.tecnico.myDrive.domain.PlainFile;
@@ -23,6 +26,7 @@ import pt.tecnico.myDrive.exceptions.FileUnknownException;
 import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 import pt.tecnico.myDrive.exceptions.CannotExecuteDirectoryException;
 import pt.tecnico.myDrive.exceptions.NoExtensionException;
+import pt.tecnico.myDrive.exceptions.NoAssociatedAppException;
 
 @RunWith(JMockit.class)
 public class ExecuteFileTest extends AbstractServiceTest {
@@ -31,6 +35,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
   private User _user, _user2;
   private Login _login;
   private String args[] = {"1","2"};
+  private App app, otherUserApp;
 
   /* (non-Javadoc)
    * @see pt.tecnico.myDrive.service.AbstractServiceTest#populate()
@@ -41,7 +46,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
       _fs = FileSystem.getInstance();
       _user = new User(_fs, "litxo88888", "litxo88888", "litxo8888");
 	  _user.setHomeDirectory(new Directory(_fs, "litxo88888", _fs.getHomeDirectory(), _user));
-      _user2 = new User(_fs, "esquentador" , "esquentador", "esquentador");
+      _user2 = new User(_fs, "esquentador" , "esquentador", "rwxdrwxd", "esquentador");
       _login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
 
       /* We'll have something like this
@@ -67,13 +72,14 @@ public class ExecuteFileTest extends AbstractServiceTest {
       Directory dir1 = new Directory (_fs, "dir1", _user.getHomeDirectory(), _user);
       Directory dir2 = new Directory (_fs, "dir2", dir1                    , _user);
 
-      new App       (_fs, "app", _user.getHomeDirectory(), _user, "pt.tecnico.myDrive.domain.FileSystem.apptest");
-      new App       (_fs, "app2", _user.getHomeDirectory(), _user2, "");
+      app = new App       (_fs, "app", _user.getHomeDirectory(), _user, "pt.tecnico.myDrive.domain.FileSystem.apptest");
+      otherUserApp = new App       (_fs, "app2", _user.getHomeDirectory(), _user2, "");
 
       new PlainFile (_fs, "pf" , _user.getHomeDirectory(), _user, "/home/litxo88888/app 1 2");
 
-      new PlainFile (_fs, "noextension" , _user.getHomeDirectory(), _user, "/home/litxo88888/otheruser.txt 1 2");
+      new PlainFile (_fs, "noextension" , _user.getHomeDirectory(), _user2, "/home/litxo88888/otheruser.txt 1 2");
       new PlainFile (_fs, "otheruser.txt", _user.getHomeDirectory(), _user2, "");
+
       new Link      (_fs, "linksucc1", _user.getHomeDirectory(), _user, "dir1/plainfile1");
       new Link      (_fs, "linksucc2", _user.getHomeDirectory(), _user, "dir1/dir2/plainfile2");
 
@@ -213,7 +219,14 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
   
   @Test
-  public void executeExtensionn () throws Exception {
+  public void executeExtension() throws Exception {
+    new MockUp<User>(){
+        @Mock
+        public App getAssociation(String extension){
+            return app;
+        }
+    };
+
     ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
     efs.execute();
 
@@ -223,6 +236,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
         }
     };
   }
+
   @Test(expected = FileUnknownException.class)
   public void executeUnknownFile() throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "nofile", args);
@@ -244,10 +258,29 @@ public class ExecuteFileTest extends AbstractServiceTest {
   //no execution permission, with extension, tries to execute but no permissions
   @Test(expected = InsufficientPermissionsException.class)
   public void executeOtherUserFile() throws Exception {
+    new MockUp<User>(){
+        @Mock
+        public App getAssociation(String extension){
+            return otherUserApp;
+        }
+    };
+    
     ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
     efs.execute();
   }
 
+  @Test(expected = NoAssociatedAppException.class)
+  public void executeNoAppFound() throws Exception {
+    new MockUp<User>(){
+        @Mock
+        public App getAssociation(String extension){
+            return null;
+        }
+    };
+    
+    ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
+    efs.execute();
+  }
   //no execution permission, tries to execute with extension, but none of it was
   //found
   @Test(expected = NoExtensionException.class)

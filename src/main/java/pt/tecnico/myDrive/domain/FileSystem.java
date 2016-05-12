@@ -338,11 +338,10 @@ public class FileSystem extends FileSystem_Base {
    */
   public void executeFile(String path, User user, Directory directory, String[] arguments) {
     File file = getFileByPath(path, user, directory);
-    try{
+    if(user.isExecutable(file))
         file.execute(user, arguments);
-    } catch(InsufficientPermissionsException e){
+    else
         executeWithExtensionApp(user, file, path);
-    }
   }
 
 
@@ -358,7 +357,6 @@ public class FileSystem extends FileSystem_Base {
         throw new NoAssociatedAppException(extension);
 
     String[] arguments = {path};
-
     try{
         app.execute(user,arguments);
     } catch(InsufficientPermissionsException e){
