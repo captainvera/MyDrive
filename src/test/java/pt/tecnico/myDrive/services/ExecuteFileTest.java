@@ -197,7 +197,6 @@ public class ExecuteFileTest extends AbstractServiceTest {
     };
   }
 
-  
   @Test
   public void executeExtension() throws Exception {
     new MockUp<User>(){
@@ -216,6 +215,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
         }
     };
   }
+
 
   @Test(expected = FileUnknownException.class)
   public void executeUnknownFile() throws Exception {
@@ -290,13 +290,8 @@ public class ExecuteFileTest extends AbstractServiceTest {
             return otherUserApp;
         }
     };
-     
     ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
     efs.execute();
-    }catch(InsufficientPermissionsException e){
-        System.out.println("I really have an exeption here");
-        throw new InsufficientPermissionsException(); 
-    }
   }
 
   @Test(expected = NoAssociatedAppException.class)
@@ -307,7 +302,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
             return null;
         }
     };
-    
+
     ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
     efs.execute();
   }
