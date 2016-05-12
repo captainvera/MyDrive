@@ -51,7 +51,6 @@ public class PlainFile extends PlainFile_Base {
 
   @Override
   public void execute(User user, String[] arguments) {
-    user.checkExecutionPermissions(this);
     FileSystem fs = getFileSystem$6p();
     String data = getData(user);
     String[] fileLines = data.split("\\r?\\n");

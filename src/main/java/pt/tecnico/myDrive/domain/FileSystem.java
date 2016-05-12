@@ -207,18 +207,6 @@ public class FileSystem extends FileSystem_Base {
   }
 
   /**
-   * Searches Logins Set by User's username (since username is unique) to find a specific Login.
-   * Returns null if no login is found.
-   */
-  private Login getLoginByUser(User user){
-    for(Login login: super.getLoginsSet()){
-      if(login.getUser().equals(user))
-        return login;
-    }
-    return null;
-  }
-
-  /**
    * Verifies if a user exists by its username. Usernames are unique
    */
   private Boolean userExists(String username) {
@@ -338,11 +326,10 @@ public class FileSystem extends FileSystem_Base {
    */
   public void executeFile(String path, User user, Directory directory, String[] arguments) {
     File file = getFileByPath(path, user, directory);
-    try{
+    if(user.isExecutable(file))
         file.execute(user, arguments);
-    } catch(InsufficientPermissionsException e){
+    else
         executeWithExtensionApp(user, file, path);
-    }
   }
 
 
@@ -358,7 +345,6 @@ public class FileSystem extends FileSystem_Base {
         throw new NoAssociatedAppException(extension);
 
     String[] arguments = {path};
-
     try{
         app.execute(user,arguments);
     } catch(InsufficientPermissionsException e){
@@ -748,6 +734,18 @@ public class FileSystem extends FileSystem_Base {
 
   }
 
+  /**
+   * Delete Login with token.
+   */
+  private void removeLoginByToken(long token){
+    for (Login login: super.getLoginsSet()){
+      if(login.compareToken(token))
+        login.remove();
+    }
+
+  }
+
+
   /* ****************************************************************************
    * |                              Services                                    |
    * ****************************************************************************
@@ -872,6 +870,15 @@ public class FileSystem extends FileSystem_Base {
     if(!name.equals("") && name != null && value != null && !value.equals(""))
       _login.addEnvVar(name, value);
     return _login.listEnvVar();
+  }
+
+  public void logout(long token){
+    if (!isValidToken(token)) {
+      endSession();
+      log.warn("Invalid Token.");
+      throw new InvalidTokenException();
+    }
+    removeLoginByToken(token);    
   }
 
   /**
