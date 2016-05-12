@@ -6,7 +6,7 @@ import pt.tecnico.myDrive.domain.Link;
 import pt.tecnico.myDrive.domain.User;
 import pt.tecnico.myDrive.domain.File;
 import pt.tecnico.myDrive.domain.PlainFile;
-import pt.tecnico.myDrive.services.dto.EnvironmentVariabledto;
+import pt.tecnico.myDrive.services.dto.EnvironmentVariableDTO;
 import pt.ist.fenixframework.DomainRoot;
 
 // Domain Exceptions
@@ -848,7 +848,7 @@ public class FileSystem extends FileSystem_Base {
     executeFile(filename, _login.getUser(), _login.getCurrentDirectory(), arguments);
   }
 
-  public List<EnvironmentVariabledto> addEnvironmentVariable(long token, String name, String value){
+  public List<EnvironmentVariableDTO> addEnvironmentVariable(long token, String name, String value){
     updateSession(token);
     if(!name.equals("") && name != null && value != null && !value.equals(""))
       _login.addEnvVar(name, value);
