@@ -29,6 +29,8 @@ import pt.tecnico.myDrive.exceptions.NoExtensionException;
 import pt.tecnico.myDrive.exceptions.NoAssociatedAppException;
 import pt.tecnico.myDrive.exceptions.InvalidTokenException;
 
+import pt.tecnico.myDrive.presentation.Helper;
+
 @RunWith(JMockit.class)
 public class ExecuteFileTest extends AbstractServiceTest {
 
@@ -53,7 +55,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
       Directory dir1 = new Directory (_fs, "dir1", _user.getHomeDirectory(), _user);
       Directory dir2 = new Directory (_fs, "dir2", dir1                    , _user);
 
-      app = new App       (_fs, "app", _user.getHomeDirectory(), _user, "pt.tecnico.myDrive.domain.FileSystem.apptest");
+      app = new App       (_fs, "app", _user.getHomeDirectory(), _user, "pt.tecnico.myDrive.presentation.Helper.argumentTest");
       otherUserApp = new App       (_fs, "app2", _user.getHomeDirectory(), _user2, "");
 
       new PlainFile (_fs, "pf" , _user.getHomeDirectory(), _user, "/home/litxo88888/app 1 2");
@@ -87,7 +89,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
     efs.execute();
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }
@@ -98,7 +100,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
     efs.execute();
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }
@@ -111,7 +113,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }
@@ -122,7 +124,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
     efs.execute();
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }
@@ -134,7 +136,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }
@@ -146,7 +148,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }
@@ -158,7 +160,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }
@@ -170,7 +172,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }
@@ -181,7 +183,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
     efs.execute();
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }
@@ -193,7 +195,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }
@@ -212,7 +214,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }

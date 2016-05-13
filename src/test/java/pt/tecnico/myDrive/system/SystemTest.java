@@ -27,7 +27,7 @@ public class SystemTest extends AbstractSystemTest {
             _user1.setHomeDirectory(new Directory(_fs, "user8888", _fs.getHomeDirectory(), _user1));
 
             _pf = new PlainFile (_fs, "pf" , _user1.getHomeDirectory(), _user1, "pf_Data");
-            _app = new App (_fs, "app", _user1.getHomeDirectory(), _user1, "pt.tecnico.myDrive.domain.FileSystem.apptest");
+            _app = new App (_fs, "app", _user1.getHomeDirectory(), _user1, "pt.tecnico.myDrive.presentation.Helper.argumentTest");
 
             _login = new pt.tecnico.myDrive.domain.Login(_fs, _user2, _user2.getHomeDirectory(), 123l);
 

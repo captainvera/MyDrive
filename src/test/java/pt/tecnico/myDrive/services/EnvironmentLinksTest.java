@@ -13,6 +13,7 @@ import pt.tecnico.myDrive.exceptions.*;
 import pt.tecnico.myDrive.services.*;
 
 import pt.tecnico.myDrive.visitors.PlainFileVisitor;
+import pt.tecnico.myDrive.presentation.Helper;
 
 import java.util.*;
 
@@ -42,7 +43,7 @@ public class EnvironmentLinksTest extends AbstractServiceTest {
       System.out.println(_user1.getHomeDirectory().getPath());
 
       _pf = new PlainFile (_fs, "pf" , _user1.getHomeDirectory(), _user1, "pf_Data");
-      _app = new App (_fs, "app", _user1.getHomeDirectory(), _user1, "pt.tecnico.myDrive.domain.FileSystem.apptest");
+      _app = new App (_fs, "app", _user1.getHomeDirectory(), _user1, "pt.tecnico.myDrive.presentation.Helper.argumentTest");
 
       _login = new Login(_fs, _user1, _user1.getHomeDirectory(), 123l);
 
@@ -147,7 +148,7 @@ public class EnvironmentLinksTest extends AbstractServiceTest {
 
     new Verifications(){
         {
-            _fs.apptest(args);
+            Helper.argumentTest(args);
         }
     };
   }
