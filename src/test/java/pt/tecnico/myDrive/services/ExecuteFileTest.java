@@ -27,6 +27,7 @@ import pt.tecnico.myDrive.exceptions.InsufficientPermissionsException;
 import pt.tecnico.myDrive.exceptions.CannotExecuteDirectoryException;
 import pt.tecnico.myDrive.exceptions.NoExtensionException;
 import pt.tecnico.myDrive.exceptions.NoAssociatedAppException;
+import pt.tecnico.myDrive.exceptions.InvalidTokenException;
 
 @RunWith(JMockit.class)
 public class ExecuteFileTest extends AbstractServiceTest {
@@ -238,55 +239,9 @@ public class ExecuteFileTest extends AbstractServiceTest {
   //no execution permission, with extension, tries to execute but no permissions
   @Test(expected = InsufficientPermissionsException.class)
   public void executeOtherUserFile() throws Exception {
-    try{
     new MockUp<User>(){
         @Mock
         public App getAssociation(String extension){
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
-            System.out.println(otherUserApp.toString());
             return otherUserApp;
         }
     };

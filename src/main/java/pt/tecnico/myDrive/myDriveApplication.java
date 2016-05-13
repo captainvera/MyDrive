@@ -63,7 +63,6 @@ public class myDriveApplication {
 
   @Atomic
   public static void xmlPrint() {
-    // FIXME TODO
     log.trace("xmlPrint: " + FenixFramework.getDomainRoot());
     Document doc = FileSystem.getInstance().xmlExport();
     XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
@@ -74,7 +73,6 @@ public class myDriveApplication {
 
   @Atomic
   public static void xmlScan(java.io.File file){
-    // FIXME TODO
     log.trace("xmlScan: " + FenixFramework.getDomainRoot());
     SAXBuilder builder = new SAXBuilder();
     try {
