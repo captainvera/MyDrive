@@ -54,8 +54,6 @@ public class Link extends Link_Base {
   }
   @Override
   public File getFile(ArrayList<String> tokens, User user) {
-    System.out.println("DEBUG link: " + getPath());
-
     if(tokens.size() == 0)
       return getFileSystem$6p().getFileByPath(getData(user), user, getParent());
 
@@ -68,7 +66,6 @@ public class Link extends Link_Base {
     for(String s : tokens )
       remaining += '/' + s;
 
-    System.out.println("DEBUG!! " + remaining + " | ");
     File file = getFileSystem$6p().getFileByPath(remaining, user, getParent());
     user.checkReadPermissions(file);
     return file;
