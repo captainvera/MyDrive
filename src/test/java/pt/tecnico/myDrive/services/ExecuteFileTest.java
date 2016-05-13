@@ -48,7 +48,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
     try {
       _fs = FileSystem.getInstance();
       _user = new User(_fs, "litxo88888", "litxo88888", "litxo8888");
-	  _user.setHomeDirectory(new Directory(_fs, "litxo88888", _fs.getHomeDirectory(), _user));
+      _user.setHomeDirectory(new Directory(_fs, "litxo88888", _fs.getHomeDirectory(), _user));
       _user2 = new User(_fs, "esquentador" , "esquentador", "esquentador", "rwxdr---");
       _login = new Login(_fs, _user, _user.getHomeDirectory(), 123l);
 
@@ -84,197 +84,171 @@ public class ExecuteFileTest extends AbstractServiceTest {
   }
 
   @Test
-  public void executeApp() throws Exception {
-    ExecuteFileService efs = new ExecuteFileService(123l, "app", args );
+  public void executeApp(@Mocked final Helper hp) throws Exception {
+    ExecuteFileService efs = new ExecuteFileService(123l, "app", args);
     efs.execute();
     new Verifications(){
-        {
-            Helper.argumentTest(args);
-        }
+      {
+        hp.argumentTest(args);
+      }
     };
   }
 
   @Test
-  public void executePF() throws Exception {
+  public void executePF(@Mocked final Helper hp) throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "pf", args);
     efs.execute();
     new Verifications(){
-        {
-            Helper.argumentTest(args);
-        }
+      {
+        hp.argumentTest((String[])any);
+      }
     };
   }
 
   @Test
-  public void executePFByPath() throws Exception {
+  public void executePFByPath(@Mocked final Helper hp) throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "/home/litxo88888/pf", args);
     efs.execute();
 
 
     new Verifications(){
-        {
-            Helper.argumentTest(args);
-        }
+      {
+        hp.argumentTest(args);
+      }
     };
   }
 
   @Test
-  public void executeLinkSucc1() throws Exception {
+  public void executeLinkSucc1(@Mocked final Helper hp) throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "linksucc1", args);
     efs.execute();
     new Verifications(){
-        {
-            Helper.argumentTest(args);
-        }
+      {
+        hp.argumentTest(args);
+      }
     };
   }
 
   @Test
-  public void executeLinkSucc2() throws Exception {
+  public void executeLinkSucc2(@Mocked final Helper hp) throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "linksucc2", args);
     efs.execute();
 
     new Verifications(){
-        {
-            Helper.argumentTest(args);
-        }
+      {
+        hp.argumentTest(args);
+      }
     };
   }
 
   @Test
-  public void executeLinkByRelPathSucc1() throws Exception {
+  public void executeLinkByRelPathSucc1(@Mocked final Helper hp) throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "dir1/dir2/linkpathsucc1", args);
     efs.execute();
 
     new Verifications(){
-        {
-            Helper.argumentTest(args);
-        }
+      {
+        hp.argumentTest(args);
+      }
     };
   }
 
   @Test
-  public void executeLinkByRelPathSucc2() throws Exception {
+  public void executeLinkByRelPathSucc2(@Mocked final Helper hp) throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "dir1/dir2/linkpathsucc2", args);
     efs.execute();
 
     new Verifications(){
-        {
-            Helper.argumentTest(args);
-        }
+      {
+        hp.argumentTest(args);
+      }
     };
   }
 
   @Test
-  public void executeLinkByAbsPathSucc() throws Exception {
+  public void executeLinkByAbsPathSucc(@Mocked final Helper hp) throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "/home/litxo88888/linksucc1", args);
     efs.execute();
 
     new Verifications(){
-        {
-            Helper.argumentTest(args);
-        }
+      {
+        hp.argumentTest(args);
+      }
     };
   }
 
   @Test
-  public void link2linkSucc () throws Exception {
+  public void link2linkSucc (@Mocked final Helper hp) throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "link2linksucc1", args);
     efs.execute();
     new Verifications(){
-        {
-            Helper.argumentTest(args);
-        }
+      {
+        hp.argumentTest(args);
+        hp.argumentTest(args);
+      }
     };
   }
 
   @Test
-  public void link2linkPath () throws Exception {
+  public void link2linkPath (@Mocked final Helper hp) throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "linkfail1/plainfile2", args);
     efs.execute();
 
     new Verifications(){
-        {
-            Helper.argumentTest(args);
-        }
+      {
+        hp.argumentTest(args);
+      }
     };
   }
-
-  @Test
-  public void executeExtension() throws Exception {
-    new MockUp<User>(){
-        @Mock
-        public App getAssociation(String extension){
-            return app;
-        }
-    };
-
-    ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
-    efs.execute();
-
-    new Verifications(){
-        {
-            Helper.argumentTest(args);
-        }
-    };
-  }
-
 
   @Test(expected = FileUnknownException.class)
-  public void executeUnknownFile() throws Exception {
-    ExecuteFileService efs = new ExecuteFileService(123l, "nofile", args);
-    efs.execute();
-  }
+    public void executeUnknownFile() throws Exception {
+      ExecuteFileService efs = new ExecuteFileService(123l, "nofile", args);
+      efs.execute();
+    }
 
   @Test(expected = CannotExecuteDirectoryException.class)
-  public void executeDirectory() throws Exception {
-    ExecuteFileService efs = new ExecuteFileService(123l, "dir1/dir2/", args);
-    efs.execute();
-  }
+    public void executeDirectory() throws Exception {
+      ExecuteFileService efs = new ExecuteFileService(123l, "dir1/dir2/", args);
+      efs.execute();
+    }
 
   @Test(expected = CannotExecuteDirectoryException.class)
-  public void executeLinkDirectoryPath() throws Exception {
-    ExecuteFileService efs = new ExecuteFileService(123l, "linkfail1", args);
-    efs.execute();
-  }
+    public void executeLinkDirectoryPath() throws Exception {
+      ExecuteFileService efs = new ExecuteFileService(123l, "linkfail1", args);
+      efs.execute();
+    }
 
   //no execution permission, with extension, tries to execute but no permissions
   @Test(expected = InsufficientPermissionsException.class)
-  public void executeOtherUserFile() throws Exception {
-    new MockUp<User>(){
+    public void executeOtherUserFile() throws Exception {
+      new MockUp<User>(){
         @Mock
         public App getAssociation(String extension){
-            return otherUserApp;
+          return otherUserApp;
         }
-    };
-    ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
-    efs.execute();
-  }
+      };
+      ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
+      efs.execute();
+    }
 
   @Test(expected = NoAssociatedAppException.class)
-  public void executeNoAppFound() throws Exception {
-    new MockUp<User>(){
+    public void executeNoAppFound() throws Exception {
+      new MockUp<User>(){
         @Mock
         public App getAssociation(String extension){
-            return null;
+          return null;
         }
-    };
+      };
 
-    ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
-    efs.execute();
-  }
-  //no execution permission, tries to execute with extension, but none of it was
-  //found
-  @Test(expected = NoExtensionException.class)
-  public void executeNoExtensionFile() throws Exception {
-    ExecuteFileService efs = new ExecuteFileService(123l, "noextension", args);
-    efs.execute();
-  }
+      ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
+      efs.execute();
+    }
+
   //test with extension with success
-  
   @Test(expected = InvalidTokenException.class)
-  public void executeInvalidToken() throws Exception {
-    ExecuteFileService efs = new ExecuteFileService(911112l, "app", args );
-    efs.execute();
-  }
+    public void executeInvalidToken() throws Exception {
+      ExecuteFileService efs = new ExecuteFileService(911112l, "app", args );
+      efs.execute();
+    }
 }

@@ -55,6 +55,11 @@ public class myDriveApplication {
   	FileSystem.getInstance();
   }
 
+  @Atomic
+  public static void reset(){
+  	log.trace("Initializing: " + FenixFramework.getDomainRoot());
+  	FileSystem.getInstance().reset();
+  }
 
   @Atomic
   public static void setupDrive(){

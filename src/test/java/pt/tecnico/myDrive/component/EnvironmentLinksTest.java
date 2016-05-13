@@ -17,7 +17,7 @@ import pt.tecnico.myDrive.presentation.Helper;
 
 import java.util.*;
 
-public class EnvironmentLinksTest extends AbstractServiceTest {
+public class EnvironmentLinksTest extends AbstractComponentTest {
 
   private FileSystem _fs;
   private User _user1;

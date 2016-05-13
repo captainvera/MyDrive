@@ -1,4 +1,4 @@
-package pt.tecnico.myDrive.service;
+package pt.tecnico.myDrive.component;
 
 import org.junit.BeforeClass;
 import org.junit.Before;
@@ -21,8 +21,7 @@ public abstract class AbstractComponentTest {
   @BeforeClass
   public static void initialSetup(){
     //Initiate stuff
-  	log.trace("Initializing: " + FenixFramework.getDomainRoot());
-    myDriveApplication.init();
+    myDriveApplication.reset();
   }
 
   @Before

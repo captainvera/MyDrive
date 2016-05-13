@@ -21,7 +21,7 @@ import pt.tecnico.myDrive.exceptions.*;
 import pt.tecnico.myDrive.visitors.PlainFileVisitor;
 import pt.tecnico.myDrive.domain.Login;
 
-public class IntegrationTest extends AbstractServiceTest {
+public class IntegrationTest extends AbstractSystemTest {
 
   @Mocked EnvironmentVariableService ev;
   @Mocked ExecuteFileService efs;

@@ -21,8 +21,7 @@ public abstract class AbstractServiceTest {
   @BeforeClass
   public static void initialSetup(){
     //Initiate stuff
-  	log.trace("Initializing: " + FenixFramework.getDomainRoot());
-    myDriveApplication.init();
+    myDriveApplication.reset();
   }
 
   @Before
