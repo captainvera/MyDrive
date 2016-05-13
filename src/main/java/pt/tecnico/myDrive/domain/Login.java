@@ -35,6 +35,9 @@ public class Login extends Login_Base {
    * Basic remove implementation for Login objects
    */
   public void remove() {
+    for(EnvironmentVariable ev : super.getEnvVarSet()){
+      ev.remove(); 
+    }
     nullifyRelations();
     deleteDomainObject();
   }

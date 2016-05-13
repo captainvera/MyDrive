@@ -19,7 +19,9 @@ public class WriteFileService extends myDriveService {
 
 	@Override
 	protected void dispatch() {
-		FileSystem fs = getFileSystem();
+		FileSystem fs = FileSystem.getInstance();
+    System.out.println(fs == null);
+    System.out.println(_token + "\\    \\"+ _filepath + "\\    \\" + _data);
 		fs.writeFile(_token, _filepath, _data);
 	}
 

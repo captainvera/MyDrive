@@ -17,6 +17,15 @@ public class EnvironmentVariable extends EnvironmentVariable_Base {
     super.setValue(value);
   }
 
+  public void remove(){
+    nullifyRelations();
+    deleteDomainObject();
+  }
+
+  private void nullifyRelations(){
+    super.setLogin(null);
+  } 
+    
   @Override
   public void setName(String s) {
     throw new MethodDeniedException();

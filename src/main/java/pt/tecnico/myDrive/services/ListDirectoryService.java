@@ -23,7 +23,7 @@ public class ListDirectoryService extends myDriveService{
 
 	@Override
 	protected void dispatch() {
-    FileSystem fs = getFileSystem();
+    FileSystem fs = FileSystem.getInstance();
     _data = fs.listDirectory(_token, _path);
 	}
 

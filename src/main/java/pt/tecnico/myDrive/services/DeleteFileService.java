@@ -17,7 +17,7 @@ public class DeleteFileService extends myDriveService{
 
 	@Override
 	protected void dispatch()  {
-		FileSystem fs = getFileSystem();
+		FileSystem fs = FileSystem.getInstance();
 		fs.deleteFile(_token, _filename);
 
 	}
