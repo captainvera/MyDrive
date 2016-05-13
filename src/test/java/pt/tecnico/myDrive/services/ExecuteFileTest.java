@@ -96,6 +96,17 @@ public class ExecuteFileTest extends AbstractServiceTest {
   }
 
   @Test
+  public void executeAppNoArgs(@Mocked final Helper hp) throws Exception {
+    ExecuteFileService efs = new ExecuteFileService(123l, "app", null);
+    efs.execute();
+    new Verifications(){
+      {
+        hp.argumentTest((String[])any);
+      }
+    };
+  }
+
+  @Test
   public void executeAppDefault(@Mocked final Helper hp) throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "appdefault", args);
     efs.execute();
