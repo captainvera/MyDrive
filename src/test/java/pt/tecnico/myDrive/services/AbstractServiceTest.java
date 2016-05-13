@@ -14,6 +14,7 @@ import javax.transaction.SystemException;
 import pt.ist.fenixframework.FenixFramework;
 import pt.ist.fenixframework.core.WriteOnReadError;
 import pt.tecnico.myDrive.myDriveApplication;
+import pt.tecnico.myDrive.domain.FileSystem;
 
 public abstract class AbstractServiceTest {
   private static final Logger log = LogManager.getRootLogger();
@@ -21,7 +22,8 @@ public abstract class AbstractServiceTest {
   @BeforeClass
   public static void initialSetup(){
     //Initiate stuff
-    myDriveApplication.init();
+  	log.trace("Initializing: " + FenixFramework.getDomainRoot());
+  	FileSystem.getInstance();
   }
 
   @Before
