@@ -22,7 +22,7 @@ public abstract class AbstractSystemTest {
   @BeforeClass
   public static void initialSetup(){
     //Initiate stuff
-    myDriveApplication.reset();
+    myDriveApplication.init();
   }
 
   @Before
@@ -50,6 +50,7 @@ public abstract class AbstractSystemTest {
   @AfterClass
   public static void finish(){
     // Orderly shutdown
+    myDriveApplication.reset();
     FenixFramework.shutdown();
   }
 
