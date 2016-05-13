@@ -84,7 +84,7 @@ public class ExecuteAssociationTest extends AbstractComponentTest {
   }
 
   @Test
-  public void executeExtension() throws Exception {
+  public void executeExtension(@Mocked final Helper hp) throws Exception {
     new MockUp<User>(){
         @Mock
         public App getAssociation(String extension){
@@ -97,7 +97,7 @@ public class ExecuteAssociationTest extends AbstractComponentTest {
 
     new Verifications(){
         {
-            Helper.argumentTest(args);
+            hp.argumentTest((String[])any);
         }
     };
   }
@@ -109,4 +109,30 @@ public class ExecuteAssociationTest extends AbstractComponentTest {
     ExecuteFileService efs = new ExecuteFileService(123l, "noextension", args);
     efs.execute();
   }
+
+  //no execution permission, with extension, tries to execute but no permissions
+  @Test(expected = InsufficientPermissionsException.class)
+    public void executeOtherUserFile() throws Exception {
+      new MockUp<User>(){
+        @Mock
+        public App getAssociation(String extension){
+          return otherUserApp;
+        }
+      };
+      ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
+      efs.execute();
+    }
+
+  @Test(expected = NoAssociatedAppException.class)
+    public void executeNoAppFound() throws Exception {
+      new MockUp<User>(){
+        @Mock
+        public App getAssociation(String extension){
+          return null;
+        }
+      };
+
+      ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
+      efs.execute();
+    }
 }

@@ -56,6 +56,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
       Directory dir2 = new Directory (_fs, "dir2", dir1                    , _user);
 
       app = new App       (_fs, "app", _user.getHomeDirectory(), _user, "pt.tecnico.myDrive.presentation.Helper.argumentTest");
+      app = new App       (_fs, "appdefault", _user.getHomeDirectory(), _user, "pt.tecnico.myDrive.presentation.Helper");
       otherUserApp = new App       (_fs, "app2", _user.getHomeDirectory(), _user2, "");
 
       new PlainFile (_fs, "pf" , _user.getHomeDirectory(), _user, "/home/litxo88888/app 1 2");
@@ -95,6 +96,17 @@ public class ExecuteFileTest extends AbstractServiceTest {
   }
 
   @Test
+  public void executeAppDefault(@Mocked final Helper hp) throws Exception {
+    ExecuteFileService efs = new ExecuteFileService(123l, "appdefault", args);
+    efs.execute();
+    new Verifications(){
+      {
+        hp.main(args);
+      }
+    };
+  }
+
+  @Test
   public void executePF(@Mocked final Helper hp) throws Exception {
     ExecuteFileService efs = new ExecuteFileService(123l, "pf", args);
     efs.execute();
@@ -113,7 +125,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
       {
-        hp.argumentTest(args);
+        hp.argumentTest((String[])any);
       }
     };
   }
@@ -124,7 +136,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
     efs.execute();
     new Verifications(){
       {
-        hp.argumentTest(args);
+        hp.argumentTest((String[])any);
       }
     };
   }
@@ -136,7 +148,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
       {
-        hp.argumentTest(args);
+        hp.argumentTest((String[])any);
       }
     };
   }
@@ -148,7 +160,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
       {
-        hp.argumentTest(args);
+        hp.argumentTest((String[])any);
       }
     };
   }
@@ -160,7 +172,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
       {
-        hp.argumentTest(args);
+        hp.argumentTest((String[])any);
       }
     };
   }
@@ -172,7 +184,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
       {
-        hp.argumentTest(args);
+        hp.argumentTest((String[])any);
       }
     };
   }
@@ -183,8 +195,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
     efs.execute();
     new Verifications(){
       {
-        hp.argumentTest(args);
-        hp.argumentTest(args);
+        hp.argumentTest((String[])any);
       }
     };
   }
@@ -196,7 +207,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
 
     new Verifications(){
       {
-        hp.argumentTest(args);
+        hp.argumentTest((String[])any);
       }
     };
   }
@@ -219,33 +230,7 @@ public class ExecuteFileTest extends AbstractServiceTest {
       efs.execute();
     }
 
-  //no execution permission, with extension, tries to execute but no permissions
-  @Test(expected = InsufficientPermissionsException.class)
-    public void executeOtherUserFile() throws Exception {
-      new MockUp<User>(){
-        @Mock
-        public App getAssociation(String extension){
-          return otherUserApp;
-        }
-      };
-      ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
-      efs.execute();
-    }
 
-  @Test(expected = NoAssociatedAppException.class)
-    public void executeNoAppFound() throws Exception {
-      new MockUp<User>(){
-        @Mock
-        public App getAssociation(String extension){
-          return null;
-        }
-      };
-
-      ExecuteFileService efs = new ExecuteFileService(123l, "otheruser.txt", args);
-      efs.execute();
-    }
-
-  //test with extension with success
   @Test(expected = InvalidTokenException.class)
     public void executeInvalidToken() throws Exception {
       ExecuteFileService efs = new ExecuteFileService(911112l, "app", args );
