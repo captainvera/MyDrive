@@ -73,10 +73,4 @@ public class LogoutTest extends AbstractServiceTest {
     assertTrue("Logout user2 successful.", user2 == _user2 && user4 == null);
 	}
 
-	@Test(expected=InvalidTokenException.class)
-	public void invalidToken() throws Exception{
-		LogoutService logoutservice1 = new LogoutService(125l);
-		logoutservice1.execute();
-	}
-
 }

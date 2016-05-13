@@ -10,10 +10,10 @@ public class Quit extends MyDriveCommand {
 
   public void execute(String[] args) {
     if(args.length == 0){
-      //if(shell().getActiveUser().equals("nobody")){
-      //  new LogoutService(shell().getActiveToken()).execute();
-      //  shell().removeSession("nobody");
-      //}
+      if(shell().getActiveUser().equals("nobody")){
+        new LogoutService(shell().getActiveToken()).execute();
+        shell().removeSession("nobody");
+      }
       shell().shutdown();
     } else
       throw new RuntimeException("USAGE: " + name());

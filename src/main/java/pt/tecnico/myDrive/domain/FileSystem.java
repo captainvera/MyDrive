@@ -868,11 +868,7 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void logout(long token){
-    if (!isValidToken(token)) {
-      endSession();
-      log.warn("Invalid Token.");
-      throw new InvalidTokenException();
-    }
+    endSession();
     removeLoginByToken(token);    
   }
 
