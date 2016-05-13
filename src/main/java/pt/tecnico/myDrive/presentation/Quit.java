@@ -9,14 +9,15 @@ public class Quit extends MyDriveCommand {
   public Quit(MyDriveShell sh) { super(sh, "quit", "Logout a certain token"); }
 
   public void execute(String[] args) {
-    LogoutService ls;
     if(args.length == 0){
-      ls = new LogoutService(shell().getActiveToken());
+      //if(shell().getActiveUser().equals("nobody")){
+      //  new LogoutService(shell().getActiveToken()).execute();
+      //  shell().removeSession("nobody");
+      //}
       shell().shutdown();
     } else
-	    throw new RuntimeException("USAGE: " + name());
+      throw new RuntimeException("USAGE: " + name());
 
-    ls.execute();
     shell().println("Logged out token.");
   }
 }

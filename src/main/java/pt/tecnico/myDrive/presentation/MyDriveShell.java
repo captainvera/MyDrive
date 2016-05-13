@@ -56,6 +56,12 @@ public class MyDriveShell extends Shell {
     _sessions.put(username, new Session(token, "/home/"+username));
   }
 
+  public void removeSession(String username){
+    if(_sessions.containsKey(username)){
+      _sessions.remove(username);
+    }
+  }
+
   public void setActiveSession(String username){
     Session session= _sessions.get(username);
     if(session != null){
@@ -98,8 +104,6 @@ public class MyDriveShell extends Shell {
   }
 
   public void shutdown(){
-    if(getActiveUser().equals("nobody"))
-      new LogoutService(getActiveToken()).execute();
     System.exit(0);
   }
 }

@@ -10,17 +10,27 @@ public class Login extends MyDriveCommand {
 
   public void execute(String[] args) {
     LoginService ls = null;
+
+
 	  if (args.length < 1)
 	    throw new RuntimeException("USAGE: "+name()+" username" + " [password]");
-	  else if(args.length == 1)
+	  else if(args.length == 1) {
+      if(shell().getActiveUser().equals("nobody")){
+        shell().removeSession("nobody");
+        new LogoutService(shell().getActiveToken()).execute();
+      }
       ls = new LoginService(args[0], "");
-    else
+    }
+    else {
+      if(shell().getActiveUser().equals("nobody")){
+        shell().removeSession("nobody");
+        new LogoutService(shell().getActiveToken()).execute();
+      }
       ls = new LoginService(args[0], args[1]);
+    }
 
     ls.execute();
 
-    if(shell().getActiveUser().equals("nobody"))
-      new LogoutService(shell().getActiveToken()).execute();
 
     long token = ls.result();
     String username = args[0];
