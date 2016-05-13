@@ -33,14 +33,10 @@ public class App extends App_Base {
     super.init(fs, fs.requestId(), name, parent, owner, data);
   }
 
-  /**
-   * TEMPORARY
-   */
   @Override
   public int getSize() {
     return super.getSize();
   }
-
 
   @Override
   public File getFile(ArrayList<String> tokens, User user) {
@@ -49,10 +45,22 @@ public class App extends App_Base {
 
   @Override
   public void execute(User user, String[] arguments){
+      user.checkExecutionPermissions(this);
+      String appMethod = getData(user);
       try{
-        user.checkExecutionPermissions(this);
-        String appMethod = getData(user);
-        //last part of the string, being the method name of the package
+        //First we assume no method is provided
+        Class[] arg = new Class[1];
+        arg[0] = String[].class;
+        Method method = Class.forName(appMethod).getDeclaredMethod("main", arg);
+        Object[] args = new Object[]{arguments};
+        
+        method.invoke(this, args);
+    } catch(NoSuchMethodException e) {
+      throw new RuntimeException("Unknown method on list file");
+    } catch(ClassNotFoundException e ) {
+      try{
+        //If no class is found maybe the method is specified
+        
         String methodName = appMethod.substring(appMethod.lastIndexOf(".") + 1);
         //the class name to look for
         String className = appMethod.substring(0, appMethod.lastIndexOf("."));
@@ -62,12 +70,11 @@ public class App extends App_Base {
         Object[] args = new Object[]{arguments};
         
         method.invoke(this, args);
-
-    } catch(NoSuchMethodException e) {
-      throw new RuntimeException("Unknown method on list file");
-    } catch(ClassNotFoundException e ) {
-      throw new RuntimeException("Unknown class on list file");
-    } catch(IllegalAccessException e){ throw new RuntimeException("IllegalAccessException while executing app.");
+      }catch(InvocationTargetException | ClassNotFoundException | IllegalAccessException | NoSuchMethodException e1) {
+        throw new RuntimeException("No method nor class on app");
+      } 
+    } catch(IllegalAccessException e){ 
+      throw new RuntimeException("IllegalAccessException while executing app.");
     } catch(InvocationTargetException e){
       throw new RuntimeException("InvocationTargetException while executing app");
     }
