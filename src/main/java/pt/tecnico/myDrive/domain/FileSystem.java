@@ -964,13 +964,4 @@ public class FileSystem extends FileSystem_Base {
   public void setRootDirectory(RootDirectory rootDirectory) {
     throw new MethodDeniedException();
   }
-
-  public static String apptest(String[] cenas){
-    System.out.println("Testing app execution. Executed apptest");
-    System.out.println("Provided arguments:");
-    for(String s : cenas){
-      System.out.println("arg -> "+s);
-    }
-    return "HEY!";
-  }
 }
