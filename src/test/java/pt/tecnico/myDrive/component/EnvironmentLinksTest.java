@@ -26,7 +26,8 @@ public class EnvironmentLinksTest extends AbstractComponentTest {
   private App _app;
   private Login _login;
   private String args[] = {"1","2"};
-
+  private Link _applink;
+  private Link _filelink;
 
   /* (non-Javadoc)
   * @see pt.tecnico.myDrive.service.AbstractServiceTest#populate()
@@ -41,7 +42,10 @@ public class EnvironmentLinksTest extends AbstractComponentTest {
       _user1.setHomeDirectory(new Directory(_fs, "user8888", _fs.getHomeDirectory(), _user1));
 
       System.out.println(_user1.getHomeDirectory().getPath());
-
+      new Link(_fs, "link", _user1.getHomeDirectory().getParent(), _user1, "$HOME");
+      _applink = new Link(_fs, "appLink", _user1.getHomeDirectory(), _user1, "$APP");
+      new Link(_fs, "dirLink", _user1.getHomeDirectory().getParent(), _user1, "$DIR");
+      _filelink = new Link(_fs, "fileLink", _user1.getHomeDirectory(), _user1, "$FILE");
       _pf = new PlainFile (_fs, "pf" , _user1.getHomeDirectory(), _user1, "pf_Data");
       _app = new App (_fs, "app", _user1.getHomeDirectory(), _user1, "pt.tecnico.myDrive.presentation.Helper.argumentTest");
 
@@ -64,7 +68,7 @@ public class EnvironmentLinksTest extends AbstractComponentTest {
       }
     };
 
-    ChangeDirectoryService changeDirectory = new ChangeDirectoryService(123l, "/home/$HOME");
+    ChangeDirectoryService changeDirectory = new ChangeDirectoryService(123l, "/home/link");
 
     changeDirectory.execute();
     String result = changeDirectory.result();
@@ -142,7 +146,7 @@ public class EnvironmentLinksTest extends AbstractComponentTest {
       }
     };
 
-    ExecuteFileService ef = new ExecuteFileService(123l, "/home/user8888/$APP", args);
+    ExecuteFileService ef = new ExecuteFileService(123l, "/home/user8888/appLink", args);
 
     ef.execute();
 
@@ -164,7 +168,7 @@ public class EnvironmentLinksTest extends AbstractComponentTest {
       }
     };
 
-    ListDirectoryService ld = new ListDirectoryService(123l, "/home/$DIR");
+    ListDirectoryService ld = new ListDirectoryService(123l, "/home/dirLink");
 
     ld.execute();
     String result = ld.result();
@@ -172,8 +176,10 @@ public class EnvironmentLinksTest extends AbstractComponentTest {
     String self = ((String) _user1.getHomeDirectory().toString().replaceAll(_user1.getHomeDirectory().getName(), ".") + "\n");
 		String parent = ((String) _user1.getHomeDirectory().getParent().toString().replaceAll(_user1.getHomeDirectory().getParent().getName(), "..") + "\n");
     String app = _app.toString() + "\n";
+    String applink = _applink.toString() + "\n";
+    String filelink = _filelink.toString() + "\n";
     String plainfile = _pf.toString() + "\n";
-		String list = self + parent + app + plainfile;
+		String list = self + parent + app + applink + filelink + plainfile;
 
     System.out.println(list);
     System.out.println("aqui");
@@ -193,7 +199,7 @@ public class EnvironmentLinksTest extends AbstractComponentTest {
       }
     };
 
-    ReadFileService rf = new ReadFileService(123l, "/home/user8888/$FILE");
+    ReadFileService rf = new ReadFileService(123l, "/home/user8888/fileLink");
 
     rf.execute();
     String result = rf.result();
@@ -212,7 +218,7 @@ public class EnvironmentLinksTest extends AbstractComponentTest {
       }
     };
 
-    WriteFileService wf = new WriteFileService(123l, "/home/user8888/$FILE", "test");
+    WriteFileService wf = new WriteFileService(123l, "/home/user8888/fileLink", "test");
 
     wf.execute();
 
