@@ -12,11 +12,10 @@ public abstract class Shell {
   private String name;
 
   /**
-   * Sessions 
+   * Sessions
    */
-  private String _username = "";
-  private String _currentDir = "/";
-   
+  private String _prompt;
+
   public Shell(String n) { this(n, new PrintWriter(System.out, true), true); }
   public Shell(String n, Writer w) { this(n, w, true); }
   public Shell(String n, Writer w, boolean flush) {
@@ -70,11 +69,11 @@ public abstract class Shell {
 
   public void execute() throws Exception {
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    String str, prompt = _username + " @ " + _currentDir + " ~ "; // System.getenv().get("PS1");
+    String str; // System.getenv().get("PS1");
 
     //if (prompt == null) prompt = "6P@MLG$420 > ";
     System.out.println(name+" shell ('quit' to leave)");
-    System.out.print(prompt);
+    System.out.print(_prompt);
     while ((str = in.readLine()) != null) {
       String[] arg = str.split(" ");
       Command c = coms.get(arg[0]);
@@ -88,8 +87,7 @@ public abstract class Shell {
       } else
 	      if (arg[0].length() > 0)
           System.err.println(arg[0]+": command not found. ('help' for command list)");
-      prompt = _username + " @ " + _currentDir + " ~ ";
-      System.out.print(prompt);
+      System.out.print(_prompt);
     }
     System.out.println(name+" end");
   }
@@ -132,11 +130,7 @@ public abstract class Shell {
     return true;
   }
 
- public void setUser(String username){
-    _username = username;
-  }
-
-  public void setDir(String currentDir){
-    _currentDir = currentDir;
+ public void setPrompt(String prompt){
+    _prompt = prompt;
   }
 }

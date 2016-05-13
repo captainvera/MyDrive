@@ -500,7 +500,6 @@ public class FileSystem extends FileSystem_Base {
   public Directory checkPathImport(String path){
     path = path.substring(1, path.length());
     String[] folders = path.split("/");
-    System.out.println("[DEBUUUUUG] " + path);
     Directory current = super.getRootDirectory();
     for (String folder : folders){
       try{
@@ -577,6 +576,7 @@ public class FileSystem extends FileSystem_Base {
   }
 
   public void xmlImport(Element firstElement) {
+    reset();
     // FIXME TODO
     try {
       for (Element userElement: firstElement.getChildren("user"))

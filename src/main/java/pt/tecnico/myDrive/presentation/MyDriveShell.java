@@ -1,13 +1,21 @@
 package pt.tecnico.myDrive.presentation;
 
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+
 import pt.tecnico.myDrive.services.LoginService;
 import pt.tecnico.myDrive.services.LogoutService;
+import pt.tecnico.myDrive.services.ImportMyDriveService;
 
 import java.util.TreeMap;
 
 public class MyDriveShell extends Shell {
 
   private String _activeUser;
+  private String _currentDir;
   private Session _activeSession;
   long _token;
 
@@ -15,6 +23,7 @@ public class MyDriveShell extends Shell {
   private TreeMap<String, Session> _sessions = new TreeMap<String, Session>();
 
   public static void main(String[] args) throws Exception {
+    if(args.length > 0) xmlScan(new java.io.File(args[0]));
     MyDriveShell sh = new MyDriveShell();
     sh.execute();
   }
@@ -53,8 +62,7 @@ public class MyDriveShell extends Shell {
       _activeUser = username;
       _activeSession = session;
 
-      setUser(username);
-      setDir(session.getCurrentDirectory());
+      setPrompt(username + " @ " + session.getCurrentDirectory() + " ~ ");
     }else{
       println("No session present for user " + username);
     }
@@ -74,11 +82,23 @@ public class MyDriveShell extends Shell {
 
   public void changeCurrentDirectory(String currentDir){
     _activeSession.setCurrentDirectory(currentDir);
-    setDir(currentDir);
+    setPrompt(_activeUser + " @ " + currentDir + " ~ ");
+  }
+
+  public static void xmlScan(java.io.File file){
+    // FIXME TODO
+    SAXBuilder builder = new SAXBuilder();
+    try {
+      Document document = (Document)builder.build(file);
+      ImportMyDriveService imds = new ImportMyDriveService(document);
+      imds.execute();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public void shutdown(){
-    new LogoutService(_token).execute(); 
+    new LogoutService(_token).execute();
     System.exit(0);
-  } 
+  }
 }
