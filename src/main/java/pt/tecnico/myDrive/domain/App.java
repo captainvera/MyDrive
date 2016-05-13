@@ -67,8 +67,9 @@ public class App extends App_Base {
         Class[] arg = new Class[1];
         arg[0] = String[].class;
         Method method = Class.forName(className).getDeclaredMethod(methodName, arg);
+
         Object[] args = new Object[]{arguments};
-        
+
         method.invoke(this, args);
       }catch(InvocationTargetException | ClassNotFoundException | IllegalAccessException | NoSuchMethodException e1) {
         throw new RuntimeException("No method nor class on app");

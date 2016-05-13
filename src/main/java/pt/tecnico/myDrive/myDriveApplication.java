@@ -26,6 +26,8 @@ import pt.ist.fenixframework.FenixFramework;
 
 import pt.tecnico.myDrive.presentation.MyDriveShell;
 
+import pt.tecnico.myDrive.services.ImportMyDriveService;
+
 public class myDriveApplication {
   private static final Logger log = LogManager.getRootLogger();
 
@@ -36,7 +38,7 @@ public class myDriveApplication {
       if(args.length > 0) xmlScan(new java.io.File(args[0]));
       else setupDrive();
       //xmlPrint();
-       
+
       MyDriveShell.main(new String[0]);
 
     } catch(Exception e){
@@ -72,12 +74,11 @@ public class myDriveApplication {
   @Atomic
   public static void xmlScan(java.io.File file){
     log.trace("xmlScan: " + FenixFramework.getDomainRoot());
-  	FileSystem.getInstance().reset();
-    FileSystem fs = FileSystem.getInstance();
     SAXBuilder builder = new SAXBuilder();
     try {
       Document document = (Document)builder.build(file);
-      fs.xmlImport(document.getRootElement());
+      ImportMyDriveService imds = new ImportMyDriveService(document);
+      imds.execute();
     } catch (Exception e) {
       e.printStackTrace();
     }

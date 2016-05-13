@@ -233,5 +233,3 @@ public class DeleteFileTest extends AbstractServiceTest {
     }
 
 }
-
-
