@@ -1,4 +1,4 @@
-package pt.tecnico.myDrive.service;
+package pt.tecnico.myDrive.component;
 
 import org.junit.*;
 import static org.junit.Assert.*;

@@ -15,7 +15,7 @@ import pt.ist.fenixframework.FenixFramework;
 import pt.ist.fenixframework.core.WriteOnReadError;
 import pt.tecnico.myDrive.myDriveApplication;
 
-public abstract class AbstractServiceTest {
+public abstract class AbstractComponentTest {
   private static final Logger log = LogManager.getRootLogger();
 
   @BeforeClass
