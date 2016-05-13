@@ -34,5 +34,4 @@ public class DirectoryVisitor implements GenericVisitor<Directory> {
   public Directory visit(App a) {
     return null;
   }
-
 }
