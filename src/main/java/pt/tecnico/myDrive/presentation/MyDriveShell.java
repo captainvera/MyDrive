@@ -98,7 +98,8 @@ public class MyDriveShell extends Shell {
   }
 
   public void shutdown(){
-    new LogoutService(_token).execute();
+    if(getActiveUser().equals("nobody"))
+      new LogoutService(getActiveToken()).execute();
     System.exit(0);
   }
 }

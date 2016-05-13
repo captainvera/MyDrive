@@ -1,5 +1,6 @@
 package pt.tecnico.myDrive.presentation;
 import pt.tecnico.myDrive.services.LoginService;
+import pt.tecnico.myDrive.services.LogoutService;
 
 import java.util.TreeMap;
 
@@ -17,6 +18,9 @@ public class Login extends MyDriveCommand {
       ls = new LoginService(args[0], args[1]);
 
     ls.execute();
+
+    if(shell().getActiveUser().equals("nobody"))
+      new LogoutService(shell().getActiveToken()).execute();
 
     long token = ls.result();
     String username = args[0];
